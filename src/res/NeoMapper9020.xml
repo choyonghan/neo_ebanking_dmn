@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper9020">
+
+	<!-- 가상계좌 대기 상태 조회 -->
+	<select id="selectStandbyStatCd" resultType="MyMap">
+		SELECT STANDBY_STAT_CD
+		FROM
+		(
+		    SELECT STANDBY_STAT_CD, CHK_RANK
+		    FROM
+		    (
+		    	/* 웹에서 저장 된 업무대기상태 */
+		        SELECT STANDBY_STAT_CD, '1' AS CHK_RANK
+		        FROM CYB0001
+		        WHERE DIV_CD = '0'
+		            AND STANDBY_STAT_CD IS NOT NULL /*업무대기상태가 있으면 웹에서 요청한 것*/
+		        UNION ALL
+		        /* 업무종료 23시50분 */
+		        SELECT '102' AS STANDBY_STAT_CD, '2' AS CHK_RANK
+		        FROM CYB0001
+		        WHERE DIV_CD = '0'
+		            AND VIR_WORK_STAT_CD = '101' /*업무개시상태*/
+		            AND TO_CHAR(SYSDATE, 'HH24MISS') <![CDATA[ >= ]]> '235000' /*현재시간이 23시50분 이후*/
+		            AND NVL(LAST_MDFCN_TM, '000000') <![CDATA[ < ]]> '235000' /*최종수정시간이 23시50분 이전*/
+		        UNION ALL
+		        /* 업무개시 03시 */
+		        SELECT '101' AS STANDBY_STAT_CD, '2' AS CHK_RANK
+		        FROM CYB0001
+		        WHERE DIV_CD = '0'
+		            AND VIR_WORK_STAT_CD = '102' /*업무종료상태*/
+		            AND TO_CHAR(SYSDATE, 'HH24MISS') <![CDATA[ >= ]]> '030000' /*현재시간이 03시 이후*/
+		            AND TO_CHAR(SYSDATE, 'YYYYMMDD')||'030000' <![CDATA[ > ]]> NVL(LAST_MDFCN_YMD, '000000')||NVL(LAST_MDFCN_TM, '000000') /*최종수정일시가 03시 이전*/
+		    )
+		    ORDER BY CHK_RANK DESC
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<!-- 특정날짜 가상계좌 대기 상태 조회 -->
+    <select id="selectTargetStatCd" resultType="MyMap">
+        SELECT STANDBY_STAT_CD
+        FROM
+        (
+            SELECT STANDBY_STAT_CD, CHK_RANK
+            FROM
+            (
+                /* 웹에서 저장 된 업무대기상태 */
+                SELECT STANDBY_STAT_CD, '1' AS CHK_RANK
+                FROM CYB0001
+                WHERE DIV_CD = '0'
+                    AND STANDBY_STAT_CD IS NOT NULL /*업무대기상태가 있으면 웹에서 요청한 것*/
+                UNION ALL
+                /* 업무종료 23시50분 */
+                SELECT '102' AS STANDBY_STAT_CD, '2' AS CHK_RANK
+                FROM CYB0001
+                WHERE DIV_CD = '0'
+                    AND VIR_WORK_STAT_CD = '101' /*업무개시상태*/
+                    AND TO_CHAR(SYSDATE, 'HH24MISS') <![CDATA[ >= ]]> '235000' /*현재시간이 23시50분 이후*/
+                    AND NVL(LAST_MDFCN_TM, '000000') <![CDATA[ < ]]> '235000' /*최종수정시간이 23시50분 이전*/
+                UNION ALL
+                /* 업무개시 03시 */
+                SELECT '101' AS STANDBY_STAT_CD, '2' AS CHK_RANK
+                FROM CYB0001
+                WHERE DIV_CD = '0'
+                    AND VIR_WORK_STAT_CD = '102' /*업무종료상태*/
+                    AND TO_CHAR(SYSDATE, 'HH24MISS') <![CDATA[ >= ]]> '070000' /*현재시간이 07시 이후*/
+                    AND TO_CHAR(SYSDATE, 'YYYYMMDD')||'030000' <![CDATA[ > ]]> NVL(LAST_MDFCN_YMD, '000000')||NVL(LAST_MDFCN_TM, '000000') /*최종수정일시가 03시 이전*/
+            )
+            ORDER BY CHK_RANK DESC
+        )
+        WHERE ROWNUM = 1
+    </select>
+
+	<!-- 이력 insert -->
+	<insert id="insertHistory">
+		INSERT INTO CYB0001
+		    (DIV_CD, VIR_WORK_STAT_CD, RGSTR_YMD, RGSTR_TM)
+		VALUES
+		    ('1', #{STANDBY_STAT_CD}, TO_CHAR(SYSDATE, 'YYYYMMDD'), TO_CHAR(SYSDATE, 'HH24MISS'))
+	</insert>
+
+	<!-- 업무상태 update -->
+	<update id="updateWorkStat">
+		UPDATE CYB0001 SET
+		    VIR_WORK_STAT_CD = #{STANDBY_STAT_CD},
+		    STANDBY_STAT_CD = '',
+		    LAST_MDFCN_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		    LAST_MDFCN_TM = TO_CHAR(SYSDATE, 'HH24MISS')
+		WHERE DIV_CD = '0'
+	</update>
+
+	<!-- 어제날짜 미처리건 조회 -->
+	<select id="selectNoResultData" resultType="MyMap">
+		SELECT TRNX_NO FROM TFE2190
+		WHERE 1=1
+		AND DLNG_YMD = TO_CHAR(SYSDATE -1 , 'YYYYMMDD')
+		AND TRSFR_RSLT_PRCS_YN = 'N'
+		AND JOB_SYS_CD = '02'
+	    AND JOB_STAT_CD = '12'
+	</select>
+
+	<!-- TFE2190 Cancle update -->
+	<update id="updateTFE2190Cancle">
+		UPDATE TFE2190
+	     SET DATA_RCTN_CD = 'D'
+	        ,TRSFR_PRCS_RSLT_CN = '전일미처리건반려처리입니다.'
+	        ,TRSFR_PRCS_RSLT_CD = '0006'
+	        ,TRSFR_RSLT_PRCS_YN = 'Y'
+	        ,JOB_SYS_CD = '01'
+	        ,JOB_STAT_CD = '31'
+	        ,TRSFR_RSLT_DLPS_NM   = 'admin'
+	        ,TRSFR_PRCS_RSLT_RCTN_DT   = SYSDATE
+          WHERE 1=1
+          AND TRNX_NO = #{TRNX_NO}
+	</update>
+
+	<!-- TFE2170 Cancle update -->
+	<update id="updateTFE2170Cancle">
+		UPDATE TFE2170
+	     SET DATA_RCTN_CD = 'D'
+	        ,TRSFR_PRCS_RSLT_CN = '전일미처리건반려처리입니다.'
+	        ,TRSFR_PRCS_RSLT_CD = '0006'
+	        ,TRSFR_RSLT_PRCS_YN = 'Y'
+	        ,TRSFR_RSLT_DLPS_NM = 'admin'
+	        ,TRSFR_PRCS_RSLT_RCTN_DT   = SYSDATE
+          WHERE 1=1
+          AND TRNX_NO = #{TRNX_NO}
+	</update>
+
+</mapper>

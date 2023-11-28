@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper5030">
+	<select id="trgetList"  parameterType="MyMap" resultType="MyMap">
+	<![CDATA[
+		/*NeoMapper5030.trgetList*/
+		SELECT
+			   DMND_ID 		              AS 요청ID /*REQ_ID*/                           
+	         , TRSFR_DMND_INST_DV_CD        AS 요청기관구분 /*REQ_INST_FG*/
+	         , LAF_CD                       AS 자치단체코드 /*LOC_GOV_CD*/
+	         , RTN_DMND_INST_CD             AS 관서코드 /*REQ_INST_CD*/
+	         , GCC_DEPT_CD                  AS 지급부서코드 /*GCC_DEPT_CD*/
+	         , FYR                          AS 회계연도 /*FIS_YEAR*/
+	         , ACNT_DV_CD                   AS 회계코드 /*FIS_FG_CD*/
+	         /*
+	         , 'VR'                         AS 자료구분 
+	         */ 
+	         , 'DA'                         AS 자료구분 
+	         , 'DA'                         AS 거래구분 /*20220804 신규추가*/
+	         , DLNG_YMD                     AS 거래일자 /*TRNX_YMD*/
+	         , TO_CHAR(SYSDATE, 'YYYYMMDD') AS 이체일자 
+	         , 'N'                          AS 재배정여부 
+	         , '1'                          AS 입금총건수
+	         , RCVMT_AMT                    AS 출금금액 /*RECPT_AMT*/
+	         , ''                           AS 출금계좌번호
+	         , '가상계좌지급'                  AS 출금명세
+	         , ''                           AS 별단계좌번호
+	         ,TRNX_NO                       AS 거래번호 /*V*/
+	         , null                         AS 예산과목코드
+	         , '0'                          AS 급여구분
+	         , '0'                          AS 입금명세구분
+	         , ACNT_DV_NM                   AS 자치단체명 /*LOC_GOV_NM*/
+	         , FLD_NM                       AS 관서명 /*GOV_OFFICE_NM*/
+	         , SECT_NM                      AS 지급부서명 /*GCC_DEPT_NM*/
+	         , 'N'                          AS 복지급여여부
+	         , '1'                          AS 입금일련번호
+	         , '10'                         AS 입금유형
+	         , '031'                        AS 입금은행코드
+	         /*, RTN_ECRP_ACTNO               AS 입금계좌번호 RTN_ACCT_NO*/
+	         , DRW_REAL_ACTNO               AS 입금계좌번호 /*TOBE변경.실계좌*/
+	         , RTN_ECRP_ACTNO				AS ECRP_ACTNO
+	         , RTN_DND_DEPT_NM              AS 입금계좌예금주명 /*REQ_DEPT_NM*/
+	         , RCVMT_AMT                    AS 입금금액 /*RECPT_AMT*/
+	         , '가상계좌입금'                  AS 입금명세
+	         , 'N'                          AS 세목코드참조여부
+	         , null                         AS 세목코드
+	         , '00'                         AS 압류방지코드
+	         , ' '                          AS CMS번호
+	         /*, EPRS_HIST_NO   /EXPD_RESOL_HIST_NO*/
+	         /*, GCC_GIVE_NO 	  /GCC_RESOL_REGI_NO*/
+	         , VIR_ECRP_ACTNO               AS 가상계좌번호 /*VR_ACCT_NO*/
+	         , ANE_LIM_ACC_YN 				/*세출한도계좌여부*/
+	         , STBX_TRSM_TRGT_DV_CD /*금고전송대상구분코드*/
+	         , CASE ANE_LIM_ACC_YN WHEN 'Y' THEN RTN_ECRP_ACTNO ELSE '' END AS 공란
+	      FROM TFE2547 A /*TEF_EFAM080*/
+	     WHERE STBX_DMND_DV_CD = '17' /*REQ_FG*/
+	       AND RCVMT_DMND_DV_CD = '17' /*RECPT_REQ_FG*/
+	       AND (PRCS_DT + 10/(24*60)) < SYSDATE /*DEAL_DATE*/
+	     UNION ALL
+	    SELECT 'LF'           	AS 요청ID
+	         , '01'      		AS 요청기관구분
+	         , LAF_CD       	AS 자치단체코드 /*LOCAL_GOV_CD*/
+	         , GOF_CD      		AS 관서코드 /*REQ_INST_CD*/
+	         , GCC_DEPT_CD      AS 지급부서코드 /*GCC_DEPT_CD*/
+	         , FYR         		AS 회계연도 /*FIS_YEAR*/
+	         , '100'        	AS 회계코드
+	         /*
+	         , 'EA'          	AS 자료구분
+	         */
+	         , 'DB'          	AS 자료구분
+	         , 'DB'             AS 거래구분 /*20220804 신규추가*/
+	         , DMND_YMD         AS 거래일자 /*REQ_YMD*/
+	         , TO_CHAR(SYSDATE, 'YYYYMMDD') AS 이체일자
+	         , 'N'              AS 재배정여부
+	         , '1'              AS 입금총건수
+	         , RCVMT_AMT        AS 출금금액 /*RECPT_AMT*/
+	         , ''               AS 출금계좌번호
+	         , '가상계좌지급'      AS 출금명세
+	         , ''               AS 별단계좌번호
+	         ,TRNX_NO           AS 거래번호
+	         , null             AS 예산과목코드
+	         , '0'              AS 급여구분
+	         , '0'              AS 입금명세구분
+	         , LAF_NM       	AS 자치단체명 /*LOC_GOV_NM*/
+	         , GOF_NM    		AS 관서명 /*GOV_OFFICE_NM*/
+	         , GCC_DEPT_NM      AS 지급부서명 /*GCC_DEPT_NM*/
+	         , 'N'              AS 복지급여여부
+	         , '1'              AS 입금일련번호
+	         , '10'             AS 입금유형
+	         , '031'            AS 입금은행코드
+	         /*, STBX_ECRP_ACTNO  AS 입금계좌번호 CASHBOX_ACCT_NO*/
+	         , DRW_REAL_ACTNO   AS 입금계좌번호 /*TOBE변경.실계좌*/
+	         , STBX_ECRP_ACTNO  AS ECRP_ACTNO
+	         , DMDR_NM      	AS 입금계좌예금주명 /*REQ_USER_NM*/
+	         , RCVMT_AMT        AS 입금금액 /*RECPT_AMT*/
+	         , '가상계좌입금'   	AS 입금명세
+	         , 'N'              AS 세목코드참조여부
+	         , null             AS 세목코드
+	         , '00'             AS 압류방지코드
+	         , ' '              AS CMS번호
+	         /*, PAID_SNUM / PAIDUP_SNO*/
+	         , VIR_ECRP_ACTNO        AS 가상계좌번호/*VR_ACCT_NO*/
+	         , ANE_LIM_ACC_YN 				/*세출한도계좌여부*/
+	         , STBX_TRSM_TRGT_DV_CD
+	         , CASE ANE_LIM_ACC_YN WHEN 'Y' THEN STBX_ECRP_ACTNO ELSE '' END AS 공란
+	      FROM TFD3601 A /*TEF_CASHBOXRECPTIF*/
+	     WHERE STBX_DMND_DV_CD = '17'  /*REQ_FG*/
+	       AND RCVMT_DMND_DV_CD = '17' /*RECPT_REQ_FG*/
+	       AND (PRCS_DT + 10/(24*60)) < SYSDATE /*DEAL_DATE*/
+	     ORDER 
+	     	BY 거래번호
+	]]>
+	</select>
+	
+	<select id="getQryMainAcctNo" parameterType="MyMap" resultType="String">
+	<![CDATA[
+		/*NeoMapper5030.getQryMainAcctNo*/
+		SELECT /*+ index_asc(A VIR_IDX2)*/
+			   MAIN_ACCT_NO
+		  FROM TFC0006 /*VRACCTNOLIST*/
+		 WHERE LOC_GOV_CD = #{자치단체코드}
+		   AND VR_ACCT_NO = #{가상계좌번호}
+	]]>
+	</select>
+	
+
+    <insert id="insert2547h" parameterType="MyMap">
+    <![CDATA[
+		/*NeoMapper5030.insert2547h*/
+    	INSERT
+    	  INTO TFE2547H 
+    	SELECT 
+			   A.TRNX_NO
+			 , (
+			 	SELECT NVL( MAX(HIST_SNUM)+1, 1)
+			 	  FROM TFE2547H
+			 	 WHERE TRNX_NO = A.TRNX_NO
+			   ) AS HIST_SNUM
+			 , A.LAF_CD
+			 , A.LINK_SNUM
+			 , A.LINK_TRSC_ID
+			 , A.DMND_ID
+			 , A.TRSFR_DMND_INST_DV_CD
+			 , A.RTN_DMND_INST_CD
+			 , A.GCC_DEPT_CD
+			 , A.FYR
+			 , A.ACNT_DV_CD
+			 , A.RTN_DATA_DV_CD
+			 , A.EPRS_HIST_NO
+			 , A.GCC_GIVE_NO
+			 , A.DLNG_YMD
+			 , A.GIVE_SCD_YMD
+			 , A.DLNG_AMT
+			 , A.RTN_DMND_CN
+			 , A.RTN_INST_DV_CD
+			 , A.STBX_DMND_DV_CD
+			 , A.INFRM_DMND_DV_CD
+			 , A.RCVMT_DMND_DV_CD
+			 , A.RTN_DND_DEPT_CD
+			 , A.FLD_CD
+			 , A.SECT_CD
+			 , A.ANE_STMK_CD
+			 , A.RTN_FNIS_CD
+			 , A.RTN_ECRP_ACTNO
+			 , A.VIR_ECRP_ACTNO
+			 , A.RCVMT_YMD
+			 , A.RCVMT_AMT
+			 , A.RMT_FNIS_CD
+			 , A.RTN_DMND_DT
+			 , A.ACNT_DV_NM
+			 , A.FLD_NM
+			 , A.SECT_NM
+			 , A.LAF_NM
+			 , A.GOF_NM
+			 , A.GCC_DEPT_NM
+			 , A.ANE_STMK_NM
+			 , A.RTN_DND_DEPT_NM
+			 , A.RTN_RGSTR_USR_ID
+			 , A.RTN_RGSTR_USR_NM
+			 , A.RTN_RSLT_PRCS_YN
+			 , A.RTN_RSLT_CN
+			 , A.VIR_ACC_RSLT_DLPS_NM
+			 , A.PRCS_DT
+			 , A.BSCS_ADDR
+			 , A.DADDR
+			 , A.OTPT_TMS
+			 , A.STBX_BANK_CD
+			 , A.LINK_PRCS_DV_CD
+			 , A.LINK_TRSM_STAT_CD
+			 , A.LINK_ERR_MSG_CN
+			 , A.PRCT_PRCS_DT
+			 , A.LINK_STAT_PRCS_DT
+			 , A.CREATE_DATE
+			 , A.RTN_ACCT_DATE
+			 , A.DRW_REAL_ACTNO
+			 , A.STBX_TRSM_TRGT_DV_CD
+			 , A.ANE_LIM_ACC_YN
+    	  FROM TFE2547 A
+    	 WHERE 1=1
+    	   AND TRNX_NO = #{거래번호}
+    ]]>
+    </insert>
+	
+
+    <insert id="insert3601h" parameterType="MyMap">
+    <![CDATA[
+		/*NeoMapper5030.insert3601h*/
+    	INSERT
+    	  INTO TFD3601H 
+    	SELECT 
+			   A.TRNX_NO
+			 , (
+			 	SELECT NVL( MAX(HIST_SNUM)+1, 1)
+			 	  FROM TFD3601H
+			 	 WHERE TRNX_NO = A.TRNX_NO
+			   ) AS HIST_SNUM
+			 , A.LAF_CD
+			 , A.LINK_SNUM
+			 , A.LINK_HIST_SNUM
+			 , A.LINK_TRSC_ID
+			 , A.GOF_CD
+			 , A.GCC_DEPT_CD
+			 , A.FYR
+			 , A.GCC_DEPT_PAID_RGSTR_NO
+			 , A.LAF_LVL_CD
+			 , A.STBX_DMND_DV_CD
+			 , A.PAID_DMND_DV_CD
+			 , A.RCVMT_DMND_DV_CD
+			 , A.RAP_DEPT_CD
+			 , A.PAID_SNUM
+			 , A.DMND_YMD
+			 , A.PSEP_CGP_NM
+			 , A.DLNG_AMT
+			 , A.PAID_SCD_YMD
+			 , A.STBX_BANK_CD
+			 , A.STBX_ECRP_ACTNO
+			 , A.VIR_ECRP_ACTNO
+			 , A.RCVMT_YMD
+			 , A.RCVMT_AMT
+			 , A.RMT_BANK_CD
+			 , A.CASH_TY_CD
+			 , A.CASH_ITM_CD
+			 , A.CASH_TY_NM
+			 , A.CASH_ITM_NM
+			 , A.LAF_NM
+			 , A.GOF_NM
+			 , A.GCC_DEPT_NM
+			 , A.STBX_BANK_CSHR_NM
+			 , A.CGP_TELNO
+			 , A.DMND_DT
+			 , A.DMDR_NM
+			 , A.PRCS_DT
+			 , A.DLPS_NM
+			 , A.RSLT_PRCS_YN
+			 , A.PRCS_RSLT_EPL_CN
+			 , A.OTLN_CN
+			 , A.BSCS_ADDR
+			 , A.DADDR
+			 , A.LINK_PRCS_DV_CD
+			 , A.LINK_TRSM_STAT_CD
+			 , A.LINK_ERR_MSG_CN
+			 , A.PRCT_PRCS_DT
+			 , A.LINK_STAT_PRCS_DT
+			 , A.CREATE_DATE
+			 , A.RTN_ACCT_DATE
+			 , A.DRW_REAL_ACTNO
+			 , A.STBX_TRSM_TRGT_DV_CD
+			 , A.ANE_LIM_ACC_YN
+    	  FROM TFD3601 A
+    	 WHERE 1=1
+    	   AND TRNX_NO = #{거래번호}
+    ]]>
+    </insert>
+	
+	<update id="update2547" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper5030.update2547*/
+		UPDATE TFE2547 /*TEF_EFAM080*/
+		   SET STBX_DMND_DV_CD = #{STBX_DMND_DV_CD} /*금고요청구분코드 / REQ_FG*/
+		     , RCVMT_DMND_DV_CD = #{RCVMT_DMND_DV_CD} /*수납요청구분코드 / RECPT_REQ_FG*/
+		     , STBX_TRSM_TRGT_DV_CD = NVL( #{STBX_TRSM_TRGT_DV_CD}, 'N') /*금고전송대상구분코드(N:비대상, Y:대상)*/
+		 WHERE TRNX_NO = #{거래번호}
+	]]>
+	</update>
+	
+	<update id="update3601" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper5030.update3601*/
+		UPDATE TFD3601 /*TEF_CASHBOXRECPTIF*/
+		   SET STBX_DMND_DV_CD = #{STBX_DMND_DV_CD} /*금고요청구분코드 / REQ_FG*/
+		     , RCVMT_DMND_DV_CD = #{RCVMT_DMND_DV_CD} /*수납요청구분코드 / RECPT_REQ_FG*/
+		     , STBX_TRSM_TRGT_DV_CD = NVL( #{STBX_TRSM_TRGT_DV_CD}, 'N') /*금고전송대상구분코드(N:비대상, Y:대상)*/
+		 WHERE TRNX_NO = #{거래번호}
+	]]>
+	</update>
+
+</mapper>

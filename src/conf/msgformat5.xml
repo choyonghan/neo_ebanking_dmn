@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!DOCTYPE header>
+
+<messageFormats desc="과오납">
+	<!-- 공통 업무 시작 -->
+	<messageFormat msgNumber="1001" desc="세입과목정보">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="전달일" size="8" position="0" repetition="1" type="N" format="string" desc="전달일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="129" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="구분코드" size="4" position="0" repetition="1" type="N" format="string" desc="구분코드"/>
+			<field id="1" name="시스템구분코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="N" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="세입과목전달건수" size="8" position="0" repetition="1" type="AN" format="string" desc="세입과목전달건수"/>
+			<field id="1" name="FILLER2" size="67" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="순번" size="8" position="0" repetition="1" type="N" format="string" desc="순번"/>
+			<field id="1" name="회계년도" size="4" position="0" repetition="1" type="AN" format="string" desc="회계년도"/>
+			<field id="1" name="회계구분" size="2" position="0" repetition="1" type="AN" format="string" desc="회계구분"/>
+			<field id="1" name="세입과목코드" size="6" position="0" repetition="1" type="N" format="string" desc="세입과목코드"/>
+			<field id="1" name="세입과목명" size="50" position="0" repetition="1" type="AN" format="string" desc="세입과목명"/>
+			<field id="1" name="운영과목코드" size="6" position="0" repetition="1" type="AN" format="string" desc="운영과목코드"/>
+			<field id="1" name="운영과목명" size="50" position="0" repetition="1" type="AN" format="string" desc="운영과목명"/>
+			<field id="1" name="FILLER2" size="8" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="140" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="1002" desc="회계구분 정보">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="전달일" size="8" position="0" repetition="1" type="N" format="string" desc="전달일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="149" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="구분코드" size="4" position="0" repetition="1" type="N" format="string" desc="구분코드"/>
+			<field id="1" name="시스템구분코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="회계과목전달건수" size="8" position="0" repetition="1" type="AN" format="string" desc="회계과목전달건수"/>
+			<field id="1" name="FILLER2" size="87" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="순번" size="8" position="0" repetition="1" type="N" format="string" desc="순번"/>
+			<field id="1" name="특별회계사업코드" size="4" position="0" repetition="1" type="AN" format="string" desc="특별회계사업코드"/>
+			<field id="1" name="특별회계사업명" size="100" position="0" repetition="1" type="AN" format="string" desc="특별회계사업명"/>
+			<field id="1" name="FILLER2" size="42" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="160" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="1003" desc="사용자정보">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="전달일" size="8" position="0" repetition="1" type="N" format="string" desc="전달일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="429" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="구분코드" size="4" position="0" repetition="1" type="N" format="string" desc="구분코드"/>
+			<field id="1" name="시스템구분코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="사용자건수" size="8" position="0" repetition="1" type="AN" format="string" desc="사용자건수"/>
+			<field id="1" name="FILLER2" size="367" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="순번" size="8" position="0" repetition="1" type="N" format="string" desc="순번"/>
+			<field id="1" name="금융기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="금융기관코드"/>
+			<field id="1" name="사용자ID" size="20" position="0" repetition="1" type="AN" format="string" desc="사용자ID"/>
+			<field id="1" name="사용자명" size="50" position="0" repetition="1" type="AN" format="string" desc="사용자명"/>
+			<field id="1" name="소속과코드" size="20" position="0" repetition="1" type="AN" format="string" desc="소속(과)코드"/>
+			<field id="1" name="소속팀계코드" size="20" position="0" repetition="1" type="AN" format="string" desc="소속(팀,계)코드"/>
+			<field id="1" name="시스템권한구분" size="1" position="0" repetition="1" type="AN" format="string" desc="시스템권한구분"/>
+			<field id="1" name="사용자HASH값" size="300" position="0" repetition="1" type="AN" format="string" desc="사용자HASH값"/>
+			<field id="1" name="FILLER2" size="12" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="440" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="1004" desc="부서(과)정보">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="전달일" size="8" position="0" repetition="1" type="N" format="string" desc="전달일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="139" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="구분코드" size="4" position="0" repetition="1" type="N" format="string" desc="구분코드"/>
+			<field id="1" name="시스템구분코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="N" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="부서과건수" size="8" position="0" repetition="1" type="AN" format="string" desc="부서(과)건수"/>
+			<field id="1" name="FILLER2" size="77" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="순번" size="8" position="0" repetition="1" type="N" format="string" desc="순번"/>
+			<field id="1" name="부서코드과" size="20" position="0" repetition="1" type="AN" format="string" desc="부서코드(과)"/>
+			<field id="1" name="부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="FILLER2" size="12" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="150" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="1005" desc="부서(계,팀)정보">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="전달일" size="8" position="0" repetition="1" type="N" format="string" desc="전달일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="109" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="구분코드" size="4" position="0" repetition="1" type="N" format="string" desc="구분코드"/>
+			<field id="1" name="시스템구분코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="N" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="부서계팀건수" size="8" position="0" repetition="1" type="AN" format="string" desc="부서(계,팀)건수"/>
+			<field id="1" name="FILLER2" size="47" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="순번" size="8" position="0" repetition="1" type="N" format="string" desc="순번"/>
+			<field id="1" name="부서코드계팀" size="20" position="0" repetition="1" type="AN" format="string" desc="부서코드(계,팀)"/>
+			<field id="1" name="부서계팀명" size="20" position="0" repetition="1" type="AN" format="string" desc="부서(계,팀)명"/>
+			<field id="1" name="상위부서과코드" size="20" position="0" repetition="1" type="AN" format="string" desc="상위부서(과)코드"/>
+			<field id="1" name="소속팀계코드" size="20" position="0" repetition="1" type="AN" format="string" desc="소속(팀,계)코드"/>
+			<field id="1" name="FILLER2" size="26" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="120" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+	<!-- 공통 업무 끝 -->
+
+	<!-- 과오납 업무 시작 -->
+	<messageFormat msgNumber="2001" desc="세입금지출결의">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="조회요청일" size="8" position="0" repetition="1" type="N" format="string" desc="조회요청일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="801" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입출금지시거래구분코드" size="4" position="0" repetition="1" type="AN" format="string" desc="입출금지시거래구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="결의자명" size="50" position="0" repetition="1" type="AN" format="string" desc="결의자명"/>
+			<field id="1" name="거래요청관리번호" size="19" position="0" repetition="1" type="AN" format="string" desc="거래요청관리번호"/>
+			<field id="1" name="회계연도" size="4" position="0" repetition="1" type="N" format="string" desc="회계연도"/>
+			<field id="1" name="회계일자" size="8" position="0" repetition="1" type="N" format="string" desc="회계일자"/>
+			<field id="1" name="출금총건수" size="8" position="0" repetition="1" type="N" format="string" desc="출금총건수"/>
+			<field id="1" name="출금총금액" size="15" position="0" repetition="1" type="N" format="string" desc="출금총금액"/>
+			<field id="1" name="광역시도세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="광역시도세계좌번호"/>
+			<field id="1" name="광역시도세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세현년도출금금액"/>
+			<field id="1" name="광역시도세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세과년도출금금액"/>
+			<field id="1" name="시군구세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="시군구세계좌번호"/>
+			<field id="1" name="시군구세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세현년도출금금액"/>
+			<field id="1" name="시군구세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세과년도출금금액"/>
+			<field id="1" name="국세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="국세계좌번호"/>
+			<field id="1" name="국세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세현년도출금금액"/>
+			<field id="1" name="국세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세과년도출금금액"/>
+			<field id="1" name="출금계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="출금계좌적요"/>
+			<field id="1" name="출금거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="출금거래결과코드"/>
+			<field id="1" name="출금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="출금거래결과상세"/>
+			<field id="1" name="은행회계일자" size="8" position="0" repetition="1" type="AN" format="string" desc="은행회계일자"/>
+			<field id="1" name="광역시도세금융기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="광역시도세금융기관코드"/>
+			<field id="1" name="시군구세금융기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="시군구세금융기관코드"/>
+			<field id="1" name="국세금융기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="국세금융기관코드"/>
+			<field id="1" name="FILLER2" size="224" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="광역시도세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="광역시도세계좌번호"/>
+			<field id="1" name="시군구세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="시군구세계좌번호"/>
+			<field id="1" name="국세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="국세계좌번호"/>
+			<field id="1" name="입금거래순번" size="6" position="0" repetition="1" type="N" format="string" desc="입금거래순번"/>
+			<field id="1" name="상세내역관리번호" size="22" position="0" repetition="1" type="AN" format="string" desc="상세내역관리번호"/>
+			<field id="1" name="입금부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="입금부서코드"/>
+			<field id="1" name="입금부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="입금부서명"/>
+			<field id="1" name="납세번호" size="31" position="0" repetition="1" type="AN" format="string" desc="납세번호"/>
+			<field id="1" name="부과년도" size="4" position="0" repetition="1" type="N" format="string" desc="부과년도"/>
+			<field id="1" name="납세자번호" size="13" position="0" repetition="1" type="AN" format="string" desc="납세자번호"/>
+			<field id="1" name="세목코드" size="6" position="0" repetition="1" type="AN" format="string" desc="세목코드"/>
+			<field id="1" name="세목명" size="100" position="0" repetition="1" type="AN" format="string" desc="세목명"/>
+			<field id="1" name="본세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="본세회계구분코드"/>
+			<field id="1" name="본세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="본세입금액"/>
+			<field id="1" name="본세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="본세가산금"/>
+			<field id="1" name="도시계획세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="도시계획세회계구분코드"/>
+			<field id="1" name="도시계획세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="도시계획세입금액"/>
+			<field id="1" name="도시계획세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="도시계획세가산금"/>
+			<field id="1" name="지역자원시설세회계구분코드공동" size="2" position="0" repetition="1" type="AN" format="string" desc="지역자원시설세회계구분코드(공동)"/>
+			<field id="1" name="지역자원시설세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="지역자원시설세입금액"/>
+			<field id="1" name="지역자원시설세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="지역자원시설세가산금"/>
+			<field id="1" name="지방교육세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="지방교육세회계구분코드"/>
+			<field id="1" name="지방교육세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="지방교육세입금액"/>
+			<field id="1" name="지방교욱세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="지방교욱세가산금"/>
+			<field id="1" name="국세농특세입금액" size="15" position="0" repetition="1" type="AN" format="string" desc="국세농특세입금액"/>
+			<field id="1" name="국세농특세가산액" size="15" position="0" repetition="1" type="N" format="string" desc="국세농특세가산액"/>
+			<field id="1" name="국세교육세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세교육세입금액"/>
+			<field id="1" name="국세교육세가산액" size="15" position="0" repetition="1" type="N" format="string" desc="국세교육세가산액"/>
+			<field id="1" name="국세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="국세회계구분코드"/>
+			<field id="1" name="국세세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세세입금액"/>
+			<field id="1" name="국세세입가산금" size="15" position="0" repetition="1" type="N" format="string" desc="국세세입가산금"/>
+			<field id="1" name="광역시도세회계구분" size="2" position="0" repetition="1" type="AN" format="string" desc="광역시도세회계구분"/>
+			<field id="1" name="광역시도세세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세세입금액"/>
+			<field id="1" name="광역시도세세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세세가산금"/>
+			<field id="1" name="시군구세회계구분" size="2" position="0" repetition="1" type="AN" format="string" desc="시군구세회계구분"/>
+			<field id="1" name="시군구세세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세세입금액"/>
+			<field id="1" name="시군구세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세가산금"/>
+			<field id="1" name="수취인계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="수취인계좌적요"/>
+			<field id="1" name="입금상세거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="입금상세거래결과코드"/>
+			<field id="1" name="입금상세거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="입금상세거래결과상세"/>
+			<field id="1" name="환급금관리번호" size="15" position="0" repetition="1" type="AN" format="string" desc="환급금관리번호"/>
+			<field id="1" name="FILLER2" size="12" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총금액" size="15" position="0" repetition="1" type="N" format="string" desc="총금액"/>
+			<field id="1" name="총입금건수" size="8" position="0" repetition="1" type="N" format="string" desc="총입금건수"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="789" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="2002" desc="세입금충당입출금">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="조회요청일" size="8" position="0" repetition="1" type="N" format="string" desc="조회요청일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="1021" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입출금지시거래구분코드" size="4" position="0" repetition="1" type="AN" format="string" desc="입출금지시거래구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="결의자명" size="50" position="0" repetition="1" type="AN" format="string" desc="결의자명"/>
+			<field id="1" name="거래요청관리번호" size="19" position="0" repetition="1" type="AN" format="string" desc="거래요청관리번호"/>
+			<field id="1" name="회계연도" size="4" position="0" repetition="1" type="N" format="string" desc="회계연도"/>
+			<field id="1" name="회계일자" size="8" position="0" repetition="1" type="N" format="string" desc="회계일자"/>
+			<field id="1" name="납부일자" size="8" position="0" repetition="1" type="N" format="string" desc="납부일자"/>
+			<field id="1" name="자금이체일자" size="8" position="0" repetition="1" type="N" format="string" desc="자금이체일자"/>
+			<field id="1" name="출금총건수" size="8" position="0" repetition="1" type="N" format="string" desc="출금총건수"/>
+			<field id="1" name="출금총금액" size="15" position="0" repetition="1" type="N" format="string" desc="출금총금액"/>
+			<field id="1" name="광역시도세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="광역시도세계좌번호"/>
+			<field id="1" name="광역시도세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세현년도출금금액"/>
+			<field id="1" name="광역시도세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세과년도출금금액"/>
+			<field id="1" name="시군구세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="시군구세계좌번호"/>
+			<field id="1" name="시군구세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세현년도출금금액"/>
+			<field id="1" name="시군구세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세과년도출금금액"/>
+			<field id="1" name="국세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="국세계좌번호"/>
+			<field id="1" name="국세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세현년도출금금액"/>
+			<field id="1" name="국세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세과년도출금금액"/>
+			<field id="1" name="출금계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="출금계좌적요"/>
+			<field id="1" name="출금거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="출금거래결과코드"/>
+			<field id="1" name="출금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="출금거래결과상세"/>
+			<field id="1" name="은행회계일자" size="8" position="0" repetition="1" type="AN" format="string" desc="은행회계일자"/>
+			<field id="1" name="은행납부일자" size="8" position="0" repetition="1" type="AN" format="string" desc="은행납부일자"/>
+			<field id="1" name="은행자금이체일자" size="8" position="0" repetition="1" type="AN" format="string" desc="은행자금이체일자"/>
+			<field id="1" name="FILLER2" size="421" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="광역시도세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="광역시도세계좌번호"/>
+			<field id="1" name="시군구세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="시군구세계좌번호"/>
+			<field id="1" name="국세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="국세계좌번호"/>
+			<field id="1" name="입금거래순번" size="6" position="0" repetition="1" type="N" format="string" desc="입금거래순번"/>
+			<field id="1" name="상세내역관리번호" size="22" position="0" repetition="1" type="AN" format="string" desc="상세내역관리번호"/>
+			<field id="1" name="입금부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="입금부서코드"/>
+			<field id="1" name="입금부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="입금부서명"/>
+			<field id="1" name="납세번호" size="31" position="0" repetition="1" type="AN" format="string" desc="납세번호"/>
+			<field id="1" name="부과년도" size="4" position="0" repetition="1" type="N" format="string" desc="부과년도"/>
+			<field id="1" name="납세자번호" size="13" position="0" repetition="1" type="AN" format="string" desc="납세자번호"/>
+			<field id="1" name="납세자명" size="80" position="0" repetition="1" type="AN" format="string" desc="납세자명"/>
+			<field id="1" name="세목코드" size="6" position="0" repetition="1" type="AN" format="string" desc="세목코드"/>
+			<field id="1" name="세목명" size="100" position="0" repetition="1" type="AN" format="string" desc="세목명"/>
+			<field id="1" name="본세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="본세회계구분코드"/>
+			<field id="1" name="본세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="본세입금액"/>
+			<field id="1" name="본세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="본세가산금"/>
+			<field id="1" name="도시계획세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="도시계획세회계구분코드"/>
+			<field id="1" name="도시계획세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="도시계획세입금액"/>
+			<field id="1" name="도시계획세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="도시계획세가산금"/>
+			<field id="1" name="지역자원시설세회계구분코드공동" size="2" position="0" repetition="1" type="AN" format="string" desc="지역자원시설세회계구분코드(공동)"/>
+			<field id="1" name="지역자원시설세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="지역자원시설세입금액"/>
+			<field id="1" name="지역자원시설세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="지역자원시설세가산금"/>
+			<field id="1" name="지방교육세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="지방교육세회계구분코드"/>
+			<field id="1" name="지방교육세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="지방교육세입금액"/>
+			<field id="1" name="지방교욱세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="지방교욱세가산금"/>
+			<field id="1" name="국세농특세입금액" size="15" position="0" repetition="1" type="AN" format="string" desc="국세농특세입금액"/>
+			<field id="1" name="국세농특세가산액" size="15" position="0" repetition="1" type="N" format="string" desc="국세농특세가산액"/>
+			<field id="1" name="국세교육세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세교육세입금액"/>
+			<field id="1" name="국세교육세가산액" size="15" position="0" repetition="1" type="N" format="string" desc="국세교육세가산액"/>
+			<field id="1" name="국세회계구분코드" size="2" position="0" repetition="1" type="AN" format="string" desc="국세회계구분코드"/>
+			<field id="1" name="국세세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세세입금액"/>
+			<field id="1" name="국세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="국세세입가산금"/>
+			<field id="1" name="광역시도세회계구분" size="2" position="0" repetition="1" type="AN" format="string" desc="광역시도세회계구분"/>
+			<field id="1" name="광역시도세세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세세입금액"/>
+			<field id="1" name="광역시도세세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세세가산금"/>
+			<field id="1" name="시군구세회계구분" size="2" position="0" repetition="1" type="AN" format="string" desc="시군구세회계구분"/>
+			<field id="1" name="시군구세세입금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세세입금액"/>
+			<field id="1" name="시군구세가산금" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세가산금"/>
+			<field id="1" name="세입금충당OCR밴드입금부" size="108" position="0" repetition="1" type="AN" format="string" desc="세입금충당(OCR밴드)-입금부"/>
+			<field id="1" name="수취인계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="수취인계좌적요"/>
+			<field id="1" name="입금상세거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="입금상세거래결과코드"/>
+			<field id="1" name="입금상세거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="입금상세거래결과상세"/>
+			<field id="1" name="환급금관리번호" size="15" position="0" repetition="1" type="AN" format="string" desc="환급금관리번호"/>
+			<field id="1" name="광역시도세금융기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="광역시도세금융기관코드"/>
+			<field id="1" name="시군구세금융기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="시군구세금융기관코드"/>
+			<field id="1" name="국세금융기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="국세금융기관코드"/>
+			<field id="1" name="FILLER2" size="35" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총금액" size="15" position="0" repetition="1" type="N" format="string" desc="총금액"/>
+			<field id="1" name="총입금건수" size="8" position="0" repetition="1" type="N" format="string" desc="총입금건수"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="1009" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="2003" desc="세입금지급입출금">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="조회요청일" size="8" position="0" repetition="1" type="N" format="string" desc="조회요청일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="901" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입출금지시거래구분코드" size="4" position="0" repetition="1" type="AN" format="string" desc="입출금지시거래구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="N" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="결의자명" size="50" position="0" repetition="1" type="AN" format="string" desc="결의자명"/>
+			<field id="1" name="거래요청관리번호" size="19" position="0" repetition="1" type="AN" format="string" desc="거래요청관리번호"/>
+			<field id="1" name="회계연도" size="4" position="0" repetition="1" type="N" format="string" desc="회계연도"/>
+			<field id="1" name="회계일자" size="8" position="0" repetition="1" type="N" format="string" desc="회계일자"/>
+			<field id="1" name="출금총건수" size="8" position="0" repetition="1" type="N" format="string" desc="출금총건수"/>
+			<field id="1" name="출금총금액" size="15" position="0" repetition="1" type="N" format="string" desc="출금총금액"/>
+			<field id="1" name="광역시도세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="광역시도세계좌번호"/>
+			<field id="1" name="광역시도세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세현년도출금금액"/>
+			<field id="1" name="광역시도세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="광역시도세과년도출금금액"/>
+			<field id="1" name="시군구세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="시군구세계좌번호"/>
+			<field id="1" name="시군구세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세현년도출금금액"/>
+			<field id="1" name="시군구세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="시군구세과년도출금금액"/>
+			<field id="1" name="국세계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="국세계좌번호"/>
+			<field id="1" name="국세현년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세현년도출금금액"/>
+			<field id="1" name="국세과년도출금금액" size="15" position="0" repetition="1" type="N" format="string" desc="국세과년도출금금액"/>
+			<field id="1" name="출금계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="출금계좌적요"/>
+			<field id="1" name="출금거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="출금거래결과코드"/>
+			<field id="1" name="출금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="출금거래결과상세"/>
+			<field id="1" name="은행회계일자" size="8" position="0" repetition="1" type="AN" format="string" desc="은행회계일자"/>
+			<field id="1" name="FILLER2" size="333" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입금거래순번" size="6" position="0" repetition="1" type="N" format="string" desc="입금거래순번"/>
+			<field id="1" name="상세내역관리번호" size="22" position="0" repetition="1" type="AN" format="string" desc="상세내역관리번호"/>
+			<field id="1" name="환급금관리번호" size="15" position="0" repetition="1" type="AN" format="string" desc="환급금관리번호"/>
+			<field id="1" name="입금부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="입금부서코드"/>
+			<field id="1" name="입금부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="입금부서명"/>
+			<field id="1" name="납세번호" size="31" position="0" repetition="1" type="AN" format="string" desc="납세번호"/>
+			<field id="1" name="부과년도" size="4" position="0" repetition="1" type="N" format="string" desc="부과년도"/>
+			<field id="1" name="납세자번호" size="13" position="0" repetition="1" type="AN" format="string" desc="납세자번호"/>
+			<field id="1" name="납세자명" size="80" position="0" repetition="1" type="AN" format="string" desc="납세자명"/>
+			<field id="1" name="납세자주소" size="200" position="0" repetition="1" type="AN" format="string" desc="납세자주소"/>
+			<field id="1" name="세목코드" size="6" position="0" repetition="1" type="AN" format="string" desc="세목코드"/>
+			<field id="1" name="세목명" size="100" position="0" repetition="1" type="AN" format="string" desc="세목명"/>
+			<field id="1" name="추심기관코드" size="5" position="0" repetition="1" type="AN" format="string" desc="추심기관코드"/>
+			<field id="1" name="추심기관명" size="20" position="0" repetition="1" type="AN" format="string" desc="추심기관명"/>
+			<field id="1" name="수취인금융기관코드" size="7" position="0" repetition="1" type="AN" format="string" desc="수취인금융기관코드"/>
+			<field id="1" name="환급금지급방법코드" size="1" position="0" repetition="1" type="AN" format="string" desc="환급금지급방법코드"/>
+			<field id="1" name="수취인계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="수취인계좌번호"/>
+			<field id="1" name="수취인계좌예금주명" size="40" position="0" repetition="1" type="AN" format="string" desc="수취인계좌예금주명"/>
+			<field id="1" name="수취인계좌예금주번호" size="13" position="0" repetition="1" type="AN" format="string" desc="수취인계좌예금주번호"/>
+			<field id="1" name="수취인전화번호" size="20" position="0" repetition="1" type="AN" format="string" desc="수취인전화번호"/>
+			<field id="1" name="지급액" size="15" position="0" repetition="1" type="N" format="string" desc="지급액"/>
+			<field id="1" name="수취인계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="수취인계좌적요"/>
+			<field id="1" name="입금상세거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="입금상세거래결과코드"/>
+			<field id="1" name="입금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="입금거래결과상세"/>
+			<field id="1" name="환급금지급고유관리번호" size="20" position="0" repetition="1" type="AN" format="string" desc="환급금지급고유관리번호"/>
+			<field id="1" name="FILLER2" size="15" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총금액" size="13" position="0" repetition="1" type="N" format="string" desc="총금액"/>
+			<field id="1" name="총입금건수" size="8" position="0" repetition="1" type="N" format="string" desc="총입금건수"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="891" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="2004" desc="세입금정산입출금">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="조회요청일" size="8" position="0" repetition="1" type="N" format="string" desc="조회요청일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="491" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입출금지시거래구분코드" size="4" position="0" repetition="1" type="AN" format="string" desc="입출금지시거래구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="AN" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="결의자명" size="50" position="0" repetition="1" type="AN" format="string" desc="결의자명"/>
+			<field id="1" name="거래요청관리번호" size="19" position="0" repetition="1" type="AN" format="string" desc="거래요청관리번호"/>
+			<field id="1" name="회계연도" size="4" position="0" repetition="1" type="N" format="string" desc="회계연도"/>
+			<field id="1" name="회계일자" size="8" position="0" repetition="1" type="N" format="string" desc="회계일자"/>
+			<field id="1" name="출금계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="출금계좌번호"/>
+			<field id="1" name="출금총건수" size="8" position="0" repetition="1" type="N" format="string" desc="출금총건수"/>
+			<field id="1" name="출금총금액" size="15" position="0" repetition="1" type="N" format="string" desc="출금총금액"/>
+			<field id="1" name="출금계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="출금계좌적요"/>
+			<field id="1" name="출금거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="출금거래결과코드"/>
+			<field id="1" name="출금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="출금거래결과상세"/>
+			<field id="1" name="은행회계일자" size="8" position="0" repetition="1" type="AN" format="string" desc="은행회계일자"/>
+			<field id="1" name="FILLER2" size="53" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입금거래순번" size="6" position="0" repetition="1" type="N" format="string" desc="입금거래순번"/>
+			<field id="1" name="상세내역관리번호" size="22" position="0" repetition="1" type="AN" format="string" desc="상세내역관리번호"/>
+			<field id="1" name="세목코드" size="6" position="0" repetition="1" type="AN" format="string" desc="세목코드"/>
+			<field id="1" name="세목명" size="100" position="0" repetition="1" type="AN" format="string" desc="세목명"/>
+			<field id="1" name="수취인기관코드" size="5" position="0" repetition="1" type="AN" format="string" desc="수취인기관코드"/>
+			<field id="1" name="수취인기관명" size="20" position="0" repetition="1" type="AN" format="string" desc="수취인기관명"/>
+			<field id="1" name="수취인금융기관코드" size="7" position="0" repetition="1" type="AN" format="string" desc="수취인기관코드"/>
+			<field id="1" name="수취인계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="수취인계좌번호"/>
+			<field id="1" name="수취인계좌예금주명" size="40" position="0" repetition="1" type="AN" format="string" desc="수취인계좌예금주명"/>
+			<field id="1" name="수취인계좌예금주번호" size="13" position="0" repetition="1" type="AN" format="string" desc="수취인계좌예금주번호"/>
+			<field id="1" name="수취인전화번호" size="20" position="0" repetition="1" type="AN" format="string" desc="수취인전화번호"/>
+			<field id="1" name="지급액" size="15" position="0" repetition="1" type="N" format="string" desc="지급액"/>
+			<field id="1" name="수취인계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="수취인계좌적요"/>
+			<field id="1" name="입금상세거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="입금상세거래결과코드"/>
+			<field id="1" name="입금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="입금거래결과상세"/>
+			<field id="1" name="FILLER2" size="89" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총금액" size="13" position="0" repetition="1" type="N" format="string" desc="총금액"/>
+			<field id="1" name="총입금건수" size="8" position="0" repetition="1" type="N" format="string" desc="총입금건수"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="481" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<messageFormat msgNumber="2005" desc="보증금지급입출금">
+		<head keyname="HEADER" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="조회요청일" size="8" position="0" repetition="1" type="N" format="string" desc="조회요청일"/>
+			<field id="1" name="처리결과코드" size="3" position="0" repetition="1" type="AN" format="string" desc="처리결과코드"/>
+			<field id="1" name="FILLER" size="451" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</head>
+		<body keyvalue="MDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호M"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입출금지시거래구분코드" size="4" position="0" repetition="1" type="AN" format="string" desc="입출금지시거래구분코드"/>
+			<field id="1" name="전송일시" size="12" position="0" repetition="1" type="AN" format="string" desc="전송일시"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="AN" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="지방자치단체코드" size="5" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="지방자치단체명" size="30" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="부서코드" size="20" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="부서명" size="100" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="결의자명" size="50" position="0" repetition="1" type="AN" format="string" desc="결의자명"/>
+			<field id="1" name="거래요청관리번호" size="19" position="0" repetition="1" type="AN" format="string" desc="거래요청관리번호"/>
+			<field id="1" name="회계연도" size="4" position="0" repetition="1" type="N" format="string" desc="회계연도"/>
+			<field id="1" name="회계일자" size="8" position="0" repetition="1" type="N" format="string" desc="회계일자"/>
+			<field id="1" name="출금계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="출금계좌번호"/>
+			<field id="1" name="출금총건수" size="8" position="0" repetition="1" type="N" format="string" desc="출금총건수"/>
+			<field id="1" name="출금총금액" size="15" position="0" repetition="1" type="N" format="string" desc="출금총금액"/>
+			<field id="1" name="출금계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="출금계좌적요"/>
+			<field id="1" name="출금거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="출금거래결과코드"/>
+			<field id="1" name="출금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="출금거래결과상세"/>
+			<field id="1" name="은행회계일자" size="8" position="0" repetition="1" type="AN" format="string" desc="은행회계일자"/>
+			<field id="1" name="FILLER2" size="13" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<body keyvalue="DDATA" className="">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호D"/>
+			<field id="1" name="FILLER" size="20" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+			<field id="1" name="입금거래순번" size="6" position="0" repetition="1" type="N" format="string" desc="입금거래순번"/>
+			<field id="1" name="상세내역관리번호" size="22" position="0" repetition="1" type="AN" format="string" desc="상세내역관리번호"/>
+			<field id="1" name="수취인금융기관코드" size="7" position="0" repetition="1" type="AN" format="string" desc="수취인기관코드"/>
+			<field id="1" name="수취인계좌번호" size="20" position="0" repetition="1" type="AN" format="string" desc="수취인계좌번호"/>
+			<field id="1" name="수취인계좌예금주명" size="40" position="0" repetition="1" type="AN" format="string" desc="수취인계좌예금주명"/>
+			<field id="1" name="수취인계좌예금주번호" size="13" position="0" repetition="1" type="AN" format="string" desc="수취인계좌예금주번호"/>
+			<field id="1" name="수취인전화번호" size="20" position="0" repetition="1" type="AN" format="string" desc="수취인전화번호"/>
+			<field id="1" name="지급액" size="15" position="0" repetition="1" type="N" format="string" desc="지급액"/>
+			<field id="1" name="수취인계좌적요" size="36" position="0" repetition="1" type="AN" format="string" desc="수취인계좌적요"/>
+			<field id="1" name="입금상세거래결과코드" size="5" position="0" repetition="1" type="AN" format="string" desc="입금상세거래결과코드"/>
+			<field id="1" name="입금거래결과상세" size="100" position="0" repetition="1" type="AN" format="string" desc="입금거래결과상세"/>
+			<field id="1" name="FILLER2" size="180" position="0" repetition="1" type="AN" format="string" desc="FILLER2"/>
+		</body>
+		<tail keyname="TAIL" sizeName="" includeHead="no">
+			<field id="1" name="업무구분" size="6" position="0" repetition="1" type="AN" format="string" desc="업무구분"/>
+			<field id="1" name="데이터구분" size="2" position="0" repetition="1" type="N" format="string" desc="데이터구분"/>
+			<field id="1" name="일련번호" size="8" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="송신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="송신기관코드"/>
+			<field id="1" name="수신기관코드" size="3" position="0" repetition="1" type="N" format="string" desc="수신기관코드"/>
+			<field id="1" name="이용기관지로번호" size="7" position="0" repetition="1" type="N" format="string" desc="이용기관지로번호"/>
+			<field id="1" name="시스템코드" size="1" position="0" repetition="1" type="N" format="string" desc="시스템코드"/>
+			<field id="1" name="총금액" size="13" position="0" repetition="1" type="N" format="string" desc="총금액"/>
+			<field id="1" name="총입금건수" size="8" position="0" repetition="1" type="N" format="string" desc="총입금건수"/>
+			<field id="1" name="총DataRecord수" size="8" position="0" repetition="1" type="N" format="string" desc="총DataRecord수"/>
+			<field id="1" name="FILLER" size="441" position="0" repetition="1" type="AN" format="string" desc="FILLER"/>
+		</tail>
+	</messageFormat>
+
+	<!-- 과오납 업무 시작 -->
+</messageFormats>

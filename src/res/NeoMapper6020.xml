@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper6020">
+   <select id="select"  resultType="MyMap">
+		SELECT	자치단체코드,
+				회계연도,
+				회계구분코드,
+				작성일자,
+				일자별순번,
+				세입과목코드,
+				전일누계금액,
+				세입금액,
+				과오납반환액,
+				과목경정액,
+				전송일시,
+				삭제여부
+		 FROM	세입원장
+		 WHERE  전송여부 = 'N'
+		 AND    자치단체코드 = #{자치단체코드,javaType=String,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="MyMap">
+        INSERT INTO ${LEDGER_NM}
+           (
+            LOCAL_GOV_CD,
+            FIS_YEAR,
+            FIS_FG_CD,
+            YMD,
+            SEQ,
+            REV_CD,
+            ACCUM_AMT,
+            DAY_INC_AMT,
+            DAY_EXC_RESTO_AMT,
+            DAY_ACCT_RV_AMT,
+            TRANSM_DATE,
+            DEL_YN
+           )
+            VALUES
+           (
+            #{자치단체코드,javaType=String,jdbcType=VARCHAR},
+            #{회계연도,javaType=String,jdbcType=VARCHAR},
+            #{회계구분코드,javaType=String,jdbcType=VARCHAR},
+            #{작성일자,javaType=String,jdbcType=VARCHAR},
+            #{일자별순번},
+            #{세입과목코드,javaType=String,jdbcType=VARCHAR},
+            #{전일누계금액},
+            #{세입금액},
+            #{과오납반환액},
+            #{과목경정액},
+            SYSDATE,
+            #{삭제여부,javaType=String,jdbcType=VARCHAR}
+           )
+    </insert>
+
+    <update id="update" parameterType="MyMap">
+        UPDATE  세입원장
+           SET  전송여부     = 'Y'
+         WHERE  자치단체코드 = #{자치단체코드,javaType=String,jdbcType=VARCHAR}
+           AND  회계연도     = #{회계연도,javaType=String,jdbcType=VARCHAR}
+           AND  회계구분코드 = #{회계구분코드,javaType=String,jdbcType=VARCHAR}
+           AND  작성일자     = #{작성일자,javaType=String,jdbcType=VARCHAR}
+           AND  일자별순번   = #{일자별순번}
+           AND  세입과목코드 = #{세입과목코드,javaType=String,jdbcType=VARCHAR}
+    </update>
+
+    <update id="ehojoupdate" parameterType="MyMap">
+        UPDATE  ${LEDGER_NM}
+           SET  DEL_YN       = 'N'
+         WHERE  LOCAL_GOV_CD = #{자치단체코드,javaType=String,jdbcType=VARCHAR}
+           AND  FIS_YEAR     = #{회계연도,javaType=String,jdbcType=VARCHAR}
+           AND  YMD          = #{작성일자,javaType=String,jdbcType=VARCHAR}
+           AND  DEL_YN       = 'Y'
+    </update>
+
+</mapper>

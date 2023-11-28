@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!DOCTYPE header>
+
+<messageFormats desc="보고서전문">
+    <!-- 보고서 테이블 2020 9/22 추가 -->
+    <messageFormat msgNumber="419" desc="수입일계표1">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="1021" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG19" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="DTMK_CD" size="6" position="0" repetition="1" type="AN" format="string" desc="세목코드"/>
+			<field id="1" name="DTMK_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="세목명"/>
+			<field id="1" name="CAP_NTAX_DV_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="시도국세구분코드"/>
+			<field id="1" name="ACNT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="회계일자"/>
+			<field id="1" name="PSNTY_CNT" size="20" position="0" repetition="1" type="N" format="string" desc="현년도건수"/>
+			<field id="1" name="PSNTY_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="현년도금액"/>
+			<field id="1" name="PSTY_CNT" size="20" position="0" repetition="1" type="N" format="string" desc="과년도건수"/>
+			<field id="1" name="PSTY_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="과년도금액"/>
+			<field id="1" name="TXRV_SUM_CNT" size="20" position="0" repetition="1" type="N" format="string" desc="세입합계건수"/>
+			<field id="1" name="TXRV_TOTL_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입총계금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+    <messageFormat msgNumber="420" desc="수입일계표2">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="1021" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG20" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="DTMK_CD" size="6" position="0" repetition="1" type="AN" format="string" desc="세목코드"/>
+			<field id="1" name="DTMK_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="세목명"/>
+			<field id="1" name="CAP_NTAX_DV_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="시도국세구분코드"/>
+			<field id="1" name="ACNT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="회계일자"/>
+			<field id="1" name="RCVMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="수납금액"/>
+			<field id="1" name="RFN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="환급금액"/>
+			<field id="1" name="TXRV_SBJ_RVSN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입과목경정금액"/>
+			<field id="1" name="TXRV_DD_SUM_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입일합계금액"/>
+			<field id="1" name="NTRCT_RCVMT_CNT" size="20" position="0" repetition="1" type="N" format="string" desc="영수필통지서수납건수"/>
+			<field id="1" name="NTRCT_RFN_CNT" size="20" position="0" repetition="1" type="N" format="string" desc="영수필통지서환급건수"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+    <messageFormat msgNumber="421" desc="세입일계표">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="714" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG21" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="ACNT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="회계일자"/>
+			<field id="1" name="LDY_TXRV_AGGR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전일세입누계금액"/>
+			<field id="1" name="RCVMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="수납금액"/>
+			<field id="1" name="RFN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="환급금액"/>
+			<field id="1" name="TXRV_SBJ_RVSN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입과목경정금액"/>
+			<field id="1" name="TXRV_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입금액"/>
+			<field id="1" name="TXRV_AGGR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입누계금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+     <messageFormat msgNumber="422" desc="세출일계표">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="794" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG22" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="ACNT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="회계일자"/>
+			<field id="1" name="FDAC_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금배정금액"/>
+			<field id="1" name="FDAC_AGGR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금배정누계금액"/>
+			<field id="1" name="LDY_ANE_AGGR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전일세출누계금액"/>
+			<field id="1" name="GIVE_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="지급금액"/>
+			<field id="1" name="NPYM_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="미지급금액"/>
+			<field id="1" name="PMOD_AGGR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="지급명령누계금액"/>
+			<field id="1" name="RTN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="반납금액"/>
+			<field id="1" name="ANE_SBJ_RVSN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세출과목경정금액"/>
+			<field id="1" name="ANE_AGGR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세출누계금액"/>
+			<field id="1" name="FD_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금잔액금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+     <messageFormat msgNumber="423" desc="세입세출일계표">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="954" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG23" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="ACNT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="회계일자"/>
+			<field id="1" name="RCVMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="수납금액"/>
+			<field id="1" name="RFN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="환급금액"/>
+			<field id="1" name="TXRV_SBJ_RVSN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입과목경정금액"/>
+			<field id="1" name="TXRV_DD_SUM_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세입일합계금액"/>
+			<field id="1" name="FDAC_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금배정금액"/>
+			<field id="1" name="FDAC_RTN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금배정반납금액"/>
+			<field id="1" name="FDAC_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금배정잔액금액"/>
+			<field id="1" name="EP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="지출금액"/>
+			<field id="1" name="RTN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="반납금액"/>
+			<field id="1" name="ANE_SBJ_RVSN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세출과목경정금액"/>
+			<field id="1" name="ANE_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="세출금액"/>
+			<field id="1" name="PMOD_NPYM_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="지급명령미지급금액"/>
+			<field id="1" name="FD_BDTR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금전용금액"/>
+			<field id="1" name="FD_OP_DPI_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금운용예치금액"/>
+			<field id="1" name="FD_OP_CNLT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금운용해지금액"/>
+			<field id="1" name="FD_OP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="자금운용금액"/>
+			<field id="1" name="STBX_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="금고잔액금액"/>
+			<field id="1" name="UNDL_TRSFR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="미처리이체금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+     <messageFormat msgNumber="424" desc="세입세출외현금일계표">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="1658" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG24" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="ACNT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="회계일자"/>
+			<field id="1" name="LDY_RLR_DPO_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전일정기예금잔액금액"/>
+			<field id="1" name="LDY_CASH_STG_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전일현금보관잔액금액"/>
+			<field id="1" name="LDY_RAMT_SUM_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전일잔액합계금액"/>
+			<field id="1" name="RCVMT_CNT" size="20" position="0" repetition="1" type="N" format="string" desc="수납건수"/>
+			<field id="1" name="RCVMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="수납금액"/>
+			<field id="1" name="GIVE_CNT" size="20" position="0" repetition="1" type="N" format="string" desc="지급건수"/>
+			<field id="1" name="GIVE_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="지급금액"/>
+			<field id="1" name="RLR_DPO_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="정기예금잔액금액"/>
+			<field id="1" name="CASH_STG_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="현금보관잔액금액"/>
+			<field id="1" name="RAMT_SUM_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="잔액합계금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="DPSV_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="예적금구분코드"/>
+			<field id="1" name="DPSV_KND_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="예적금종류명"/>
+			<field id="1" name="DEPT_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="DEPT_NM" size="500" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="STBX_ECRP_ACTNO" size="48" position="0" repetition="1" type="AN" format="string" desc="금고암호화계좌번호"/>
+			<field id="1" name="GCC_DEPT_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="GCC부서코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+    <messageFormat msgNumber="427" desc="금융재정건전성정보">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="388" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG27" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="BANK_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="은행명"/>
+			<field id="1" name="QTR_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="분기구분코드"/>
+			<field id="1" name="CRTR_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="기준일자"/>
+			<field id="1" name="TAC_RT" size="20" position="0" repetition="1" type="N" format="string" desc="총자본비율"/>
+			<field id="1" name="FXUD_CRDT_RT" size="20" position="0" repetition="1" type="N" format="string" desc="고정이하여신비율"/>
+			<field id="1" name="ABD_RTAC_RT" size="20" position="0" repetition="1" type="N" format="string" desc="대손충당금적립율비율"/>
+			<field id="1" name="TAC_RT_EVL_GRDE_NUM" size="5" position="0" repetition="1" type="N" format="string" desc="총자본비율평가등급수"/>
+			<field id="1" name="FXUD_CRDT_RT_EVL_GRDE_NUM" size="5" position="0" repetition="1" type="N" format="string" desc="고정이하여신비율평가등급수"/>
+			<field id="1" name="ABD_ACM_RT_EVL_GRDE_NUM" size="5" position="0" repetition="1" type="N" format="string" desc="대손충당금적립비율평가등급수"/>
+			<field id="1" name="MDS_LTM_CRDV_GRDE_NM" size="5" position="0" repetition="1" type="AN" format="string" desc="무디스장기신용평가등급명"/>
+			<field id="1" name="MDS_STM_CRDV_GRDE_NM" size="5" position="0" repetition="1" type="AN" format="string" desc="무디스단기신용평가등급명"/>
+			<field id="1" name="SNP_LTM_CRDV_GRDE_NM" size="5" position="0" repetition="1" type="AN" format="string" desc="스탠더드앤드푸어스장기신용평가등급명"/>
+			<field id="1" name="SNP_STM_CRDV_GRDE_NM" size="5" position="0" repetition="1" type="AN" format="string" desc="스탠더드앤드푸어스단기신용평가등급명"/>
+			<field id="1" name="FTCH_LTM_CRDV_GRDE_NM" size="5" position="0" repetition="1" type="AN" format="string" desc="피치장기신용평가등급명"/>
+			<field id="1" name="FTCH_STM_CRDV_GRDE_NM" size="5" position="0" repetition="1" type="AN" format="string" desc="피치단기신용평가등급명"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+    <messageFormat msgNumber="428" desc="일상경비월별잔액수신정보">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="1734" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG28" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GCC_DEPT_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="GCC부서코드"/>
+			<field id="1" name="EXE_YM" size="6" position="0" repetition="1" type="AN" format="string" desc="집행연월"/>
+			<field id="1" name="ACC_SNUM" size="10" position="0" repetition="1" type="AN" format="string" desc="계좌일련번호"/>
+			<field id="1" name="DPI_ECRP_ACTNO" size="48" position="0" repetition="1" type="AN" format="string" desc="예치암호화계좌번호"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="LAF_NM" size="500" position="0" repetition="1" type="AN" format="string" desc="지방자치단체명"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="DEPT_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="DEPT_NM" size="500" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="RAMT_AMT" size="20" position="0" repetition="1" type="AN" format="string" desc="잔액금액"/>
+			<field id="1" name="DATA_RCTN_YN" size="1" position="0" repetition="1" type="AN" format="string" desc="자료수신여부"/>
+			<field id="1" name="DATA_RCTN_DT" size="14" position="0" repetition="1" type="AN" format="string" desc="자료수신일시"/>
+			<field id="1" name="RTN_RSLT_PRCS_STAT_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="반납결과처리상태코드"/>
+			<field id="1" name="RSLT_PRCS_USR_ID" size="20" position="0" repetition="1" type="AN" format="string" desc="결과처리사용자ID"/>
+			<field id="1" name="PRCS_RSLT_RCTN_DT" size="14" position="0" repetition="1" type="AN" format="string" desc="처리결과수신일시"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+    <messageFormat msgNumber="429" desc="지역개발기금 수입지출 일계표">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="1094" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG29" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="ACNT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="회계일자"/>
+			<field id="1" name="PBN_SL_RV_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="공채매출수입금액"/>
+			<field id="1" name="FLA_WDRW_RV_PRN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="융자금회수수입원금금액"/>
+			<field id="1" name="FLA_WDRW_RV_INT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="융자금회수수입이자금액"/>
+			<field id="1" name="DPM_INT_RV_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="예탁금이자수입금액"/>
+			<field id="1" name="DPO_INT_RV_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="예금이자수입금액"/>
+			<field id="1" name="ETC_RV_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="기타수입금액"/>
+			<field id="1" name="DPI_WDRW_RV_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="예치회수수입금액"/>
+			<field id="1" name="FND_FLA_EP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="기금융자금지출금액"/>
+			<field id="1" name="DPM_EP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="예탁금지출금액"/>
+			<field id="1" name="PBN_RPM_EP_PRN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="공채상환지출원금금액"/>
+			<field id="1" name="PBN_RPM_EP_INT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="공채상환지출이자금액"/>
+			<field id="1" name="ADIT_EP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="선이자지출금액"/>
+			<field id="1" name="FND_MGCT_EP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="기금관리비지출금액"/>
+			<field id="1" name="ETC_EP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="기타지출금액"/>
+			<field id="1" name="AVFD_PRN_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전도자금원금금액"/>
+			<field id="1" name="AVFD_INT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전도자금이자금액"/>
+			<field id="1" name="AVFD_ADIT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전도자금선이자금액"/>
+			<field id="1" name="AVFD_MTRY_INT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전도자금만기이자금액"/>
+			<field id="1" name="AVFD_MDRD_RPM_INT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="전도자금중도상환이자금액"/>
+			<field id="1" name="NRA_DPI_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="신종환매체예치금액"/>
+			<field id="1" name="NRA_DRFT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="신종환매체인출금액"/>
+			<field id="1" name="RLR_DPO_ACM_DPI_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="정기예금적립예치금액"/>
+			<field id="1" name="RLR_DPO_ACM_DRFT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="정기예금적립인출금액"/>
+			<field id="1" name="RLR_DPO_ISD_DPI_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="정기예금정기적금예치금액"/>
+			<field id="1" name="RLR_DPO_ISD_DRFT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="정기예금정기적금인출금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+     <messageFormat msgNumber="430" desc="지역개발공채 발행내역">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="337" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG30" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="SL_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="매출일자"/>
+			<field id="1" name="CLCN_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="정산일자"/>
+			<field id="1" name="BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="은행코드"/>
+			<field id="1" name="BANK_BOFF_CD " size="7" position="0" repetition="1" type="AN" format="string" desc="매출지점코드"/>
+			<field id="1" name="BANK_BOFF_NM " size="200" position="0" repetition="1" type="AN" format="string" desc="매출지점명"/>
+			<field id="1" name="CLTN_INST_NM" size="50" position="0" repetition="1" type="AN" format="string" desc="징수기관명"/>
+			<field id="1" name="USWY_DV_NO" size="5" position="0" repetition="1" type="AN" format="string" desc="용도구분번호"/>
+			<field id="1" name="USWY_DV_NM" size="50" position="0" repetition="1" type="AN" format="string" desc="용도구분명"/>
+			<field id="1" name="CT_SELL_DV_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="채권매도구분코드"/>
+			<field id="1" name="ISU_TMS" size="10" position="0" repetition="1" type="N" format="string" desc="발행횟수"/>
+			<field id="1" name="ISU_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="발행금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+     <messageFormat msgNumber="431" desc="융자금회수이자내역">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="1379" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG31" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="FL_BGNG_YMD " size="8" position="0" repetition="1" type="AN" format="string" desc="융자시작일자"/>
+			<field id="1" name="BANK_CD " size="3" position="0" repetition="1" type="AN" format="string" desc="은행코드"/>
+			<field id="1" name="BANK_NM " size="300" position="0" repetition="1" type="AN" format="string" desc="은행명"/>
+			<field id="1" name="ENP_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="업체명"/>
+			<field id="1" name="ECRP_BNO " size="48" position="0" repetition="1" type="AN" format="string" desc="암호화사업자등록번호"/>
+			<field id="1" name="FL_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="융자금액"/>
+			<field id="1" name="ARP_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="기상환금액"/>
+			<field id="1" name="RPM_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="상환잔액금액"/>
+			<field id="1" name="RPM_IRT " size="20" position="0" repetition="1" type="N" format="string" desc="상환이율"/>
+			<field id="1" name="RPM_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="상환일자"/>
+			<field id="1" name="RPM_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="상환금액"/>
+			<field id="1" name="INT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="이자금액"/>
+			<field id="1" name="RAMT_AMT " size="20" position="0" repetition="1" type="N" format="string" desc="잔액금액"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+</messageFormats>

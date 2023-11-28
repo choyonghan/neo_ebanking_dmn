@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!DOCTYPE header>
+
+<messageFormats desc="보고서전문(청백리)">
+
+    <messageFormat msgNumber="426" desc="계좌거래내역">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="1138" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG26" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="DLNG_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="거래일자"/>
+			<field id="1" name="DLNG_TM" size="6" position="0" repetition="1" type="AN" format="string" desc="거래시각"/>
+			<field id="1" name="ACC_DLNG_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="계좌거래구분코드"/>
+			<field id="1" name="ACC_DLNG_DV_NM" size="20" position="0" repetition="1" type="AN" format="string" desc="계좌거래구분명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="STBX_ECRP_ACTNO" size="48" position="0" repetition="1" type="AN" format="string" desc="금고암호화계좌번호"/>
+			<field id="1" name="DLNG_SNUM" size="20" position="0" repetition="1" type="N" format="string" desc="거래일련번호"/>
+			<field id="1" name="DLNG_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="거래은행코드"/>
+			<field id="1" name="DLNG_ECRP_ACTNO" size="48" position="0" repetition="1" type="AN" format="string" desc="거래암호화계좌번호"/>
+			<field id="1" name="PWDDA_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="입출금자명"/>
+			<field id="1" name="DPST_BOFF_NO" size="7" position="0" repetition="1" type="AN" format="string" desc="입금지점번호"/>
+			<field id="1" name="DDAM_DLNG_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="입출금거래구분코드"/>
+			<field id="1" name="DDAM_RV_DV_CD" size="10" position="0" repetition="1" type="AN" format="string" desc="입출금수입구분코드"/>
+			<field id="1" name="DDAM_DV_NM" size="50" position="0" repetition="1" type="AN" format="string" desc="입출금구분명"/>
+			<field id="1" name="IDRK_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="기산일일자"/>
+			<field id="1" name="ACC_INPT_DT" size="14" position="0" repetition="1" type="AN" format="string" desc="계좌입력일시"/>
+			<field id="1" name="ACC_RGST_NM" size="50" position="0" repetition="1" type="AN" format="string" desc="계좌입력자명"/>
+			<field id="1" name="ERP_PRCS_YN" size="1" position="0" repetition="1" type="AN" format="string" desc="ERP처리여부"/>
+			<field id="1" name="PAID_TN" size="10" position="0" repetition="1" type="N" format="string" desc="납입회차"/>
+			<field id="1" name="DLNG_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="거래금액"/>
+			<field id="1" name="PSNT_RAMT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="현재잔액금액"/>
+			<field id="1" name="CRTR_IRT" size="10" position="0" repetition="1" type="N" format="string" desc="기준이율"/>
+			<field id="1" name="DLNG_OTLN_CN" size="500" position="0" repetition="1" type="AN" format="string" desc="거래적요내용"/>
+			<field id="1" name="ATM_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="ATM구분코드"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+    <messageFormat msgNumber="425" desc="계좌신규 개설 및 약정정보">
+        <head keyname="업무구분" sizeName="" includeHead="no">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="WORK_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="작업일자"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="START_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="시작일자"/>
+			<field id="1" name="END_DATE" size="8" position="0" repetition="1" type="AN" format="string" desc="종료일자"/>
+			<field id="1" name="TRAN_RECD_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="TOT_REQ_CNT" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="BLANK" size="2286" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+        </head>
+        <body keyvalue="KLIDDG25" className="">
+			<field id="1" name="fileWorkGb" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="GB_CD" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="LAF_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="지방자치단체코드"/>
+			<field id="1" name="STBX_ECRP_ACTNO" size="48" position="0" repetition="1" type="AN" format="string" desc="금고암호화계좌번호"/>
+			<field id="1" name="BF_STBX_ECRP_ACTNO" size="48" position="0" repetition="1" type="AN" format="string" desc="이전금고암호화계좌번호"/>
+			<field id="1" name="TRSM_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="전송일자"/>
+			<field id="1" name="ACC_DLNG_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="계좌개설거래구분코드"/>
+			<field id="1" name="DLNG_SNUM" size="20" position="0" repetition="1" type="N" format="string" desc="거래일련번호"/>
+			<field id="1" name="GOF_CD" size="4" position="0" repetition="1" type="AN" format="string" desc="관서코드"/>
+			<field id="1" name="GOF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="관서명"/>
+			<field id="1" name="DEPT_CD" size="7" position="0" repetition="1" type="AN" format="string" desc="부서코드"/>
+			<field id="1" name="DEPT_NM" size="500" position="0" repetition="1" type="AN" format="string" desc="부서명"/>
+			<field id="1" name="FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="회계연도"/>
+			<field id="1" name="ACNT_DV_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="회계구분코드"/>
+			<field id="1" name="ACNT_DV_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="회계구분명"/>
+			<field id="1" name="NEW_ACC_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="신규계좌구분코드"/>
+			<field id="1" name="ACC_PRT_NM" size="100" position="0" repetition="1" type="AN" format="string" desc="계좌상품명"/>
+			<field id="1" name="LAF_ECRP_BNO" size="48" position="0" repetition="1" type="AN" format="string" desc="지방자치단체암호화사업자등록번호"/>
+			<field id="1" name="DPOR_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="예금주명"/>
+			<field id="1" name="BDE_NM" size="100" position="0" repetition="1" type="AN" format="string" desc="복식부기명"/>
+			<field id="1" name="ACC_ESTBL_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="계좌개설일자"/>
+			<field id="1" name="MTRY_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="만기일자"/>
+			<field id="1" name="CNLT_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="해지일자"/>
+			<field id="1" name="DPI_PD_NUM" size="20" position="0" repetition="1" type="N" format="string" desc="예치기간수"/>
+			<field id="1" name="CRTR_IRT" size="17" position="0" repetition="1" type="N" format="string" desc="기준이율"/>
+			<field id="1" name="ITRT_APLCN_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="금리적용일자"/>
+			<field id="1" name="ACC_CNLT_YN" size="1" position="0" repetition="1" type="AN" format="string" desc="계좌해지여부"/>
+			<field id="1" name="CNLT_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="해지구분코드"/>
+			<field id="1" name="CARD_PYMT_ACC_YN" size="1" position="0" repetition="1" type="AN" format="string" desc="카드결제계좌여부"/>
+			<field id="1" name="ZRPY_ACC_YN" size="1" position="0" repetition="1" type="AN" format="string" desc="제로페이계좌여부"/>
+			<field id="1" name="INBA_USE_YN" size="1" position="0" repetition="1" type="AN" format="string" desc="인터넷뱅킹사용여부"/>
+			<field id="1" name="INT_RCG_PRD_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="이자수취주기코드"/>
+			<field id="1" name="BOR_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="차입금액"/>
+			<field id="1" name="RPM_PRD_MM" size="2" position="0" repetition="1" type="AN" format="string" desc="상환주기월"/>
+			<field id="1" name="RPM_DV_CD" size="2" position="0" repetition="1" type="AN" format="string" desc="상환구분코드"/>
+			<field id="1" name="RPM_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="상환일자"/>
+			<field id="1" name="PRN_RPM_TOTT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="원금상환총금액"/>
+			<field id="1" name="RPM_INT_AMT" size="20" position="0" repetition="1" type="N" format="string" desc="상환이자금액"/>
+			<field id="1" name="BOR_END_YMD" size="8" position="0" repetition="1" type="AN" format="string" desc="차입종료일자"/>
+			<field id="1" name="PRNT_ECRP_ACTNO" size="48" position="0" repetition="1" type="AN" format="string" desc="부모암호화계좌번호"/>
+			<field id="1" name="ESTBL_BOFF_NO" size="7" position="0" repetition="1" type="AN" format="string" desc="개설지점번호"/>
+			<field id="1" name="DLNG_BOFF_NM" size="300" position="0" repetition="1" type="AN" format="string" desc="거래지점명"/>
+			<field id="1" name="PUB_DPO_FYR" size="4" position="0" repetition="1" type="AN" format="string" desc="공공예금회계연도"/>
+			<field id="1" name="ANE_LIM_ACC_YN" size="1" position="0" repetition="1" type="AN" format="string" desc="세출한도계좌여부"/>
+			<field id="1" name="STBX_BANK_CD" size="3" position="0" repetition="1" type="AN" format="string" desc="금고은행코드"/>
+			<field id="1" name="REGI_DATE" size="14" position="0" repetition="1" type="AN" format="string" desc="등록일시"/>
+        </body>
+    </messageFormat>
+
+</messageFormats>

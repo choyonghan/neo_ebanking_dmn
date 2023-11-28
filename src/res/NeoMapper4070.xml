@@ -1,0 +1,1054 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper4070">
+    <!-- ############################################ -->
+    <!-- ############# TR2001 ####################### -->
+    <!-- ############################################ -->
+
+    <update id="updateTR2001_548_Status_P" >
+        UPDATE CSTSCYB548 SET ETAX_STATUS_CODE = 'P'
+        WHERE ETAX_STATUS_CODE = '01'
+    </update>
+
+    <update id="updateTR2001_548_Status_04">
+        UPDATE CSTSCYB548 SET ETAX_STATUS_CODE ='04'
+        WHERE ETAX_STATUS_CODE ='P'
+    </update>
+
+    <!-- 원장에서 M/D를  만드는 쿼리 -->
+    <select id="getTR2001_548M_DateSelect" resultType="MyMap">
+        /* NeoMapper4070.getTR2001_548M_DateSelect - 548원장에서 마스터용 데이터 추출 */
+        <![CDATA[
+        SELECT  A.C_SLF_ORG
+        ,       A.JING_NO
+        ,       A.ACCT_YY
+        ,       A.ACCT_DT
+        ,       LEV.LVL AS SIGU_TYPE
+        ,       MIN(A.DIV_OVERPAY)  AS DIV_OVERPAY
+        ,       A.YEAR_GB
+        ,       (SELECT CASE WHEN LENGTH( TRIM( SGG_NM ) ) > 3
+                             THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+                             ELSE TRIM( SGG_NM )
+                        END
+                 FROM   COMSGG
+                 WHERE  (SIDO_COD, SGG_COD) = (( SUBSTR( A.C_SLF_ORG, 1, 2 ), SUBSTR( A.C_SLF_ORG, 3, 3 ) ) )
+                 AND    ROWNUM =1
+                ) || DECODE(MIN(A.DIV_OVERPAY),'1','환급금','징수촉탁') AS OUT_DESC
+        ,       NVL( SUM( DECODE( LEV.LVL, 1, A.DO_AMT, 2, A.SI_AMT, 3, A.KU_AMT, 0 ) ), 0 ) IN_AMT
+        ,       DECODE( LEV.LVL, 1, MIN(M.광역시도세계좌번호), 2, MIN(M.시군구세계좌번호), 3, MIN(M.국세계좌번호), 0 ) AS OUT_ACC
+        ,       COUNT(DECODE(ETAX_RESULT_CODE,'0000', '1')) AS SUC_CNT
+        ,       COUNT(DECODE(ETAX_RESULT_CODE,'9999', '1')) AS ERR_CNT
+        ,       NVL( SUM(DECODE(ETAX_RESULT_CODE,'0000', DECODE( LEV.LVL, 1, A.DO_AMT, 2, A.SI_AMT, 3, A.KU_AMT, 0 ) )) , 0 ) AS SUC_AMT
+        ,       NVL( SUM(DECODE(ETAX_RESULT_CODE,'9999', DECODE( LEV.LVL, 1, A.DO_AMT, 2, A.SI_AMT, 3, A.KU_AMT, 0 ) )) , 0 ) AS ERR_AMT
+        ,       (SELECT CASE WHEN LENGTH( TRIM( SGG_NM ) ) > 3
+                        THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+                        ELSE TRIM( SGG_NM )
+                        END
+                 FROM   COMSGG
+                 WHERE  (SIDO_COD, SGG_COD) = (( SUBSTR( A.C_SLF_ORG, 1, 2 ), SUBSTR( A.C_SLF_ORG, 3, 3 ) ) )
+                 AND    ROWNUM =1
+                ) || DECODE(MIN(A.DIV_OVERPAY),'3','징수촉탁','4','징수촉탁','환급금') AS IN_DESC
+        FROM    CSTSCYB548 A,TR2001_M M
+        ,       (SELECT LEVEL LVL
+                 FROM DUAL CONNECT BY LEVEL <= 3
+                ) LEV
+        WHERE   A.ETAX_STATUS_CODE = 'P'
+        AND     A.JING_NO = M.SEQ
+        AND     ( ( LEV.LVL = 1 AND A.DO_AMT != '0') OR ( LEV.LVL = 2 AND A.SI_AMT != '0') OR ( LEV.LVL = 3 AND A.KU_AMT != '0' ))
+        GROUP BY A.C_SLF_ORG, A.JING_NO, A.ACCT_YY, A.ACCT_DT, LEV.LVL, A.YEAR_GB
+        ORDER BY C_SLF_ORG, JING_NO, ACCT_YY, ACCT_DT
+        ]]>
+    </select>
+
+    <!-- Main(출금) 저장 -->
+    <insert id="insertTR2001M" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2001_M - 반환결의확정 */
+        <![CDATA[
+        INSERT INTO CSTSCYB548M
+        (   C_SLF_ORG     /* 자치단체코드         */
+        ,   JING_NO       /* 결의번호             */
+        ,   ACCT_YY       /* 회계연도             */
+        ,   ACCT_DT       /* 이체일자             */
+        ,   SIGU_TYPE     /* 시세구세구분         */
+        ,   DIV_OVERPAY   /* 과오납구분           */
+        ,   TRN_NO        /* 거래번호             */
+        ,   YEAR_GB       /* 현과년도구분         */
+        ,   OUT_BANK_CODE /* 출금은행코드         */
+        ,   OUT_ACC_NUM   /* 출금계좌(세입금계좌) - 0311524 */
+        ,   OUT_DESC      /* 출금명세(적요)       */
+        ,   RESULT_YN     /* 결과처리여부         */
+        ,   RESULT_CODE   /* 결과코드             */
+        ,   RESULT_DESC   /* 결과설명             */
+        ,   RESULT_NAME   /* 결과처리자명         */
+        ,   RESULT_DATE   /* 결과처리일시         */
+        ,   REQ_ID        /* 담당자ID      */
+        ,   REQ_NM        /* 담당자이름           */
+        ,   REQ_TEL       /* 담당자전화번호       */
+        ,   REQ_DATE      /* 요청일시             */
+        ,   SUCCESS_CNT   /* 처리건수             */
+        ,   ERROR_CNT     /* 오류건수             */
+        ,   SUCCESS_AMT   /* 처리금액             */
+        ,   ERROR_AMT     /* 오류금액             */
+        ,   STATUS_CODE   /* 상태코드   04  */
+        ,   REG_DATE      /* 등록일시   sysdate */
+        )  VALUES
+        (   #{C_SLF_ORG,jdbcType=VARCHAR}
+        ,   #{JING_NO,jdbcType=VARCHAR}
+        ,   #{ACCT_YY,jdbcType=VARCHAR}
+        ,   #{ACCT_DT,jdbcType=VARCHAR}
+        ,   #{SIGU_TYPE,jdbcType=VARCHAR}
+        ,   #{DIV_OVERPAY,jdbcType=VARCHAR}
+        ,   'EA'||#{JING_NO,jdbcType=VARCHAR}  /* 거래번호 */
+        ,   #{YEAR_GB,jdbcType=VARCHAR}
+        ,   '031'
+        ,   #{OUT_ACC,jdbcType=VARCHAR}
+        ,   #{OUT_DESC,jdbcType=VARCHAR}
+        ,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'N','Y')
+        ,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'9999','0000')
+        ,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'지급오류','정상처리 되었습니다.')
+        ,   '대구은행'
+        ,   #{ACCT_DT,jdbcType=VARCHAR}
+        ,   '999999'    /* 담당자ID */
+        ,   '대구은행'    /* 담당자이름 */
+        ,   ''    /* 담당자전화번호 */
+        ,   SYSDATE    /* 요청일시 */
+        ,   #{SUC_CNT,jdbcType=VARCHAR}    /* 처리건수 */
+        ,   #{ERR_CNT,jdbcType=VARCHAR}    /* 오류건수 */
+        ,   #{SUC_AMT,jdbcType=VARCHAR}    /* 처리금액 */
+        ,   #{ERR_AMT,jdbcType=VARCHAR}    /* 오류금액 */
+        ,   '04'
+        ,   SYSDATE
+        )
+        ]]>
+    </insert>
+
+   <select id="getTR2001_548D_DateSelect" resultType="MyMap" parameterType="MyMap">
+        /* NeoMapper4070.getTR2001_548D_DateSelect - 548원장에서 디테일용 데이터 추출 */
+        <![CDATA[
+		SELECT  B.C_SLF_ORG AS C_SLF_ORG,
+		        B.JING_NO AS JING_NO,
+		        B.ACCT_YY AS ACCT_YY,
+		        B.ACCT_DT AS ACCT_DT,
+		        B.DIV_OVERPAY AS DIV_OVERPAY,
+		        B.SIGU_TYPE AS SIGU_TYPE,
+		        B.IN_ACC AS IN_ACC,
+		        SUM(B.IN_AMT) AS IN_AMT,
+		        B.RESULT_CODE AS RESULT_CODE,
+		        B.RESULT_DESC AS RESULT_DESC,
+		        MAX(B.IN_DESC) AS IN_DESC
+		FROM
+		       ( SELECT  A.C_SLF_ORG,
+		                 A.JING_NO,
+		                 A.ACCT_YY,
+		                 A.ACCT_DT,
+		                 LEV.LVL AS SIGU_TYPE,
+		                 A.DIV_OVERPAY  AS DIV_OVERPAY,
+		                 NVL( DECODE( LEV.LVL, 1, A.DO_AMT, 2, A.SI_AMT, 3, A.KU_AMT, 0 ), 0 ) IN_AMT,
+		                 NVL( DECODE( LEV.LVL, 1, A.OUT_DO_ACC, 2, A.OUT_SI_ACC, 3, A.OUT_KUK_ACC, 0 ), 0 ) IN_ACC,
+		                 A.ETAX_RESULT_CODE AS RESULT_CODE,
+		                 A.ETAX_RESULT_DESC AS RESULT_DESC,
+		                 (SELECT CASE WHEN LENGTH( TRIM( SGG_NM ) ) > 3
+		                         THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+		                         ELSE TRIM( SGG_NM )
+		                         END
+		                  FROM   COMSGG
+		                  WHERE  (SIDO_COD, SGG_COD) = (( SUBSTR( A.C_SLF_ORG, 1, 2 ), SUBSTR( A.C_SLF_ORG, 3, 3 ) ) )
+		                  AND    ROWNUM =1
+		                 ) || DECODE(A.DIV_OVERPAY,'3','징수촉탁','4','징수촉탁','환급금') AS IN_DESC
+		        FROM    CSTSCYB548 A
+		        ,       (SELECT LEVEL LVL
+		                 FROM DUAL CONNECT BY LEVEL <= 3
+		                ) LEV
+		        WHERE   A.ETAX_STATUS_CODE = 'P'
+		        AND     A.JING_NO = #{JING_NO,jdbcType=VARCHAR}
+		        AND   ( ( LEV.LVL = 1 AND A.DO_AMT != '0') OR ( LEV.LVL = 2 AND A.SI_AMT != '0') OR ( LEV.LVL = 3 AND A.KU_AMT != '0' )) ) B
+		WHERE 1=1
+		AND   B.SIGU_TYPE = #{SIGU_TYPE,jdbcType=VARCHAR}
+		GROUP BY B.C_SLF_ORG,
+		      B.JING_NO,
+		      B.ACCT_YY,
+		      B.ACCT_DT,
+		      B.DIV_OVERPAY,
+		      B.SIGU_TYPE,
+		      B.IN_ACC,
+		      B.RESULT_CODE,
+		      B.RESULT_DESC
+		ORDER BY
+		      B.C_SLF_ORG,
+              B.JING_NO,
+              B.ACCT_YY,
+              B.ACCT_DT,
+              B.DIV_OVERPAY,
+              B.SIGU_TYPE,
+              B.IN_ACC,
+              B.RESULT_CODE,
+              B.RESULT_DESC
+        ]]>
+    </select>
+
+    <!-- dtail(입금) 저장 -->
+    <insert id="insertTR2001D" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2001_D - 반환결의확정 */
+        <![CDATA[
+        INSERT INTO CSTSCYB548D
+        (   C_SLF_ORG     /* 자치단체코드              */
+        ,   JING_NO       /* 결의번호                  */
+        ,   ACCT_YY       /* 회계연도                  */
+        ,   ACCT_DT       /* 회계일자(이체일자)  */
+        ,   SIGU_TYPE     /* 시세구세구분              */
+        ,   SEQ           /* 일련번호                  */
+        ,   DIV_OVERPAY   /* 과오납구분 ( 1 : 과오납 ) */
+        ,   IN_BANK_CODE  /* 입금은행코드              */
+        ,   IN_ACC_NUM    /* 입금계좌번호              */
+        ,   IN_ACC_OWNER  /* 입금계좌예금주명          */
+        ,   IN_AMT        /* 입금금액               */
+        ,   IN_DESC       /* 입금명세(적요)     */
+        ,   RESULT_YN     /* 결과처리여부              */
+        ,   RESULT_CODE   /* 결과처리코드              */
+        ,   RESULT_DESC   /* 결과처리설명              */
+        ,   RESULT_NAME   /* 결과처리자                */
+        ,   RESULT_DATE   /* 결과처리일시              */
+        ,   REG_DATE      /* 등록일시                  */
+        ,   UPD_DATE      /* 수정일시                  */
+        )  VALUES
+        (   #{C_SLF_ORG,jdbcType=VARCHAR}
+        ,   #{JING_NO,jdbcType=VARCHAR}
+        ,   #{ACCT_YY,jdbcType=VARCHAR}
+        ,   #{ACCT_DT,jdbcType=VARCHAR}
+        ,   #{SIGU_TYPE,jdbcType=VARCHAR}
+        ,   #{SEQ,jdbcType=NUMERIC}
+        ,   #{DIV_OVERPAY,jdbcType=VARCHAR}
+        ,   '031' /* 픽스 */
+        ,   #{IN_ACC,jdbcType=VARCHAR}
+        ,   #{IN_DESC,jdbcType=VARCHAR}   /* 입금주명 */
+        ,   NVL(#{IN_AMT,jdbcType=NUMERIC},0)
+        ,   #{IN_DESC,jdbcType=VARCHAR}   /* 입금명세(적요) */
+        ,   DECODE(#{RESULT_CODE,jdbcType=VARCHAR},'0000','Y','N')
+        ,   #{RESULT_CODE,jdbcType=VARCHAR}
+        ,   #{RESULT_DESC,jdbcType=VARCHAR}
+        ,   '대구은행'
+        ,   #{ACCT_DT,jdbcType=VARCHAR}
+        ,   SYSDATE
+        ,   SYSDATE
+        )
+        ]]>
+    </insert>
+
+    <!-- ############################################ -->
+    <!-- ############# TR2002 ####################### -->
+    <!-- ############################################ -->
+
+    <!-- ############# TR2002_551 ####################### -->
+    <update id="updateTR2002_551_Status_P" >
+        UPDATE CSTSCYB551 SET ETAX_STATUS_CODE = 'P'
+        WHERE ETAX_STATUS_CODE = '01'
+    </update>
+
+    <update id="updateTR2002_551_Status_06">
+        UPDATE CSTSCYB551 SET ETAX_STATUS_CODE ='06'
+        WHERE ETAX_STATUS_CODE ='P'
+    </update>
+
+    <!-- 원장에서 M/D를  만드는 쿼리 -->
+    <select id="getTR2002_551M_DateSelect" resultType="MyMap">
+        /* NeoMapper4070.getTR2002_551M_DateSelect - 551원장에서 마스터용 데이터 추출 */
+        <![CDATA[
+        SELECT Z.C_SLF_ORG
+		,      Z.CREATE_DATE
+		,      Z.FILE_NUMBER
+		,      Z.D_BANK_REP
+		,      Z.DIV_APPR
+		,      Z.IN_ACC
+		,      Z.OUT_DESC
+		,      SUM(Z.SUC_CNT) AS SUC_CNT
+		,      SUM(Z.ERR_CNT) AS ERR_CNT
+		,      SUM(Z.SUC_AMT) AS SUC_AMT
+		,      SUM(Z.ERR_AMT) AS ERR_AMT
+		FROM   (
+		        SELECT A.C_SLF_ORG
+				,      A.CREATE_DATE
+				,      A.ETAX_SEQ AS FILE_NUMBER
+				,      A.D_BANK_REP
+				,      A.DIV_APPR
+				,      FC_GET_ACC_NUMBER('551',A.C_SLF_ORG,A.CREATE_DATE,A.ETAX_SEQ,A.DIV_APPR)  AS IN_ACC
+				,      (SELECT CASE
+				               WHEN LENGTH( TRIM( SGG_NM ) ) > 3
+				               THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+				               ELSE TRIM( SGG_NM )
+				               END || '충당금'
+				        FROM   COMSGG
+				        WHERE  (SIDO_COD,SGG_COD) = ((SUBSTR(A.C_SLF_ORG,1,2),SUBSTR(A.C_SLF_ORG,3,3)))
+				        AND    ROWNUM =1 ) AS OUT_DESC
+				,      DECODE(ETAX_RESULT_CODE,'0000', '1') AS SUC_CNT
+		        ,      DECODE(ETAX_RESULT_CODE,'9999', '1') AS ERR_CNT
+		        ,      NVL( DECODE(ETAX_RESULT_CODE,'0000', DECODE( LEV.LVL, 1, A.ETAX_SI_AMT, 2, A.ETAX_GU_AMT, 3, A.ETAX_KUK_AMT, 0 ) ) , 0 ) AS SUC_AMT
+		        ,      NVL( DECODE(ETAX_RESULT_CODE,'9999', DECODE( LEV.LVL, 1, A.ETAX_SI_AMT, 2, A.ETAX_GU_AMT, 3, A.ETAX_KUK_AMT, 0 ) ) , 0 ) AS ERR_AMT
+				FROM   CSTSCYB551 A
+				,      (SELECT LEVEL LVL FROM DUAL CONNECT BY LEVEL <= 3 ) LEV
+				WHERE  A.ETAX_STATUS_CODE = 'P'
+				AND    ( (LEV.LVL = 1 AND A.ETAX_SI_AMT != '0') OR (LEV.LVL = 2 AND A.ETAX_GU_AMT != '0') OR (LEV.LVL = 3 AND A.ETAX_KUK_AMT != '0') )
+			   ) Z
+		GROUP BY Z.C_SLF_ORG
+		,        Z.CREATE_DATE
+		,        Z.FILE_NUMBER
+		,        Z.D_BANK_REP
+		,        Z.DIV_APPR
+		,        Z.IN_ACC
+		,        Z.OUT_DESC
+		ORDER BY Z.C_SLF_ORG, Z.CREATE_DATE, Z.D_BANK_REP, Z.DIV_APPR
+        ]]>
+    </select>
+
+    <!-- Main(출금) 저장 -->
+    <insert id="insertTR2002_551M" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2002_551M - 세입 충당 */
+        <![CDATA[
+        INSERT INTO CSTSCYB551M
+        (   C_SLF_ORG
+		,   CREATE_DATE
+		,   FILE_NUMBER
+		,   D_BANK_REP
+		,   DIV_APPR
+		,   TRN_NO
+		,   OUT_BANK_CODE
+		,   OUT_ACC_NUM
+		,   OUT_DESC
+		,   RESULT_YN
+		,   STATUS_CODE
+		,   REG_DATE
+		,   SUCCESS_CNT   /* 처리건수             */
+        ,   ERROR_CNT     /* 오류건수             */
+        ,   SUCCESS_AMT   /* 처리금액             */
+        ,   ERROR_AMT     /* 오류금액             */
+        ,   RESULT_CODE
+        ,   RESULT_DESC
+        ,   RESULT_NAME
+        ,   RESULT_DATE
+        ,   REQ_DATE
+        ,   REQ_ID
+        ,   REQ_NM
+        )  VALUES
+        (   #{C_SLF_ORG,jdbcType=VARCHAR}
+        ,   #{CREATE_DATE,jdbcType=VARCHAR}
+        ,   #{FILE_NUMBER,jdbcType=VARCHAR}
+        ,   #{D_BANK_REP,jdbcType=VARCHAR}
+        ,   #{DIV_APPR,jdbcType=VARCHAR}
+        ,   'EC'||#{FILE_NUMBER,jdbcType=VARCHAR}
+        ,   '031'
+        ,   #{IN_ACC,jdbcType=VARCHAR}
+        ,   #{OUT_DESC,jdbcType=VARCHAR}
+        ,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'N','Y')
+        ,   '04'
+        ,   SYSDATE
+        ,   #{SUC_CNT,jdbcType=VARCHAR}    /* 처리건수 */
+        ,   #{ERR_CNT,jdbcType=VARCHAR}    /* 오류건수 */
+        ,   #{SUC_AMT,jdbcType=VARCHAR}    /* 처리금액 */
+        ,   #{ERR_AMT,jdbcType=VARCHAR}    /* 오류금액 */
+        ,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'9999','0000')
+        ,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'지급오류','정상처리 되었습니다.')
+        ,   '대구은행'
+        ,   SYSDATE
+        ,   SYSDATE
+        ,   '999999'
+        ,   '대구은행'
+        )
+        ]]>
+    </insert>
+
+    <select id="getTR2002_551D_DateSelect" resultType="MyMap" parameterType="MyMap">
+        /* NeoMapper4070.getTR2002_551D_DateSelect - 551원장에서 마스터용 데이터 추출 */
+        <![CDATA[
+        SELECT A.C_SLF_ORG
+        ,      A.CREATE_DATE
+        ,      A.FILE_NUMBER
+        ,      A.D_BANK_REP
+        ,      A.D_COM_SOIN
+        ,      A.DIV_APPR
+        ,      A.SIGU_TYPE
+        ,      A.ACCT_YY
+        ,      DECODE( A.SIGU_TYPE, 1, '대구시청', 2, (SELECT 지방자치단체명 FROM TR2002_M WHERE SEQ = A.FILE_NUMBER ), 3, '국세', 0 ) IN_ACC_OWNER
+        ,      SUM(A.IN_AMT) AS IN_AMT
+        ,      (SELECT CASE WHEN LENGTH( TRIM( SGG_NM ) ) > 3
+                            THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+                            ELSE TRIM( SGG_NM )
+                       END || '충당금'
+                FROM   COMSGG
+                WHERE  (SIDO_COD,SGG_COD) = (( SUBSTR( A.C_SLF_ORG, 1, 2 ), SUBSTR( A.C_SLF_ORG, 3, 3 ) ) )
+                AND    ROWNUM =1
+               ) AS IN_DESC
+        ,      A.IN_ACC
+        ,      A.RESULT_CODE
+        ,      A.RESULT_DESC
+        FROM   (SELECT A.C_SLF_ORG
+                ,      A.CREATE_DATE
+                ,      A.ETAX_SEQ AS FILE_NUMBER
+                ,      A.D_BANK_REP
+                ,      A.D_COM_SOIN
+                ,      A.DIV_APPR
+                ,      LEV.LVL AS SIGU_TYPE
+                ,      NVL( DECODE( LEV.LVL, 1, A.ETAX_SI_AMT, 2, A.ETAX_GU_AMT, 3, A.ETAX_KUK_AMT, 0 ), 0 ) IN_AMT
+                ,      A.ETAX_STATUS_CODE
+                ,      A.ETAX_RESULT_CODE AS RESULT_CODE
+                ,      A.ETAX_RESULT_DESC AS RESULT_DESC
+                ,      FC_GET_ACC_YEAR(A.D_COM_SOIN, A.ETAX_ACCT_YY) AS ACCT_YY
+                ,      DECODE( LEV.LVL, 1, D.광역시도세계좌번호, 2, D.시군구세계좌번호, 3, D.국세계좌번호, 0 ) AS IN_ACC
+                FROM   CSTSCYB551 A, TR2002_D D
+                ,      (SELECT LEVEL LVL
+                        FROM DUAL CONNECT BY LEVEL <= 3 ) LEV
+                WHERE  1=1
+                AND    A.SEQ = D.SEQ_D
+                AND    A.C_SLF_ORG        = #{C_SLF_ORG,jdbcType=VARCHAR}
+                AND    A.FILE_NUMBER      = #{FILE_NUMBER,jdbcType=VARCHAR}
+                AND    A.ETAX_STATUS_CODE = 'P'
+                AND    ( (LEV.LVL = 1 AND A.ETAX_SI_AMT != '0') OR (LEV.LVL = 2 AND A.ETAX_GU_AMT != '0') OR (LEV.LVL = 3 AND A.ETAX_KUK_AMT != '0') )
+                ) A
+        GROUP BY A.C_SLF_ORG
+        ,        A.CREATE_DATE
+        ,        A.FILE_NUMBER
+        ,        A.D_BANK_REP
+        ,        A.D_COM_SOIN
+        ,        A.DIV_APPR
+        ,        A.SIGU_TYPE
+        ,        A.ACCT_YY
+        ,        A.IN_ACC
+        ,        A.RESULT_CODE
+        ,        A.RESULT_DESC
+        ORDER BY A.C_SLF_ORG, A.CREATE_DATE, A.FILE_NUMBER, A.D_BANK_REP, A.DIV_APPR, A.SIGU_TYPE,A.IN_ACC,A.RESULT_CODE
+        ]]>
+    </select>
+
+    <!-- Main(출금) 저장 -->
+    <insert id="insertTR2002_551D" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2002_551D - 세입 충당 */
+        <![CDATA[
+        INSERT INTO CSTSCYB551D
+        (   C_SLF_ORG
+		,   CREATE_DATE
+		,   FILE_NUMBER
+		,   D_BANK_REP
+		,   SEQ
+        ,   DIV_APPR
+		,   SIGU_TYPE
+		,   ACCT_YY
+		,   IN_BANK_CODE
+		,   IN_ACC_NUM
+		,   IN_ACC_OWNER
+		,   IN_AMT
+		,   IN_DESC
+		,   RESULT_YN
+		,   REG_DATE
+		,   RESULT_CODE
+		,   RESULT_DESC
+		,   RESULT_NAME
+		,   RESULT_DATE
+		,   UPD_DATE
+        )  VALUES
+        (   #{C_SLF_ORG,jdbcType=VARCHAR}
+        ,   #{CREATE_DATE,jdbcType=VARCHAR}
+        ,   #{FILE_NUMBER,jdbcType=VARCHAR}
+        ,   #{D_BANK_REP,jdbcType=VARCHAR}
+        ,   #{SEQ,jdbcType=VARCHAR}
+        ,   #{DIV_APPR,jdbcType=VARCHAR}
+        ,   #{SIGU_TYPE,jdbcType=VARCHAR}
+        ,   #{ACCT_YY,jdbcType=VARCHAR}
+        ,   '031'
+        ,   #{IN_ACC,jdbcType=VARCHAR}  /* 계좌번호 */
+        ,   #{IN_ACC_OWNER,jdbcType=VARCHAR}  /*'대구은행'*/
+        ,   #{IN_AMT,jdbcType=VARCHAR}
+        ,   #{IN_DESC,jdbcType=VARCHAR}
+        ,   DECODE(#{RESULT_CODE,jdbcType=VARCHAR},'0000','Y','N')
+        ,   SYSDATE
+        ,   #{RESULT_CODE,jdbcType=VARCHAR}
+        ,   #{RESULT_DESC,jdbcType=VARCHAR}
+        ,   '대구은행'
+        ,   SYSDATE
+        ,   SYSDATE
+        )
+        ]]>
+    </insert>
+
+    <!-- ############# TR2002_553 ####################### -->
+    <update id="updateTR2002_553_Status_P" >
+        UPDATE CSTSCYB553 SET ETAX_STATUS_CODE = 'P'
+        WHERE ETAX_STATUS_CODE = '01'
+    </update>
+
+    <update id="updateTR2002_553_Status_06">
+        UPDATE CSTSCYB553 SET ETAX_STATUS_CODE ='06'
+        WHERE ETAX_STATUS_CODE ='P'
+    </update>
+
+    <!-- 원장에서 M/D를  만드는 쿼리 -->
+    <select id="getTR2002_553M_DateSelect" resultType="MyMap">
+        /* NeoMapper4070.getTR2002_553M_DateSelect - 551원장에서 마스터용 데이터 추출 */
+        <![CDATA[
+        SELECT Z.C_SLF_ORG
+		,      Z.N_LAW_EVE
+		,      Z.S_NO
+		,      Z.SUNAP_SEQ
+		,      Z.ETAX_SEQ
+		,      Z.D_BANK_REP
+		,      Z.IN_ACC
+		,      Z.OUT_DESC
+		,      Z.C_ACCCD
+		,      Z.DIV_GB
+		,      SUM(SUC_CNT) AS SUC_CNT
+		,      SUM(ERR_CNT) AS ERR_CNT
+		,      SUM(SUC_AMT) AS SUC_AMT
+		,      SUM(ERR_AMT) AS ERR_AMT
+		FROM   (
+				SELECT A.C_SLF_ORG
+				,      A.N_LAW_EVE
+				,      A.S_NO
+				,      A.SUNAP_SEQ
+				,      A.ETAX_SEQ
+				,      A.D_BANK_REP
+				,      ACCOUNT  AS IN_ACC
+				,      (SELECT CASE WHEN LENGTH( TRIM( SGG_NM ) ) > 3
+				                    THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+				                    ELSE TRIM( SGG_NM )
+				               END || DECODE(DIV_GB,'0','경매배당금충당','1','공매배당금충당','2','법원공탁금충당','3','압류추심금충당','4','변제금충당')
+				        FROM   COMSGG
+				        WHERE  (SIDO_COD,SGG_COD)=(( SUBSTR( A.C_SLF_ORG, 1, 2 ), SUBSTR( A.C_SLF_ORG, 3, 3 ) ) )
+				        AND    ROWNUM =1
+				       ) AS OUT_DESC
+				,      C_ACCCD
+				,      DIV_GB
+				,       DECODE(ETAX_RESULT_CODE,'0000', '1') AS SUC_CNT
+		        ,       DECODE(ETAX_RESULT_CODE,'9999', '1') AS ERR_CNT
+		        ,       NVL( DECODE(ETAX_RESULT_CODE,'0000', DECODE( LEV.LVL, 1, A.ETAX_SI_AMT, 2, A.ETAX_GU_AMT, 3, A.ETAX_KUK_AMT, 0 ) ), 0 ) AS SUC_AMT
+		        ,       NVL( DECODE(ETAX_RESULT_CODE,'9999', DECODE( LEV.LVL, 1, A.ETAX_SI_AMT, 2, A.ETAX_GU_AMT, 3, A.ETAX_KUK_AMT, 0 ) ), 0 ) AS ERR_AMT
+				FROM   CSTSCYB553 A
+				,      (SELECT LEVEL LVL FROM DUAL CONNECT BY LEVEL <= 3) LEV
+				WHERE  A.ETAX_STATUS_CODE = 'P'
+				AND    ( (LEV.LVL = 1 AND A.ETAX_SI_AMT != '0') OR (LEV.LVL = 2 AND A.ETAX_GU_AMT != '0') OR (LEV.LVL = 3 AND A.ETAX_KUK_AMT != '0') )
+               ) Z
+		GROUP BY Z.C_SLF_ORG
+		,      Z.N_LAW_EVE
+		,      Z.S_NO
+		,      Z.SUNAP_SEQ
+		,      Z.ETAX_SEQ
+		,      Z.D_BANK_REP
+		,      Z.IN_ACC
+		,      Z.OUT_DESC
+		,      Z.C_ACCCD
+		,      Z.DIV_GB
+		ORDER BY Z.C_SLF_ORG, Z.N_LAW_EVE, Z.S_NO
+        ]]>
+    </select>
+
+    <!-- Main(출금) 저장 -->
+    <insert id="insertTR2002_553M" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2002_553M - 세입 충당 */
+        <![CDATA[
+        INSERT INTO CSTSCYB553M
+        (   C_SLF_ORG
+		,   N_LAW_EVE
+		,   S_NO
+		,   SUNAP_SEQ
+		,   D_BANK_REP
+		,   TRN_NO
+		,   OUT_BANK_CODE
+		,   OUT_ACC_NUM
+		,   OUT_DESC
+		,   RESULT_YN
+		,   STATUS_CODE
+		,   REG_DATE
+		,   C_ACCCD
+		,   DIV_GB
+		,   SUCCESS_CNT
+		,   ERROR_CNT
+		,   SUCCESS_AMT
+		,   ERROR_AMT
+		,   RESULT_CODE
+        ,   RESULT_DESC
+        ,   RESULT_NAME
+        ,   RESULT_DATE
+        ,   REQ_DATE
+        ,   REQ_ID
+        ,   REQ_NM
+        )  VALUES
+        (   #{C_SLF_ORG,jdbcType=VARCHAR}
+		,	#{N_LAW_EVE,jdbcType=VARCHAR}
+		,	#{S_NO,jdbcType=VARCHAR}
+		,	#{SUNAP_SEQ,jdbcType=VARCHAR}
+		,	#{D_BANK_REP,jdbcType=VARCHAR}
+        ,   'EC'||TRIM(#{N_LAW_EVE,jdbcType=VARCHAR})
+        ,   '031'
+        ,   #{IN_ACC,jdbcType=VARCHAR}
+		,	#{OUT_DESC,jdbcType=VARCHAR}
+		,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'N','Y')
+		,   '04'
+        ,   SYSDATE
+		,	#{C_ACCCD,jdbcType=VARCHAR}
+		,	#{DIV_GB,jdbcType=VARCHAR}
+        ,   #{SUC_CNT,jdbcType=VARCHAR}    /* 처리건수 */
+        ,   #{ERR_CNT,jdbcType=VARCHAR}    /* 오류건수 */
+        ,   #{SUC_AMT,jdbcType=VARCHAR}    /* 처리금액 */
+        ,   #{ERR_AMT,jdbcType=VARCHAR}    /* 오류금액 */
+		,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'9999','0000')
+        ,   DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'지급오류','정상처리 되었습니다.')
+        ,   '대구은행'
+        ,   SYSDATE
+        ,   SYSDATE
+        ,   '999999'
+        ,   '대구은행'
+        )
+        ]]>
+    </insert>
+
+    <select id="getTR2002_553D_DateSelect" resultType="MyMap"  parameterType="MyMap">
+        /* NeoMapper4070.getTR2002_553D_DateSelect - 551원장에서 마스터용 데이터 추출 */
+        <![CDATA[
+        SELECT A.C_SLF_ORG
+		,      A.N_LAW_EVE
+		,      A.S_NO
+		,      MAX(A.SUNAP_SEQ) AS SUNAP_SEQ
+		,      A.ETAX_SEQ
+		,      A.D_BANK_REP
+		,      A.D_COM_SOIN
+		,      A.SIGU_TYPE
+		,      A.ACCT_YY
+		,      A.IN_ACC
+        ,      DECODE( A.SIGU_TYPE, 1, '대구시청', 2, (SELECT 지방자치단체명 FROM TR2002_M WHERE SEQ = TRIM(A.N_LAW_EVE) ), 3, '국세', 0 ) IN_ACC_OWNER
+		,      NVL( SUM( DECODE( A.SIGU_TYPE, 1, A.ETAX_SI_AMT, 2, A.ETAX_GU_AMT, 3, A.ETAX_KUK_AMT, 0 ) ), 0 ) AS IN_AMT
+		,      (SELECT CASE WHEN LENGTH( TRIM( SGG_NM ) ) > 3
+		                    THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+		                    ELSE TRIM( SGG_NM )
+		               END || DECODE(DIV_GB,'0','경매배당금충당','1','공매배당금충당','2','법원공탁금충당','3','압류추심금충당','4','변제금충당')
+		         FROM  COMSGG
+		         WHERE (SIDO_COD,SGG_COD)=(( SUBSTR( A.C_SLF_ORG, 1, 2 ), SUBSTR( A.C_SLF_ORG, 3, 3 )))
+		         AND   ROWNUM =1 ) AS IN_DESC
+        ,      A.RESULT_CODE
+        ,      A.RESULT_DESC
+		FROM   (SELECT A.C_SLF_ORG
+		        ,      A.N_LAW_EVE
+		        ,      A.S_NO
+		        ,      A.SUNAP_SEQ
+		        ,      A.ETAX_SEQ
+		        ,      A.D_BANK_REP
+		        ,      A.D_COM_SOIN
+		        ,      LEV.LVL AS SIGU_TYPE
+		        ,      A.ETAX_SI_AMT
+		        ,      A.ETAX_GU_AMT
+		        ,      A.ETAX_KUK_AMT
+		        ,      A.ETAX_STATUS_CODE
+		        ,      A.ETAX_RESULT_CODE AS RESULT_CODE
+                ,      A.ETAX_RESULT_DESC AS RESULT_DESC
+		        ,      FC_GET_ACC_YEAR(A.D_COM_SOIN, A.ETAX_ACCT_YY) AS ACCT_YY
+		        ,      DIV_GB
+		        ,      DECODE( LEV.LVL, 1, D.광역시도세계좌번호, 2, D.시군구세계좌번호, 3, D.국세계좌번호, 0 ) AS IN_ACC
+		        FROM   CSTSCYB553 A, TR2002_D D
+		        ,      (SELECT LEVEL LVL FROM DUAL CONNECT BY LEVEL <= 3 ) LEV
+		        WHERE  A.SEQ = D.SEQ_D
+		        AND    A.C_SLF_ORG        = #{C_SLF_ORG,jdbcType=VARCHAR}
+		        AND    A.N_LAW_EVE        = #{N_LAW_EVE,jdbcType=VARCHAR}
+		        AND    A.ETAX_STATUS_CODE = 'P'
+		        AND    ( ( LEV.LVL = 1 AND A.ETAX_SI_AMT != '0' ) OR ( LEV.LVL = 2 AND A .ETAX_GU_AMT != '0' ) OR ( LEV.LVL = 3 AND A .ETAX_KUK_AMT != '0' ) )
+		       ) A
+		GROUP BY A.C_SLF_ORG
+		,        A.N_LAW_EVE
+		,        A.S_NO
+		,        A.ETAX_SEQ
+		,        A.D_BANK_REP
+		,        A.D_COM_SOIN
+		,        A.SIGU_TYPE
+		,        A.ACCT_YY
+		,        A.DIV_GB
+        ,        A.IN_ACC
+        ,        A.RESULT_CODE
+        ,        A.RESULT_DESC
+        ORDER BY A.C_SLF_ORG, A.N_LAW_EVE, A.S_NO, A.ETAX_SEQ, A.D_BANK_REP, A.SIGU_TYPE
+        ]]>
+    </select>
+
+    <!-- Main(출금) 저장 -->
+    <insert id="insertTR2002_553D" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2002_553D - 세입 충당 */
+        <![CDATA[
+        INSERT INTO CSTSCYB553D
+        (   C_SLF_ORG
+		,   N_LAW_EVE
+		,   S_NO
+		,   SUNAP_SEQ
+		,   D_BANK_REP
+		,   SEQ
+		,   SIGU_TYPE
+		,   ACCT_YY
+		,   IN_BANK_CODE
+		,   IN_ACC_NUM
+		,   IN_ACC_OWNER
+		,   IN_AMT
+		,   IN_DESC
+		,   RESULT_YN
+		,   RESULT_CODE
+		,   RESULT_DESC
+		,   RESULT_NAME
+		,   RESULT_DATE
+		,   REG_DATE
+        )  VALUES
+        (   #{C_SLF_ORG,jdbcType=VARCHAR}
+		,   #{N_LAW_EVE,jdbcType=VARCHAR}
+		,   #{S_NO,jdbcType=VARCHAR}
+		,   #{SUNAP_SEQ,jdbcType=VARCHAR}
+		,   #{D_BANK_REP,jdbcType=VARCHAR}
+		,   #{SEQ,jdbcType=VARCHAR}
+		,   #{SIGU_TYPE,jdbcType=VARCHAR}
+		,   #{ACCT_YY,jdbcType=VARCHAR}
+		,   '031'
+		,   #{IN_ACC,jdbcType=VARCHAR}   /*'140202'*/
+		,   #{IN_ACC_OWNER,jdbcType=VARCHAR}
+		,   #{IN_AMT,jdbcType=VARCHAR}
+		,   #{IN_DESC,jdbcType=VARCHAR}
+		,   DECODE(#{RESULT_CODE,jdbcType=VARCHAR},'0000','Y','N')
+        ,   #{RESULT_CODE,jdbcType=VARCHAR}
+        ,   #{RESULT_DESC,jdbcType=VARCHAR}
+        ,   '대구은행'
+        ,   SYSDATE
+		,   SYSDATE
+        )
+        ]]>
+    </insert>
+
+
+    <!-- ############################################ -->
+    <!-- ############# TR2003 ####################### -->
+    <!-- ############################################ -->
+
+    <update id="updateTR2003_543_Status_P" >
+        UPDATE CSTSCYB543 SET ETAX_STATUS_CODE = 'P'
+        WHERE ETAX_STATUS_CODE = '01'
+    </update>
+
+    <select id="getTR2003_543M_DateSelect"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4070.getTR2003_543M_DateSelect - 543원장에서 마스터용 데이터 추출 */
+        <![CDATA[
+        SELECT A.C_SLF_ORG,
+               A.CREATE_DATE,
+               A.FILE_NUMBER,
+               A.DIV_OVERPAY,
+               FC_GET_ACC_NUMBER('543', A.C_SLF_ORG, A.CREATE_DATE, A.FILE_NUMBER, A.DIV_OVERPAY) AS IN_ACC,
+               (SELECT CASE
+                          WHEN LENGTH( TRIM( SGG_NM ) ) > 3 THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+                          ELSE TRIM( SGG_NM )
+                       END || DECODE(A.DIV_OVERPAY, '1', '환급금', '2', '추심', '3', '징수촉탁', '4', '징수촉탁', '8','세입금정산','9','보증금지급', '알수없음')
+                  FROM COMSGG
+                 WHERE ( SIDO_COD,
+                               SGG_COD ) = (( SUBSTR( A.C_SLF_ORG, 1, 2),
+                                       SUBSTR( A.C_SLF_ORG, 3, 3) ) )
+                   AND ROWNUM = 1 ) AS OUT_DESC,
+               COUNT(*) AS CNT,
+               COUNT(DECODE(ETAX_RESULT_CODE,'0000', '1')) AS SUC_CNT,
+               COUNT(DECODE(ETAX_RESULT_CODE,'9999', '1')) AS ERR_CNT,
+               NVL(SUM(DECODE(ETAX_RESULT_CODE,'0000',OUT_AMT)),'0') AS SUC_AMT,
+               NVL(SUM(DECODE(ETAX_RESULT_CODE,'9999',OUT_AMT)),'0') AS ERR_AMT
+        FROM CSTSCYB543 A
+        WHERE A.ETAX_STATUS_CODE ='P'
+         GROUP BY A.C_SLF_ORG,
+               A.CREATE_DATE,
+               A.FILE_NUMBER,
+               A.DIV_OVERPAY
+         ORDER BY A.C_SLF_ORG,
+               A.CREATE_DATE,
+               A.FILE_NUMBER,
+               A.DIV_OVERPAY
+        ]]>
+    </select>
+
+    <select id="getTR2003_543D_DateSelect"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4070.getTR2003_543D_DateSelect - 543원장에서 디테일용 데이터 추출 */
+        <![CDATA[
+        SELECT A.C_SLF_ORG,
+               A.CREATE_DATE,
+               A.FILE_NUMBER,
+               A.DIV_OVERPAY,
+               A.SEQ,
+               A.ACCT_DT,
+               A.OVERPAY_NO,
+               A.SEQ_NUMBER,
+               A.ETAX_C_BANK,
+               A.BANK_ACC,
+               A.ACC_OWNER_NAME,
+               A.OUT_AMT,
+               (SELECT CASE
+                          WHEN LENGTH( TRIM( SGG_NM ) ) > 3 THEN DECODE( SGG_COD, '000', '대구시', '지방세')
+                          ELSE TRIM( SGG_NM )
+                       END || DECODE(A.DIV_OVERPAY, '1', '환급금', '2', '추심', '3', '징수촉탁', '4', '징수촉탁', '8','세입금정산','9','보증금지급', '알수없음')
+               FROM COMSGG
+               WHERE ( SIDO_COD, SGG_COD ) = (( SUBSTR( A.C_SLF_ORG, 1, 2), SUBSTR( A.C_SLF_ORG, 3, 3) ) )
+               AND ROWNUM = 1 ) AS IN_DESC,
+               A.ETAX_USE_YN,
+               A.ETAX_RESULT_CODE
+        FROM CSTSCYB543 A
+        WHERE A.ETAX_STATUS_CODE ='P'
+        AND A.C_SLF_ORG = #{C_SLF_ORG,jdbcType=VARCHAR}
+        AND A.CREATE_DATE = #{CREATE_DATE,jdbcType=VARCHAR}
+        AND A.FILE_NUMBER = #{FILE_NUMBER,jdbcType=VARCHAR}
+        AND A.DIV_OVERPAY= #{DIV_OVERPAY,jdbcType=VARCHAR}
+        ]]>
+    </select>
+
+    <insert id="insertTR2003M" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2003M - 환급급지금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB543M ( C_SLF_ORG,
+              CREATE_DATE,
+              FILE_NUMBER,
+              DIV_OVERPAY,
+              TRN_NO,
+              OUT_BANK_CODE,
+              OUT_ACC_NUM,
+              OUT_DESC,
+              RESULT_YN,
+              RESULT_CODE,
+              RESULT_DESC,
+              RESULT_NAME,
+              RESULT_DATE,
+              TOTAL_CNT,
+              SUCCESS_CNT,
+              ERROR_CNT,
+              SUCCESS_AMT,
+              ERROR_AMT,
+              STATUS_CODE,
+              REG_DATE)
+        VALUES ( #{C_SLF_ORG,jdbcType=VARCHAR},
+               #{CREATE_DATE,jdbcType=VARCHAR},
+               #{FILE_NUMBER,jdbcType=VARCHAR},
+               #{DIV_OVERPAY,jdbcType=VARCHAR},
+               ('EB' || #{FILE_NUMBER,jdbcType=VARCHAR}),
+               '031',
+               #{IN_ACC,jdbcType=VARCHAR},
+               #{OUT_DESC,jdbcType=VARCHAR},
+               DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'N','Y'),
+               DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'9999','0000'),
+               DECODE(#{SUC_CNT,jdbcType=NUMERIC},0,'지급오류','정상처리 되었습니다.'),
+               '대구은행',
+               SYSDATE,
+               NVL(#{CNT,jdbcType=NUMERIC},0),
+               NVL(#{SUC_CNT,jdbcType=NUMERIC},0),
+               NVL(#{ERR_CNT,jdbcType=NUMERIC},0),
+               NVL(#{SUC_AMT,jdbcType=NUMERIC},0),
+               NVL(#{ERR_AMT,jdbcType=NUMERIC},0),
+               '04',
+               SYSDATE )
+        ]]>
+        </insert>
+
+        <insert id="insertTR2003D" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2003D - 환급급지금 */
+        <![CDATA[
+        INSERT
+          INTO CSTSCYB543D (C_SLF_ORG,
+          CREATE_DATE,
+          FILE_NUMBER,
+          DIV_OVERPAY,
+          SEQ,
+          ACCT_DT,
+          OVERPAY_NO,
+          SEQ_NUMBER,
+          IN_BANK_CODE,
+          IN_ACC_NUM,
+          IN_ACC_OWNER,
+          IN_AMT,
+          IN_DESC,
+          RESULT_YN,
+          RESULT_CODE,
+          RESULT_DESC,
+          RESULT_NAME,
+          RESULT_DATE,
+          REG_DATE )
+        VALUES ( #{C_SLF_ORG,jdbcType=VARCHAR},
+                 #{CREATE_DATE,jdbcType=VARCHAR},
+                 #{FILE_NUMBER,jdbcType=VARCHAR},
+                 #{DIV_OVERPAY,jdbcType=VARCHAR},
+                 #{SEQ,jdbcType=VARCHAR},
+                 #{ACCT_DT,jdbcType=VARCHAR},
+                 #{OVERPAY_NO,jdbcType=VARCHAR},
+                 #{SEQ_NUMBER,jdbcType=VARCHAR},
+                 #{ETAX_C_BANK,jdbcType=VARCHAR},
+                 #{BANK_ACC,jdbcType=VARCHAR},
+                 #{ACC_OWNER_NAME,jdbcType=VARCHAR},
+                 NVL(#{OUT_AMT,jdbcType=NUMERIC},0),
+                 #{IN_DESC,jdbcType=VARCHAR},
+                 DECODE(#{ETAX_RESULT_CODE,jdbcType=VARCHAR},'0000','Y','N'),
+                 #{ETAX_RESULT_CODE,jdbcType=VARCHAR},
+                 DECODE(#{ETAX_RESULT_CODE,jdbcType=VARCHAR}, '0000', '정상처리 되었습니다.', '지급오류'),
+                 '대구은행',
+                 SYSDATE,
+                 SYSDATE)
+        ]]>
+        </insert>
+
+        <update id="updateTR2003_543_Status_06">
+        UPDATE CSTSCYB543 SET ETAX_STATUS_CODE ='06'
+        WHERE ETAX_STATUS_CODE ='P'
+        </update>
+
+
+    <!-- ############################################ -->
+    <!-- ############# TR2004 ####################### -->
+    <!-- ############################################ -->
+
+    <select id="getFileNumberTR2004"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4070.getFileNumberTR2004 - 등록된 데이터가 있는지 확인 */
+        SELECT SEQ_543_FILENUMBER.NEXTVAL AS FILENUMBER
+        FROM   DUAL
+    </select>
+
+    <insert id="insertTR2004" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2004 - 환급급지금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB543 (
+           SEQ,              /* 발생순서 */
+           RAISE_TIME,       /* 발생일시 */
+           C_SLF_ORG,        /* 자치단체코드 */
+           CREATE_DATE,      /* 파일생성일자 */
+           FILE_NUMBER,      /* 파일일련번호 */
+           TOT_CNT,          /* 총건수 */
+           TOT_AMT,          /* 총금액 */
+           SEQ_NUMBER,       /* 일련번호 */
+           C_SSEMOK,         /* 세목코드 */
+           ACCT_YY,          /* 회계연도 */
+           ACCT_DT,          /* 반환결의일자 */
+           YEAR_GB,          /* 현과년도구분 */
+           OUT_DO_ACC,       /* 도세환부계좌(출금계좌) */
+           OUT_AMT,          /* 출금액 */
+           OUT_DO_AMT,       /* 도세금액 */
+           C_BANK,           /* 수취인 거래 은행코드 */
+           ACC_OWNER_NAME,   /* 수취 예금주 성명 */
+           MO_TEL,           /* 수취인 휴대폰번호 */
+           BANK_ACC,         /* 수취인 입금 계좌번호 */
+           TAX_TOTAL,        /* 지급총액 */
+           IN_DTL,           /* 입금적요 */
+           ACC_OWNER_NO,     /* 예금주 주민번호 */
+           DIV_OVERPAY,      /* 지급구분 4001~4005 */
+           PAYMENT_RESULT,   /* 지급결과코드 */
+           RTN_YN,           /* 처리여부 */
+           ETAX_C_BANK,
+           ETAX_STATUS_CODE, /* 작업상태코드 */
+           ETAX_RESULT_CODE, /* 지급결과코드 */
+           ETAX_RESULT_DESC, /* 지급결과설명 */
+           ETAX_USE_YN,      /* 사용여부 */
+           ETAX_REG_DATE,    /* 저장일시 */
+           ETAX_UPT_DATE     /* 수정일시 */
+        )
+        VALUES (
+           SEQ_543.NEXTVAL,
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           #{지방자치단체코드_M},
+           TO_CHAR(SYSDATE, 'YYYYMMDD'),
+           #{FILENUMBER_M},
+           #{출금총건수_M,          jdbcType=VARCHAR},
+           #{출금총금액_M,          jdbcType=VARCHAR},
+           #{일련번호_D,           jdbcType=VARCHAR},
+           #{세목코드_D,           jdbcType=VARCHAR},
+           #{회계연도_M,           jdbcType=VARCHAR},
+           #{회계일자_M,           jdbcType=VARCHAR},
+           '',
+           #{출금계좌번호_M,           jdbcType=VARCHAR},
+           #{지급액_D,        jdbcType=VARCHAR},
+           #{지급액_D,           jdbcType=VARCHAR},
+           SUBSTR(#{수취인금융기관코드_D,jdbcType=VARCHAR},0,3),
+           #{수취인계좌예금주명_D,          jdbcType=VARCHAR},
+           #{수취인전화번호_D,        jdbcType=VARCHAR},
+           #{수취인계좌번호_D,        jdbcType=VARCHAR},
+           #{지급액_D,        jdbcType=VARCHAR},
+           '',
+           #{수취인계좌예금주번호_D,         jdbcType=VARCHAR},
+           '4',
+           '000',
+           '0',
+           SUBSTR(#{수취인금융기관코드_D, jdbcType=VARCHAR}, 0, 3),
+           '01',
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999'),
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류'),
+           'Y',
+           SYSDATE,
+           SYSDATE
+        )
+        ]]>
+    </insert>
+
+
+    <!-- ############################################ -->
+    <!-- ############# TR2005 ####################### -->
+    <!-- ############################################ -->
+
+    <select id="getFileNumberTR2005"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4070.getFileNumberTR2005 - 등록된 데이터가 있는지 확인 */
+        SELECT SEQ_543_FILENUMBER.NEXTVAL AS FILENUMBER
+        FROM   DUAL
+    </select>
+
+    <insert id="insertTR2005" parameterType="MyMap">
+        /* NeoMapper4070.insertTR2005 - 환급급지금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB543 (
+           SEQ,              /* 발생순서 */
+           RAISE_TIME,       /* 발생일시 */
+           C_SLF_ORG,        /* 자치단체코드 */
+           CREATE_DATE,      /* 파일생성일자 */
+           FILE_NUMBER,      /* 파일일련번호 */
+           TOT_CNT,          /* 총건수 */
+           TOT_AMT,          /* 총금액 */
+           SEQ_NUMBER,       /* 일련번호 */
+           ACCT_YY,          /* 회계연도 */
+           ACCT_DT,          /* 반환결의일자 */
+           YEAR_GB,          /* 현과년도구분 */
+           OUT_DO_ACC,       /* 도세환부계좌 */
+           OUT_AMT,          /* 출금액 */
+           C_BANK,           /* 수취인 거래 은행코드 */
+           ACC_OWNER_NAME,   /* 수취 예금주 성명 */
+           MO_TEL,           /* 수취인 휴대폰번호 */
+           BANK_ACC,         /* 수취인 입금 계좌번호 */
+           TAX_TOTAL,        /* 지급총액 */
+           IN_DTL,           /* 입금적요 */
+           ACC_OWNER_NO,     /* 예금주 주민번호 */
+           DIV_OVERPAY,      /* 지급구분 5001~5005 */
+           PAYMENT_RESULT,   /* 지급결과코드 */
+           RTN_YN,           /* 처리여부 */
+           ETAX_C_BANK,
+           ETAX_STATUS_CODE, /* 작업상태코드 */
+           ETAX_RESULT_CODE, /* 지급결과코드 */
+           ETAX_RESULT_DESC, /* 지급결과설명 */
+           ETAX_USE_YN,      /* 사용여부 */
+           ETAX_REG_DATE,    /* 저장일시 */
+           ETAX_UPT_DATE     /* 수정일시 */
+        )
+        VALUES (
+           SEQ_543.NEXTVAL,
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           #{지방자치단체코드_M},
+           TO_CHAR(SYSDATE, 'YYYYMMDD'),
+           #{FILENUMBER_M},
+           #{출금총건수_M,          jdbcType=VARCHAR},
+           #{출금총금액_M,          jdbcType=VARCHAR},
+           #{일련번호_D,           jdbcType=VARCHAR},
+           #{회계연도_M,           jdbcType=VARCHAR},
+           #{회계일자_M,           jdbcType=VARCHAR},
+           '',
+           #{출금계좌번호_M,        jdbcType=VARCHAR},
+           #{지급액_D,             jdbcType=VARCHAR},
+           SUBSTR(#{수취인금융기관코드_D,jdbcType=VARCHAR},0,3),
+           #{수취인계좌예금주명_D,    jdbcType=VARCHAR},
+           #{수취인전화번호_D,       jdbcType=VARCHAR},
+           #{수취인계좌번호_D,       jdbcType=VARCHAR},
+           #{지급액_D,             jdbcType=VARCHAR},
+           '',
+           #{수취인계좌예금주번호_D,         jdbcType=VARCHAR},
+           '5',
+           '000',
+           '0',
+           SUBSTR(#{수취인금융기관코드_D, jdbcType=VARCHAR}, 0, 3),
+           '01',
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999'),
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류'),
+           'Y',
+           SYSDATE,
+           SYSDATE
+        )
+        ]]>
+    </insert>
+
+</mapper>

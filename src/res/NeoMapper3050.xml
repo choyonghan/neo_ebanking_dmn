@@ -1,0 +1,1096 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper3050">
+
+
+	<!-- TCM1482S(회계정보) 신규 등록된 데이터 확인 -->
+	<!-- 조건처리 필요  -->
+	<select id="getTCM1482S"  resultType="MyMap" parameterType="MyMap">
+		SELECT LINK_TRSC_ID
+				, LAF_CD
+		 FROM TCM1482S						/* 회계구분정보 */
+		WHERE LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID, LAF_CD
+<!-- 		   AND (LINK_STAT_PRCS_DT = ''  OR   LINK_STAT_PRCS_DT IS NULL)   			/* 연계상태처리일시 */ -->
+    </select>
+
+
+    <select id="selectTCM1482S"  resultType="MyMap" parameterType="MyMap">
+	 	SELECT LINK_SNUM       			 	/* 연계일련번호 */
+				, LAF_CD        					/* 자치단체코드 */
+				, LINK_TRSC_ID        			/* 연계트랜잭션ID */
+				, FYR        						/* 회계연도 */
+				, ACNT_DV_MSTR_CD        /* 회계구분마스터코드 */
+				, ACNT_DV_CD        /* 회계구분코드 */
+				, LAF_NM        /* 지방자치단체명 */
+				, ACNT_DV_NM        /* 회계구분명 */
+				, ACNT_DV_MSTR_NM        /* 회계구분마스터명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, USE_YN        /* 사용유무 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, LINK_ERR_MSG_CN        /*  */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+		 FROM TCM1482S						/* 회계구분정보 */
+		WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+		   AND LAF_CD = #{LAF_CD}
+		   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+    <!-- 같은 데이터 값 들어오면 이전 날짜 사용여부 N으로 update     -->
+    <update id="updateOldTCM1482" parameterType="MyMap">
+        UPDATE TCM1482
+		   SET USE_YN = 'N'
+		 WHERE USE_YN = 'Y'
+		 AND LAF_CD = #{LAF_CD}
+		 AND FYR = #{FYR}
+		 AND ACNT_DV_MSTR_CD = #{ACNT_DV_MSTR_CD}
+		 AND ACNT_DV_CD = #{ACNT_DV_CD}
+    </update>
+
+    <insert id="insertTCM1482" parameterType="MyMap">
+	    INSERT INTO TCM1482
+	    		( LINK_SNUM
+				, LAF_CD
+				, LINK_TRSC_ID
+				, FYR
+				, ACNT_DV_MSTR_CD
+
+				, ACNT_DV_CD
+				, LAF_NM
+				, ACNT_DV_NM
+				, ACNT_DV_MSTR_NM
+				, STBX_BANK_CD
+
+				, USE_YN
+				, LINK_PRCS_DV_CD
+				, LINK_TRSM_STAT_CD
+				, PRCT_PRCS_DT
+				, LINK_STAT_PRCS_DT
+
+
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD         /* 작업시스템코드 */
+				, JOB_STAT_CD         /* 작업상태코드 */
+				, RGSTR_DT         /* 등록일시 */
+				, DMND_YMD         /* 요청일자 */
+				)
+		VALUES
+	    		(  #{LINK_SNUM}        /* 연계일련번호 */
+	    		,  #{LAF_CD}        /* 자치단체코드 */
+				,  #{LINK_TRSC_ID}        /* 연계트랜잭션ID */
+				,  #{FYR}        /* 회계연도 */
+				,  #{ACNT_DV_MSTR_CD}        /* 회계구분마스터코드 */
+
+				,  #{ACNT_DV_CD}        /* 회계구분코드 */
+				,  #{LAF_NM, javaType=String,jdbcType=VARCHAR}        /* 지방자치단체명 */
+				,  #{ACNT_DV_NM}        /* 회계구분명 */
+				,  #{ACNT_DV_MSTR_NM, javaType=String,jdbcType=VARCHAR}        /* 회계구분마스터명 */
+				,  #{STBX_BANK_CD}        /* 금고은행코드 */
+
+				,  #{USE_YN}        /* 사용유무 */
+				,  #{LINK_PRCS_DV_CD}        /* 연계처리구분코드 */
+				,  #{LINK_TRSM_STAT_CD}        /* 연계전송상태코드 */
+				,  #{PRCT_PRCS_DT}				/* 응용처리일시 */
+				,  #{LINK_STAT_PRCS_DT}			/* 연계상태처리일시 */
+
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         /* 작업시스템코드 */
+				, #{JOB_STAT_CD}         /* 작업상태코드 */
+				, SYSDATE         /* 등록일시 */
+				, #{DMND_YMD}         /* 요청일자(현재일자 SETTING 된것) */
+	    		)
+    </insert>
+
+	<!-- 회계정보 송신테이블  update     -->
+	<update id="updateTCM1482S" parameterType="MyMap">
+		UPDATE TCM1482S SET
+<!-- 				   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+				   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD}					/* 연계전송상태코드 */
+		  WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+		     AND LAF_CD = #{LAF_CD}
+    </update>
+
+	<!-- 부서정보  TCM2061 DEPT -->
+	<!-- 조건처리 필요  -->
+    <select id="getTCM2061S" resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+    			, LAF_CD
+		 FROM TCM2061S						/* 회계구분정보 */
+		WHERE LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID, LAF_CD
+    </select>
+
+    <!-- 이전날짜 부서정보 update  TCM2061 DEPT -->
+    <update id="updateOldTCM2061" parameterType="MyMap">
+    <![CDATA[
+        UPDATE TCM2061 SET
+           LAF_CD = LAF_CD + 1001000
+          WHERE DMND_YMD = (
+          SELECT MAX(DMND_YMD) FROM TCM2061
+          WHERE DMND_YMD > to_char(SYSDATE - 7, 'YYYYMMDD')
+          AND DMND_YMD < to_char(SYSDATE, 'YYYYMMDD')
+          )
+          AND LAF_CD IN
+          ('6270000', '3410000', '3420000', '3430000', '3440000', '3450000', '3460000', '3470000', '3480000')
+    ]]>
+    </update>
+
+    <select id="selectTCM2061S" resultType="MyMap" parameterType="MyMap">
+		SELECT LINK_SNUM        /* 연계일련번호 */
+				, LAF_CD        /* 자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, LAF_NM        /* 지방자치단체명 */
+				, GCC_DEPT_CD        /* GCC부서코드 */
+				, DEPT_CD        /* 부서코드 */
+				, DEPT_NM        /* 부서명 */
+				, GOF_CD        /* 관서코드 */
+				, GOF_NM        /* 관서명 */
+				, SLNGK_CD        /* 실국코드 */
+				, SLNGK_NM        /* 실국명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, LINK_ERR_MSG_CN        /*  */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+		 FROM TCM2061S						/* 부서정보 */
+		WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+		   AND LAF_CD = #{LAF_CD}
+		   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+	<!-- 부서정보 -->
+	<insert id="insertTCM2061" parameterType="MyMap">
+		INSERT INTO TCM2061
+	    		( LINK_SNUM        /* 연계일련번호 */
+	    		, LAF_CD        /* 자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, LAF_NM        /* 지방자치단체명 */
+				, GCC_DEPT_CD        /* GCC부서코드 */
+
+				, DEPT_CD        /* 부서코드 */
+				, DEPT_NM        /* 부서명 */
+				, GOF_CD        /* 관서코드 */
+				, GOF_NM        /* 관서명 */
+				, SLNGK_CD        /* 실국코드 */
+
+				, SLNGK_NM        /* 실국명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD         /* 작업시스템코드 */
+				, JOB_STAT_CD         /* 작업상태코드 */
+				, RGSTR_DT         /* 등록일시 */
+
+				, DMND_YMD         /* 요청일자 */
+				)
+		VALUES
+	    		(  #{LINK_SNUM}        /* 연계일련번호 */
+	    		,  #{LAF_CD}        			/* 자치단체코드 */
+				,  #{LINK_TRSC_ID}        /* 연계트랜잭션ID */
+				,  #{LAF_NM}        			/* 지방자치단체명 */
+				,  #{GCC_DEPT_CD, javaType=String,jdbcType=VARCHAR}        	/* GCC부서코드 */
+
+				,  #{DEPT_CD}        		/* 부서코드 */
+				,  #{DEPT_NM}       		/* 부서명 */
+				,  #{GOF_CD}        			/* 관서코드 */
+				,  #{GOF_NM, javaType=String,jdbcType=VARCHAR}        		/* 관서명 */
+				,  #{SLNGK_CD, javaType=String,jdbcType=VARCHAR}        /* 실국코드 */
+
+				,  #{SLNGK_NM, javaType=String,jdbcType=VARCHAR}        /* 실국명 */
+				,  #{STBX_BANK_CD}        /* 금고은행코드 */
+				,  #{LINK_PRCS_DV_CD}        /* 연계처리구분코드 */
+				,  #{LINK_TRSM_STAT_CD}      /* 연계전송상태코드 */
+				,  #{PRCT_PRCS_DT, javaType=String,jdbcType=VARCHAR}				/* PRCT_PRCS_DT 응용처리일시 */
+
+				,  #{LINK_STAT_PRCS_DT, javaType=String,jdbcType=VARCHAR}        /* 연계상태처리일시 */
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         /* 작업시스템코드 */
+				, #{JOB_STAT_CD}         /* 작업상태코드 */
+				, SYSDATE         /* 등록일시 */
+
+				, #{DMND_YMD}         /* 요청일자(현재일자 SETTING 된것) */
+	    		)
+    </insert>
+
+
+     <!-- 부서정보 송신테이블  update     -->
+    <update id="updateTCM2061S" parameterType="MyMap">
+    	UPDATE TCM2061S SET
+<!-- 			  	   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+			 	   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD} 			/* 연계전송상태코드 */
+	  	  WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+	  	     AND LAF_CD = #{LAF_CD}
+    </update>
+
+
+    <!-- 	사용자정보 TCM4091 USER -->
+    <select id="getTCM4091S"  resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+    			, LAF_CD
+		 FROM TCM4091S						/* 회계구분정보 */
+		WHERE LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID, LAF_CD
+    </select>
+
+    <!-- 조건처리 필요  -->
+	<select id="selectTCM4091S"  resultType="MyMap" parameterType="MyMap">
+			SELECT LINK_SNUM        /* 연계일련번호 */
+					, LAF_CD        /* 자치단체코드 */
+					, LINK_TRSC_ID        /* 연계트랜잭션ID */
+					, ACNT_DV_CD        /* 회계구분코드 */
+					, ADC_CD        /* 회계별업무담당코드 */
+					, GOF_CD        /* 관서코드 */
+					, DEPT_CD        /* 부서코드 */
+					, GCC_DEPT_CD        /* GCC부서코드 */
+					, USR_ID        /* 사용자ID */
+					, USR_NM        /* 사용자명 */
+					, ADC_NM        /* 회계별업무담당명 */
+					, STBX_BANK_CD        /* 금고은행코드 */
+					, APRV_RGH_YN        /* 승인권한여부 */
+					, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+					, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+					, LINK_ERR_MSG_CN        /* 연계오류메시지내용 */
+					, PRCT_PRCS_DT        /* 응용처리일시 */
+					, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+<!-- 					, '' AS USER_PW        			/* 패스워드 */ -->
+<!-- 					, '' AS SYS_AUTH        			/* 시스템권한 */ -->
+<!-- 					, '' AS BF_LOGIN_DT        		/* 이전로그인일시 */ -->
+<!-- 					, '' AS LT_LOGIN_DT        		/* 최종로그인일시 */ -->
+<!-- 					, '' AS USE_N_DT        			/* 사용중지일시 */ -->
+<!-- 					, '' AS PW_CHG_DT        		/* 비밀번호변경일시 */ -->
+<!-- 					, '' AS PW_ERR_CNT        		/* 비밀번호오류횟수 */ -->
+<!-- 					, '' AS RGSTR_DT        			/* 등록일시 */ -->
+			 FROM TCM4091S					/* 사용자정보 */
+			WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+			   AND LAF_CD = #{LAF_CD}
+		   	   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+	<!--      사용자회계담당정보  -->
+    <insert id="insertTCM4091" parameterType="MyMap">
+    	INSERT INTO TCM4091
+    			( LINK_SNUM        /* 연계일련번호 */
+				, LAF_CD        /* 자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, ACNT_DV_CD        /* 회계구분코드 */
+				, ADC_CD        /* 회계별업무담당코드 */
+
+				, ADC_NM        /* 회계별업무담당명 */
+				, GOF_CD        /* 관반ㅈ서코드 */
+				, DEPT_CD        /* 부서코드 */
+				, GCC_DEPT_CD        /* GCC부서코드 */
+				, USR_ID        /* 사용자ID */
+
+				, USR_NM        /* 사용자명 */
+				, APRV_RGH_YN        /* 승인권한여부 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, FYR						/* 회계연도 */
+				, USER_PW        /* 패스워드 */
+				, SYS_AUTH        /* 시스템권한 */
+
+				, BF_LOGIN_DT        /* 이전로그인일시 */
+				, LT_LOGIN_DT        /* 최종로그인일시 */
+				, USE_N_DT        /* 사용중지일시 */
+				, PW_CHG_DT        /* 비밀번호변경일시 */
+				, PW_ERR_CNT        /* 비밀번호오류횟수 */
+
+				, RGSTR_DT        /* 등록일시 */
+				)
+		VALUES
+	    		(  #{LINK_SNUM}        	/* 연계일련번호 */
+	    		, #{LAF_CD}       			/* 자치단체코드 */
+				, #{LINK_TRSC_ID}        	/* 연계트랜잭션ID */
+				, #{ACNT_DV_CD, javaType=String,jdbcType=VARCHAR}        	/* 회계구분코드 */
+				, #{ADC_CD, javaType=String,jdbcType=VARCHAR}        			/* 회계별업무담당코드 */
+
+				, #{ADC_NM, javaType=String,jdbcType=VARCHAR}        			/* 회계별업무담당명 */
+				, #{GOF_CD, javaType=String,jdbcType=VARCHAR}        /* 관서코드 */
+				, #{DEPT_CD, javaType=String,jdbcType=VARCHAR}        /* 부서코드 */
+				, #{GCC_DEPT_CD, javaType=String,jdbcType=VARCHAR}        /* GCC부서코드 */
+				, #{USR_ID, javaType=String,jdbcType=VARCHAR}        /* 사용자ID */
+
+				, #{USR_NM, javaType=String,jdbcType=VARCHAR}        /* 사용자명 */
+				, #{APRV_RGH_YN, javaType=String,jdbcType=VARCHAR}        /* 승인권한여부 */
+				, #{STBX_BANK_CD, javaType=String,jdbcType=VARCHAR}        /* 금고은행코드 */
+				, #{LINK_PRCS_DV_CD, javaType=String,jdbcType=VARCHAR}        /* 연계처리구분코드 */
+				, #{LINK_TRSM_STAT_CD, javaType=String,jdbcType=VARCHAR}        /* 연계전송상태코드 */
+
+				, #{PRCT_PRCS_DT}        /* 응용처리일시 */
+				, #{LINK_STAT_PRCS_DT}        /* 연계상태처리일시 */
+				, #{FYR, javaType=String,jdbcType=VARCHAR}					/* 회계연도 */
+				, #{USER_PW, javaType=String,jdbcType=VARCHAR}        /* 패스워드 */
+				, #{SYS_AUTH, javaType=String,jdbcType=VARCHAR }       /* 시스템권한 */
+
+				, #{BF_LOGIN_DT, javaType=String,jdbcType=VARCHAR  }       /* 이전로그인일시 */
+				, #{LT_LOGIN_DT, javaType=String,jdbcType=VARCHAR }        /* 최종로그인일시 */
+				, #{USE_N_DT, javaType=String,jdbcType=VARCHAR }        /* 사용중지일시 */
+				, #{PW_CHG_DT}        /* 비밀번호변경일시 */
+				, #{PW_ERR_CNT}        /* 비밀번호오류횟수 */
+
+				, SYSDATE       /* 등록일시 */
+    		)
+    </insert>
+
+    <!-- 사용자정보 송신테이블  update     -->
+    <update id="updateTCM4091S" parameterType="MyMap">
+    	UPDATE TCM4091S SET
+<!-- 			   	   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+			 	  LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD} 				/* 연계전송상태코드 */
+	  	 WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+	  	    AND LAF_CD = #{LAF_CD}
+    </update>
+
+
+    <!-- 분야부문 -->
+    <select id="getTCM1222S" resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+    			, LAF_CD
+		 FROM TCM1222S						/* 분야부문 */
+		WHERE LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID, LAF_CD
+    </select>
+
+	<select id="selectTCM1222S"  resultType="MyMap" parameterType="MyMap">
+		SELECT LINK_SNUM        /* 연계일련번호 */
+				, LAF_CD        /* 지방자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, FLD_CD        /* 분야코드 */
+				, FLD_NM        /* 분야명 */
+				, SECT_CD        /* 부문코드 */
+				, SECT_NM        /* 부문명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, LINK_ERR_MSG_CN        /* 연계오류메시지내용 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+		 FROM TCM1222S					/* 분야부문 */
+		WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+		   AND LAF_CD = #{LAF_CD}
+	   	   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+    <insert id="insertTCM1222" parameterType="MyMap">
+    	INSERT INTO TCM1222 (
+				  LINK_SNUM
+				, LAF_CD
+				, LINK_TRSC_ID
+				, FYR
+				, FLD_CD
+				, FLD_NM
+				, SECT_CD
+				, SECT_NM
+				, STBX_BANK_CD
+				, LINK_PRCS_DV_CD
+				, LINK_TRSM_STAT_CD
+				, PRCT_PRCS_DT
+				, LINK_STAT_PRCS_DT
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD         /* 작업시스템코드 */
+				, JOB_STAT_CD         /* 작업상태코드 */
+				, RGSTR_DT         /* 등록일시 */
+				, DMND_YMD         /* 요청일자 */
+				)
+		VALUES
+				( #{LINK_SNUM}
+				, #{LAF_CD}
+				, #{LINK_TRSC_ID}
+				, #{FYR}
+				, #{FLD_CD}
+				, #{FLD_NM,javaType=String,jdbcType=VARCHAR}
+				, #{SECT_CD,javaType=String,jdbcType=VARCHAR}
+				, #{SECT_NM,javaType=String,jdbcType=VARCHAR}
+				, #{STBX_BANK_CD}
+				, #{LINK_PRCS_DV_CD}
+				, #{LINK_TRSM_STAT_CD}
+				, #{PRCT_PRCS_DT, javaType=String,jdbcType=VARCHAR}
+				, #{LINK_STAT_PRCS_DT, javaType=String,jdbcType=VARCHAR}
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         	/* 작업시스템코드 */
+				, #{JOB_STAT_CD}         	/* 작업상태코드 */
+				, SYSDATE         			/* 등록일시 */
+				, #{DMND_YMD}         	/* 요청일자(현재일자 SETTING 된것) */
+				)
+    </insert>
+
+    <!-- 분야부문 송신테이블  update     -->
+	<update id="updateTCM1222S" parameterType="MyMap">
+		UPDATE TCM1222S SET
+<!-- 				   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+				   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD}				/* 연계전송상태코드 */
+		  WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+		  	 AND LAF_CD = #{LAF_CD}
+    </update>
+
+
+	<!-- 세출통계목 -->
+	<select id="getTCM1172S" resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+    			, LAF_CD
+		 FROM TCM1172S						/* 세출통계목 */
+		WHERE LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID, LAF_CD
+    </select>
+
+    <!-- 조회조건 체크하고 변경할 필요있음 -->
+	<select id="selectTCM1172S"  resultType="MyMap" parameterType="MyMap">
+			SELECT LINK_SNUM        /* 연계일련번호 */
+					, LAF_CD       		 /* 지방자치단체코드 */
+					, LINK_TRSC_ID        /* 연계트랜잭션ID */
+					, FYR        				/* 회계연도 */
+					, ANE_CPLBD_CD        /* 세출편성목코드 */
+					, ANE_CPLBD_NM        /* 세출편성목명 */
+					, ANE_STMK_CD        /* 세출통계목코드 */
+					, ANE_STMK_NM        /* 세출통계목명 */
+					, STBX_BANK_CD        /* 금고은행코드 */
+					, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+					, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+					, LINK_ERR_MSG_CN        /* 연계오류메시지내용 */
+					, PRCT_PRCS_DT        /* 응용처리일시 */
+					, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+			 FROM TCM1172S					/* 세출통계목 */
+			WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+			   AND LAF_CD = #{LAF_CD}
+		   	   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+    <insert id="insertTCM1172" parameterType="MyMap">
+    	INSERT INTO TCM1172 (
+				  LINK_SNUM        /* 연계일련번호 */
+				, LAF_CD        /* 지방자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, ANE_CPLBD_CD        /* 세출편성목코드 */
+				, ANE_CPLBD_NM        /* 세출편성목명 */
+				, ANE_STMK_CD        /* 세출통계목코드 */
+				, ANE_STMK_NM        /* 세출통계목명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD         /* 작업시스템코드 */
+				, JOB_STAT_CD         /* 작업상태코드 */
+				, RGSTR_DT         /* 등록일시 */
+				, DMND_YMD         /* 요청일자 */
+				)
+		VALUES
+				( #{LINK_SNUM}
+				, #{LAF_CD}
+				, #{LINK_TRSC_ID}
+				, #{FYR}
+				, #{ANE_CPLBD_CD}
+				, #{ANE_CPLBD_NM,javaType=String,jdbcType=VARCHAR}
+				, #{ANE_STMK_CD,javaType=String,jdbcType=VARCHAR}
+				, #{ANE_STMK_NM,javaType=String,jdbcType=VARCHAR}
+				, #{STBX_BANK_CD}
+				, #{LINK_PRCS_DV_CD}
+				, #{LINK_TRSM_STAT_CD}
+				, #{PRCT_PRCS_DT}
+				, #{LINK_STAT_PRCS_DT}
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         	/* 작업시스템코드 */
+				, #{JOB_STAT_CD}         	/* 작업상태코드 */
+				, SYSDATE         			/* 등록일시 */
+				, #{DMND_YMD}         	/* 요청일자(현재일자 SETTING 된것) */
+				)
+    </insert>
+
+	<update id="updateTCM1172S" parameterType="MyMap">
+		UPDATE TCM1172S SET
+<!-- 				   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+				   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD}				/* 연계전송상태코드 */
+		  WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+		     AND LAF_CD = #{LAF_CD}
+    </update>
+
+
+
+    <!-- 세입목코드 TM TXCD -->
+    <select id="getTFM1051S" resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+		 FROM TFM1051S					/* 세입목코드 */
+		WHERE LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID
+    </select>
+
+    <!-- 조회조건 체크하고 변경할 필요있음 -->
+	<select id="selectTFM1051S"  resultType="MyMap" parameterType="MyMap">
+			SELECT  LINK_SNUM        /* 연계일련번호 */
+					, LINK_TRSC_ID        /* 연계트랜잭션ID */
+					, FYR        /* 회계연도 */
+					, RVJG_CD        /* 세입장코드 */
+					, RVJG_NM        /* 세입장명 */
+					, TXRV_GYAN_CD        /* 세입관코드 */
+					, TXRV_GYAN_NM        /* 세입관명 */
+					, TXRV_HANG_CD        /* 세입항코드 */
+					, TXRV_HANG_NM        /* 세입항명 */
+					, ARMK_CD        /* 세입목코드 */
+					, ARMK_NM        /* 세입목명 */
+					, USE_YN        /* 사용여부 */
+					, CHG_APLCN_YMD        /* 변경적용일자 */
+					, ABL_YMD        /* 폐지일자 */
+					, CHG_YMD        /* 변경일자 */
+					, STBX_BANK_CD        /* 금고은행코드 */
+					, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+					, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+					, LINK_ERR_MSG_CN        /* 연계오류메시지내용 */
+					, PRCT_PRCS_DT        /* 응용처리일시 */
+					, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+			 FROM TFM1051S					/* 세입목코드 */
+			WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+		   	   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+    <insert id="insertTFM1051" parameterType="MyMap">
+    	INSERT INTO TFM1051 (
+				  LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        	/* 연계트랜잭션ID */
+				, FYR        				/* 회계연도 */
+				, RVJG_CD        		/* 세입장코드 */
+				, RVJG_NM        		/* 세입장명 */
+				, TXRV_GYAN_CD        /* 세입관코드 */
+				, TXRV_GYAN_NM        /* 세입관명 */
+				, TXRV_HANG_CD        /* 세입항코드 */
+				, TXRV_HANG_NM        /* 세입항명 */
+				, ARMK_CD        			/* 세입목코드 */
+				, ARMK_NM        			/* 세입목명 */
+				, USE_YN        				/* 사용여부 */
+				, CHG_APLCN_YMD        /* 변경적용일자 */
+				, ABL_YMD        			/* 폐지일자 */
+				, CHG_YMD        			/* 변경일자 */
+				, STBX_BANK_CD        	/* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        			/* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD        	 /* 작업시스템코드 */
+				, JOB_STAT_CD         	/* 작업상태코드 */
+				, RGSTR_DT         		/* 등록일시 */
+				, DMND_YMD         	/* 요청일자 */
+				)
+		VALUES
+				(  #{LINK_SNUM}
+				, #{LINK_TRSC_ID}
+				, #{FYR}
+				, #{RVJG_CD}
+				, #{RVJG_NM,javaType=String,jdbcType=VARCHAR}
+				, #{TXRV_GYAN_CD}
+				, #{TXRV_GYAN_NM,javaType=String,jdbcType=VARCHAR}
+				, #{TXRV_HANG_CD}
+				, #{TXRV_HANG_NM,javaType=String,jdbcType=VARCHAR}
+				, #{ARMK_CD}
+				, #{ARMK_NM,javaType=String,jdbcType=VARCHAR}
+				, #{USE_YN}
+				, #{CHG_APLCN_YMD,javaType=String,jdbcType=VARCHAR}
+				, #{ABL_YMD,javaType=String,jdbcType=VARCHAR}
+				, #{CHG_YMD,javaType=String,jdbcType=VARCHAR}
+				, #{STBX_BANK_CD}
+				, #{LINK_PRCS_DV_CD,javaType=String,jdbcType=VARCHAR}
+				, #{LINK_TRSM_STAT_CD}
+				, #{PRCT_PRCS_DT,javaType=String,jdbcType=VARCHAR}
+				, #{LINK_STAT_PRCS_DT}
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         	/* 작업시스템코드 */
+				, #{JOB_STAT_CD}         	/* 작업상태코드 */
+				, SYSDATE         			/* 등록일시 */
+				, #{DMND_YMD}         	/* 요청일자(현재일자 SETTING 된것) */
+				)
+    </insert>
+
+	<update id="updateTFM1051S" parameterType="MyMap">
+		UPDATE TFM1051S SET
+<!-- 				   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+				   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD}				/* 연계전송상태코드 */
+		  WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+    </update>
+
+
+
+    <!-- 세입목코드매핑 TM TXMP -->
+    <select id="getTFM4020S" resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+		 FROM TFM4020S					/* 세입목코드매핑 */
+		WHERE LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID
+    </select>
+
+    <!-- 조회조건 체크하고 변경할 필요있음 -->
+	<select id="selecTFM4020S"  resultType="MyMap" parameterType="MyMap">
+		SELECT  LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, RVJG_CD        /* 세입장코드 */
+				, RVJG_NM        /* 세입장명 */
+				, TXRV_GYAN_CD        /* 세입관코드 */
+				, TXRV_GYAN_NM        /* 세입관명 */
+				, TXRV_HANG_CD        /* 세입항코드 */
+				, TXRV_HANG_NM        /* 세입항명 */
+				, ARMK_CD        /* 세입목코드 */
+				, ARMK_NM        /* 세입목명 */
+				, RPRS_TXRV_SBJ_CD        /* 대표세입목코드 */
+				, RPRS_TXRV_SBJ_NM        /* 대표세입과목명 */
+				, USE_YN        /* 사용여부 */
+				, CHG_APLCN_YMD        /* 변경적용일자 */
+				, ABL_YMD        /* 폐지일자 */
+				, CHG_YMD        /* 변경일자 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, LINK_ERR_MSG_CN        /* 연계오류메시지내용 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+		 FROM TFM4020S					/* 세입목코드 */
+		WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+	   	   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+    <insert id="insertTFM4020" parameterType="MyMap">
+    	INSERT INTO TFM4020 (
+				  LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, RVJG_CD        /* 세입장코드 */
+				, RVJG_NM        /* 세입장명 */
+				, TXRV_GYAN_CD        /* 세입관코드 */
+				, TXRV_GYAN_NM        /* 세입관명 */
+				, TXRV_HANG_CD        /* 세입항코드 */
+				, TXRV_HANG_NM        /* 세입항명 */
+				, ARMK_CD        /* 세입목코드 */
+				, ARMK_NM        /* 세입목명 */
+				, RPRS_TXRV_SBJ_CD        /* 대표세입목코드 */
+				, RPRS_TXRV_SBJ_NM        /* 대표세입과목명 */
+				, USE_YN        /* 사용여부 */
+				, CHG_APLCN_YMD        /* 변경적용일자 */
+				, ABL_YMD        /* 폐지일자 */
+				, CHG_YMD        /* 변경일자 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD         /* 작업시스템코드 */
+				, JOB_STAT_CD         /* 작업상태코드 */
+				, RGSTR_DT         /* 등록일시 */
+				, DMND_YMD         /* 요청일자 */
+				)
+		VALUES
+				(  #{LINK_SNUM}
+				, #{LINK_TRSC_ID}
+				, #{FYR}
+				, #{RVJG_CD}
+				, #{RVJG_NM, javaType=String,jdbcType=VARCHAR}
+				, #{TXRV_GYAN_CD}
+				, #{TXRV_GYAN_NM, javaType=String,jdbcType=VARCHAR}
+				, #{TXRV_HANG_CD}
+				, #{TXRV_HANG_NM, javaType=String,jdbcType=VARCHAR}
+				, #{ARMK_CD}
+				, #{ARMK_NM,javaType=String,jdbcType=VARCHAR}
+				, #{RPRS_TXRV_SBJ_CD}
+				, #{RPRS_TXRV_SBJ_NM, javaType=String,jdbcType=VARCHAR}
+				, #{USE_YN}
+				, #{CHG_APLCN_YMD}
+				, #{ABL_YMD,javaType=String,jdbcType=VARCHAR}
+				, #{CHG_YMD}
+				, #{STBX_BANK_CD}
+				, #{LINK_PRCS_DV_CD,javaType=String,jdbcType=VARCHAR}
+				, #{LINK_TRSM_STAT_CD}
+				, #{PRCT_PRCS_DT,javaType=String,jdbcType=VARCHAR}
+				, #{LINK_STAT_PRCS_DT}
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         	/* 작업시스템코드 */
+				, #{JOB_STAT_CD}         	/* 작업상태코드 */
+				, SYSDATE         			/* 등록일시 */
+				, #{DMND_YMD}         	/* 요청일자(현재일자 SETTING 된것) */
+				)
+    </insert>
+
+	<update id="updateTFM4020S" parameterType="MyMap">
+		UPDATE TFM4020S SET
+<!-- 				   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+				   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD}				/* 연계전송상태코드 */
+		 WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+    </update>
+
+
+
+    <!-- 현금종류매핑 CK CASH -->
+    <select id="getTFD3602S" resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+    			, LAF_CD
+		 FROM TFD3602S					/* 현금종류매핑 */
+		WHERE  LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID, LAF_CD
+    </select>
+
+    <!-- 조회조건 체크하고 변경할 필요있음 -->
+	<select id="selectTFD3602S"  resultType="MyMap" parameterType="MyMap">
+		SELECT  LAF_CD        /* 자치단체코드 */
+				, LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, CASH_TY_CD        /* 현금유형코드 */
+				, CASH_ITM_CD        /* 현금종목코드 */
+				, CASH_TY_NM        /* 현금유형명 */
+				, CASH_ITM_NM        /* 현금종목명 */
+				, USE_YN        /* 사용여부 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, LINK_ERR_MSG_CN        /* 연계오류메시지내용 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+		 FROM TFD3602S					/* 현금종류매핑 */
+		WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+		   AND LAF_CD = #{LAF_CD}
+	   	   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+    <insert id="insertTFD3602" parameterType="MyMap">
+    	INSERT INTO TFD3602 (
+				  LAF_CD        /* 자치단체코드 */
+				, LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, CASH_TY_CD        /* 현금유형코드 */
+				, CASH_ITM_CD        /* 현금종목코드 */
+				, CASH_TY_NM        /* 현금유형명 */
+				, CASH_ITM_NM        /* 현금종목명 */
+				, USE_YN        /* 사용여부 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD         /* 작업시스템코드 */
+				, JOB_STAT_CD         /* 작업상태코드 */
+				, RGSTR_DT         /* 등록일시 */
+				, DMND_YMD         /* 요청일자 */
+				)
+		VALUES
+				(  #{LAF_CD}
+				, #{LINK_SNUM}
+				, #{LINK_TRSC_ID}
+				, #{STBX_BANK_CD}
+				, #{CASH_TY_CD}
+				, #{CASH_ITM_CD}
+				, #{CASH_TY_NM, javaType=String,jdbcType=VARCHAR}
+				, #{CASH_ITM_NM, javaType=String,jdbcType=VARCHAR}
+				, #{USE_YN, javaType=String,jdbcType=VARCHAR}
+				, #{LINK_PRCS_DV_CD}
+				, #{LINK_TRSM_STAT_CD}
+				, #{PRCT_PRCS_DT}
+				, #{LINK_STAT_PRCS_DT}
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         	/* 작업시스템코드 */
+				, #{JOB_STAT_CD}         	/* 작업상태코드 */
+				, SYSDATE         			/* 등록일시 */
+				, #{DMND_YMD}         	/* 요청일자(현재일자 SETTING 된것) */
+				)
+    </insert>
+
+	<update id="updateTFD3602S" parameterType="MyMap">
+		UPDATE TFD3602S SET
+<!-- 				   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+				   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD}				/* 연계전송상태코드 */
+		  WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+		     AND LAF_CD = #{LAF_CD}
+    </update>
+
+
+
+    <!-- 출금계좌검증정보 WA WDAC -->
+    <select id="getTFM6210S" resultType="MyMap" parameterType="MyMap">
+    	SELECT LINK_TRSC_ID
+    			, LAF_CD
+		 FROM TFM6210S					/* 출금계좌검증정보 */
+		WHERE  LINK_TRSM_STAT_CD = #{LINK_TRSM_STAT_CD}
+	    GROUP BY LINK_TRSC_ID, LAF_CD
+    </select>
+
+    <!-- 세출한도계좌개설정보통합금고송신 EI -->
+    <select id="getTFC0011" resultType="MyMap" parameterType="MyMap">
+    	SELECT GRAM_TRSM_YMD,
+    	       GRAM_ID
+		  FROM TFC0011    /* 세출한도계좌개설정보통합금고송신 */
+		 WHERE JOB_SYS_CD = '00'
+		   AND JOB_STAT_CD = '00'
+	     GROUP BY GRAM_TRSM_YMD, GRAM_ID
+    </select>
+
+    <!-- 세출한도계좌개설정보통합금고송신  update     -->
+    <update id="updateTFC0011" parameterType="MyMap">
+    	UPDATE TFC0011 SET
+    		   JOB_SYS_CD = '01',
+    		   JOB_STAT_CD = '01',
+    		   TRNX_NO = #{TRNX_NO}
+	  	  WHERE GRAM_TRSM_YMD = #{GRAM_TRSM_YMD}
+	  	     AND GRAM_ID = #{GRAM_ID}
+    </update>
+
+    <!-- 조회조건 체크하고 변경할 필요있음 -->
+	<select id="selectTFM6210S"  resultType="MyMap" parameterType="MyMap">
+			SELECT LAF_CD        /* 지방자치단체코드 */
+					, LINK_SNUM        /* 연계일련번호 */
+					, LINK_TRSC_ID        /* 연계트랜잭션ID */
+					, DRW_ACC_SNUM        /* 출금계좌일련번호 */
+					, FYR        /* 회계연도 */
+					, EP_FD_DV_CD        /* 지출자금구분코드 */
+					, ACNT_DV_CD        /* 회계구분코드 */
+					, EXPS_DV_CD        /* 경비구분코드 */
+					, ADC_DV_CD        /* 회계별업무담당구분코드 */
+					, DEPT_CD        /* 부서코드 */
+					, GOF_CD        /* 관서코드 */
+					, BANK_CD        /* 은행코드 */
+					, ECRP_ACTNO        /* 암호화계좌번호 */
+					, DRW_ACC_MNG_NO        /* 출금계좌관리번호 */
+					, USR_NM        /* 사용자명 */
+					, USE_YN        /* 사용여부 */
+					, RGSTR_USR_ID        /* 등록사용자ID */
+					, CHG_USR_ID        /* 변경사용자ID */
+					, CHG_YMD        /* 변경일자 */
+					, RMKS_CN        /* 비고내용 */
+					, RAT_YN        /* 재배정여부 */
+					, APRV_STAT_CD        /* 승인상태코드 */
+					, APRV_USR_ID        /* 승인사용자ID */
+					, APRV_DT        /* 승인일시 */
+					, APRV_TRGT_USR_ID        /* 승인대상사용자ID */
+					, RJCT_RSON_CN        /* 반려사유내용 */
+					, ANE_LIM_ACC_YN        /* 세출한도계좌여부 */
+					, FRST_RGSTR_USR_ID        /* 최초등록사용자ID */
+					, FRST_RGSTR_DT        /* 최초등록일시 */
+					, LAST_MDFCN_USR_ID        /* 최종수정사용자ID */
+					, LAST_MDFCN_DT        /* 최종수정일시 */
+					, STBX_BANK_CD        /* 금고은행코드 */
+					, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+					, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+					, LINK_ERR_MSG_CN        /* 연계오류메시지내용 */
+					, PRCT_PRCS_DT        /* 응용처리일시 */
+					, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+			 FROM TFM6210S					/* 출금계좌검증정보 */
+			WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}
+			   AND LAF_CD = #{LAF_CD}
+		   	   AND LINK_TRSM_STAT_CD = 'N'   			/* 연계전송상태코드 */
+    </select>
+
+    <!-- 같은 데이터 값 들어오면 이전 날짜 사용여부 N으로 update -->
+    <update id="updateOldTFM6210"  parameterType="MyMap">
+            UPDATE TFM6210
+			   SET USE_YN = 'N'
+			 WHERE USE_YN = 'Y'
+			 AND LAF_CD = #{LAF_CD}
+			 AND FYR = #{FYR}
+			 AND EP_FD_DV_CD = #{EP_FD_DV_CD}
+			 AND ACNT_DV_CD = #{ACNT_DV_CD,jdbcType=VARCHAR}
+			 AND EXPS_DV_CD = #{EXPS_DV_CD,jdbcType=VARCHAR}
+			 AND ADC_DV_CD = #{ADC_DV_CD,jdbcType=VARCHAR}
+			 AND DEPT_CD = #{DEPT_CD,jdbcType=VARCHAR}
+			 AND GOF_CD = #{GOF_CD,jdbcType=VARCHAR}
+			 AND BANK_CD = #{BANK_CD,jdbcType=VARCHAR}
+			 AND ECRP_ACTNO = #{ECRP_ACTNO,jdbcType=VARCHAR}
+    </update>
+
+    <insert id="insertTFM6210" parameterType="MyMap">
+    	INSERT INTO TFM6210 (
+				  LAF_CD        /* 지방자치단체코드 */
+				, LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, DRW_ACC_SNUM        /* 출금계좌일련번호 */
+				, FYR        /* 회계연도 */
+				, EP_FD_DV_CD        /* 지출자금구분코드 */
+				, ACNT_DV_CD        /* 회계구분코드 */
+				, EXPS_DV_CD        /* 경비구분코드 */
+				, ADC_DV_CD        /* 회계별업무담당구분코드 */
+				, DEPT_CD        /* 부서코드 */
+				, GOF_CD        /* 관서코드 */
+				, BANK_CD        /* 은행코드 */
+				, ECRP_ACTNO        /* 암호화계좌번호 */
+				, DRW_ACC_MNG_NO        /* 출금계좌관리번호 */
+				, USR_NM        /* 사용자명 */
+				, USE_YN        /* 사용여부 */
+				, RGSTR_USR_ID        /* 등록사용자ID */
+				, CHG_USR_ID        /* 변경사용자ID */
+				, CHG_YMD        /* 변경일자 */
+				, RMKS_CN        /* 비고내용 */
+				, RAT_YN        /* 재배정여부 */
+				, APRV_STAT_CD        /* 승인상태코드 */
+				, APRV_USR_ID        /* 승인사용자ID */
+				, APRV_DT        /* 승인일시 */
+				, APRV_TRGT_USR_ID        /* 승인대상사용자ID */
+				, RJCT_RSON_CN        /* 반려사유내용 */
+				, ANE_LIM_ACC_YN        /* 세출한도계좌여부 */
+				, FRST_RGSTR_USR_ID        /* 최초등록사용자ID */
+				, FRST_RGSTR_DT        /* 최초등록일시 */
+				, LAST_MDFCN_USR_ID        /* 최종수정사용자ID */
+				, LAST_MDFCN_DT        /* 최종수정일시 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO						/* 거래번호 */
+				, JOB_SYS_CD         /* 작업시스템코드 */
+				, JOB_STAT_CD         /* 작업상태코드 */
+				, RGSTR_DT         /* 등록일시 */
+				, DMND_YMD         /* 요청일자 */
+				)
+		VALUES
+				( #{LAF_CD}
+				, #{LINK_SNUM}
+				, #{LINK_TRSC_ID}
+				, #{DRW_ACC_SNUM}
+				, #{FYR}
+				, #{EP_FD_DV_CD}
+				, #{ACNT_DV_CD, javaType=String,jdbcType=VARCHAR}
+				, #{EXPS_DV_CD, javaType=String,jdbcType=VARCHAR}
+				, #{ADC_DV_CD, javaType=String,jdbcType=VARCHAR}
+				, #{DEPT_CD, javaType=String,jdbcType=VARCHAR}
+				, #{GOF_CD, javaType=String,jdbcType=VARCHAR}
+				, #{BANK_CD, javaType=String,jdbcType=VARCHAR}
+				, #{ECRP_ACTNO, javaType=String,jdbcType=VARCHAR}
+				, #{DRW_ACC_MNG_NO, javaType=String,jdbcType=VARCHAR}
+				, #{USR_NM, javaType=String,jdbcType=VARCHAR}
+				, #{USE_YN, javaType=String,jdbcType=VARCHAR}
+				, #{RGSTR_USR_ID, javaType=String,jdbcType=VARCHAR}
+				, #{CHG_USR_ID, javaType=String,jdbcType=VARCHAR}
+				, #{CHG_YMD}
+				, #{RMKS_CN, javaType=String,jdbcType=VARCHAR}
+				, #{RAT_YN}
+				, #{APRV_STAT_CD}
+				, #{APRV_USR_ID, javaType=String,jdbcType=VARCHAR}
+				, #{APRV_DT, javaType=java.sql.Timestamp,jdbcType=DATE}
+				, #{APRV_TRGT_USR_ID, javaType=String,jdbcType=VARCHAR}
+				, #{RJCT_RSON_CN, javaType=String,jdbcType=VARCHAR}
+				, #{ANE_LIM_ACC_YN, javaType=String,jdbcType=VARCHAR}
+				, #{FRST_RGSTR_USR_ID, javaType=String,jdbcType=VARCHAR}
+				, #{FRST_RGSTR_DT, javaType=java.sql.Timestamp,jdbcType=DATE}
+				, #{LAST_MDFCN_USR_ID, javaType=String,jdbcType=VARCHAR}
+				, #{LAST_MDFCN_DT, javaType=java.sql.Timestamp,jdbcType=DATE}
+				, #{STBX_BANK_CD}
+				, #{LINK_PRCS_DV_CD, javaType=String,jdbcType=VARCHAR}
+				, #{LINK_TRSM_STAT_CD}
+				, #{PRCT_PRCS_DT, javaType=String,jdbcType=VARCHAR}
+				, #{LINK_STAT_PRCS_DT, javaType=String,jdbcType=VARCHAR}
+				, #{TRNX_NO}
+				, #{JOB_SYS_CD}         	/* 작업시스템코드 */
+				, #{JOB_STAT_CD}         	/* 작업상태코드 */
+				, SYSDATE         			/* 등록일시 */
+				, #{DMND_YMD}         	/* 요청일자(현재일자 SETTING 된것) */
+				)
+    </insert>
+
+	<update id="updateTFM6210S" parameterType="MyMap">
+		UPDATE TFM6210S SET
+<!-- 				   LINK_PRCS_DV_CD = #{LINK_PRCS_DV_CD} 						/* 연계처리구분코드 */ -->
+				   LINK_TRSM_STAT_CD = 	#{LINK_TRSM_STAT_CD}				/* 연계전송상태코드 */
+		  WHERE LINK_SNUM = #{LINK_SNUM}										/* pk이걸로만 되는지 확인필요 */
+		     AND LAF_CD = #{LAF_CD}
+    </update>
+
+
+
+    <!-- 	 중복된 계좌검증 파일이 있는지 확인 -->
+    <select id="checkBeforeData" parameterType="MyMap" resultType="Long">
+        SELECT  COUNT(LAF_CD) CHECK_CNT
+          FROM TFE2311
+         WHERE LAF_CD = #{LAF_CD}								/* 자치단체코드 */
+            AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}				/* 지출단계별구분코드 */
+            AND EP_NO_DV_CD = #{EP_NO_DV_CD}				/* 지출번호구분코드 */
+            AND EP_SNUM = #{EP_SNUM}							/* 지출일련번호 */
+    </select>
+
+	<!-- 	완료된 계좌검증 파일이 있다면 삭제한다. -->
+    <delete id="delLocalData" parameterType="MyMap">
+        DELETE  FROM  TFE2311
+        WHERE LAF_CD = #{LAF_CD}								/* 자치단체코드 */
+           AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}				/* 지출단계별구분코드 */
+           AND EP_NO_DV_CD = #{EP_NO_DV_CD}				/* 지출번호구분코드 */
+           AND EP_SNUM = #{EP_SNUM}							/* 지출일련번호 */
+<!--            AND  요청상태 = 'E' -->
+           AND  ACC_VRFC_STAT_CD = 'E'
+    </delete>
+
+	<!--  e-호조 테이블에서 대상 데이타 조회  DB링크에서 -> TFE2311S DBToDB  -->
+    <select id="getVerifyData" parameterType="MyMap" resultType="MyMap">
+    SELECT LINK_SNUM						/* 연계일련번호 */
+    		, LINK_TRSC_ID     				/* 연계트랜잭션ID */
+    		, LAF_CD         					/* 지방자치단체코드 */
+    		, EP_BYLV_DV_CD        		/* 지출단계별구분코드 */
+    		, EP_NO_DV_CD         			/* 지출번호구분코드 */
+    		, EP_SNUM         				/* 지출일련번호 */
+    		, ACC_VRFC_SNUM         		/* 계좌검증일련번호 */
+          FROM  TFE2311S
+         WHERE LAF_CD = #{LAF_CD}							/* 자치단체코드 */
+           AND  EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}			/* 지출단계별구분코드 */
+           AND  EP_NO_DV_CD = #{EP_NO_DV_CD}			/* 지출번호 구분코드 */
+           AND  EP_SNUM = #{EP_SNUM}						/* 지출일련번호 */
+           AND  ACC_VRFC_STAT_CD = 'R'						/* 계좌검증상태코드 */
+           AND  TO_CHAR(ACC_VRFC_DMND_DT,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+<!--            이전 -->
+<!--         SELECT  LOCAL_GOV_CD 자치단체코드, -->
+<!--                 EXP_STEP 지출단계, -->
+<!--                 EXP_NO_BG 지출번호구분, -->
+<!--                 EXP_SNO 지출순번, -->
+<!--                 VERI_SNO 검증순번, -->
+<!--                 CUST_NM 거래처명, -->
+<!--                 REPLACE(DEPOSITOR_NM, CHR(10), '') AS 예금주, -->
+<!--                 REPLACE(BANKING_INST_CD, CHR(10), '') AS 은행, -->
+<!--                 REPLACE(REPLACE(REPLACE(${ACCT_NO_DEC}, CHR(10), ''), '''', ''),' ','') AS 계좌번호, -->
+<!--                 PAY_AMT AS 지급금액, -->
+<!--                 TO_CHAR(REQ_DATE, 'YYYYMMDD HH24MISS') AS 요청일시, -->
+<!--                 REQ_USER_ID 요청자ID, -->
+<!--                 DECODE(SAL_CHR_CD,null,'00','N','00',SAL_CHR_CD) AS 압류방지코드 -->
+<!--           FROM  ${VERIFY_NM} -->
+<!--          WHERE  LOCAL_GOV_CD = #{자치단체코드} -->
+<!--            AND  EXP_STEP = #{지출단계} -->
+<!--            AND  EXP_NO_BG = #{지출번호구분} -->
+<!--            AND  EXP_SNO = #{지출순번} -->
+<!--            AND  REQ_STAT = 'R' -->
+<!--            AND  TO_CHAR(REQ_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD') -->
+    </select>
+
+
+    <!-- 	완료된 계좌검증 파일이 있는지 확인 -->
+    <select id="checkLocalData" parameterType="MyMap" resultType="Long">
+    SELECT
+            COUNT(LAF_CD) CHECK_CNT
+          FROM
+            TFE2311										/* 이뱅킹계좌검증 */
+         WHERE LAF_CD = #{LAF_CD}					/* 자치단체코드 */
+            AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}
+            AND EP_NO_DV_CD = #{EP_NO_DV_CD}
+            AND EP_SNUM = #{EP_SNUM}
+            AND JOB_STAT_CD = '32'					/* 완료 */
+<!--         SELECT -->
+<!--             COUNT(자치단체코드) CHECK_CNT -->
+<!--           FROM -->
+<!--             이뱅킹계좌검증 -->
+<!--          WHERE -->
+<!--             자치단체코드 = #{자치단체코드} -->
+<!--             AND 지출단계 = #{지출단계} -->
+<!--             AND 지출번호구분 = #{지출번호구분} -->
+<!--             AND 지출순번 = #{지출순번} -->
+<!--             AND 작업상태코드 = '32' -->
+    </select>
+
+
+</mapper>

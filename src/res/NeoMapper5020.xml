@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper5020">
+
+	<!-- 은행으로 보낼(파일생성할) 지급원장 조회 -->
+    <select id="selectTFE2190" parameterType="MyMap" resultType="MyMap">
+    	/*selectTFE2190-은행으로 보낼(파일생성할) 지급원장 조회*/
+		SELECT A.TRNX_NO   /* 거래번호 PK1 */
+		     , A.LINK_SNUM /* 연계일련번호 */
+		     , A.DMND_ID                AS 요청ID
+		     , A.TRSFR_DMND_INST_DV_CD  AS 요청기관구분
+		     , A.LAF_CD                 AS 자치단체코드
+		     , A.GOF_CD                 AS 관서코드
+		     , A.GIVE_DEPT_CD           AS 지급부서코드
+		     , A.FYR                    AS 회계연도
+		     , A.ACNT_DV_CD             AS 회계코드
+		     , A.TRSFR_DATA_DV_CD       AS 자료구분
+		     , A.PMOD_RGSTR_NO          AS 지급명령등록번호
+		     , A.DLNG_YMD               AS 거래일자
+		     , A.PMOD_NO                AS 지급명령번호
+		     , A.TRSFR_YMD              AS 이체일자  		/* 세출용 */
+		     , A.RAT_YN                 AS 재배정여부
+		     , A.DPST_CNT               AS 입금총건수
+		     , A.DLNG_AMT               AS 출금금액
+		     , A.DRW_ECRP_ACTNO         AS 출금계좌번호
+		     , A.DRW_REAL_ACTNO         AS 출금실제계좌번호
+		     , A.DRW_DTL_BANK_NM        AS 출금명세
+		     , A.SPC_ACCT_NO            AS 별단계좌번호  	/* 세출용 */
+		     , A.TRNX_NO                AS 거래번호  		/* 세출용 */
+		     , A.ANE_STMK_CD            AS 예산과목코드  	/* 세출통계목코드 */
+		     , DECODE( NVL(B.SLRY_DV_CD,'0'), '0', '0', B.SLRY_DV_CD)  AS 급여구분	/*[result]널체크가 이상해서 NVL로 변경*/
+		     , NVL(DECODE( B.DPST_DTL_CD , '' , '0', B.DPST_DTL_CD) , '0') AS 입금명세구분
+		     , A.LAF_NM                 AS 자치단체명
+		     , A.GOF_NM                 AS 관서명
+		     , A.GIVE_DEPT_NM           AS 지급부서명
+		     ,(SELECT CD_NM FROM TFC0001 WHERE CLS_CD='INCNT' AND CD='INCNT' AND CD_USE_YN='Y') AS INCNT
+		  FROM TFE2190 A  							/* 지급원장 */
+		     , TFC0002 B  							/* 급여관리 */
+		 WHERE A.LAF_CD      = B.LAF_CD(+)       	/* 자치단체코드 */
+		   AND A.ANE_STMK_CD = B.ANE_STMK_CD(+)  	/* 예산과목코드 */
+		   AND A.JOB_SYS_CD  = '01'  				/* 작업시스템코드 */
+		   AND A.JOB_STAT_CD = '01'  				/* 작업상태코드 */
+		   AND A.STBX_TRSM_TRGT_DV_CD = 'N'			/* 금고전송대상구분코드 */
+
+        <!-- ASIS 쿼리
+        SELECT A.요청ID
+             , A.요청기관구분
+             , A.자치단체코드
+             , A.관서코드
+             , A.지급부서코드
+             , A.회계연도
+             , A.회계코드
+             , A.자료구분
+             , A.지급명령등록번호
+             , A.거래일자
+             , A.지급명령번호
+             , A.이체일자
+             , A.재배정여부
+             , A.입금총건수
+             , A.출금금액
+             , A.출금계좌번호
+             , A.출금명세
+             , A.별단계좌번호
+             , A.거래번호
+             , A.예산과목코드
+             , DECODE( B.급여구분     , '' , '0', B.급여구분    ) AS 급여구분
+             , NVL(DECODE( B.입금명세구분 , '' , '0', B.입금명세구분) , '0') AS 입금명세구분
+             , A.자치단체명
+             , A.관서명
+             , A.지급부서명
+             ,(SELECT 코드명 INCNT FROM 공통코드 WHERE 분류코드 = 'INCNT' AND 코드  = 'INCNT'  AND 코드사용여부 = 'Y') AS INCNT
+          FROM 지급원장 A
+             , 급여관리 B
+         WHERE A.자치단체코드   = B.자치단체코드(+)
+           AND A.예산과목코드   = B.예산과목코드(+)
+           AND A.작업시스템코드 = '01'
+           AND A.작업상태코드     = '01'
+            -->
+    </select>
+
+	<!-- 은행으로 보낼(파일생성할) 입금명세 조회 -->
+    <select id="selectTFE2170"  parameterType="MyMap" resultType="MyMap">
+    	/*selectTFE2170-은행으로 보낼(파일생성할) 입금명세 조회*/
+	    SELECT A.DPST_SNUM			AS 입금일련번호
+	     , A.DPST_TY_CD				AS 입금유형
+	     , A.DLNG_YMD				AS 거래일자
+	     , A.DPST_BANK_CD			AS 입금은행코드
+	     , REPLACE(REPLACE(A.DPST_ECRP_ACTNO, '-',''),' ','')           AS 입금계좌번호
+	     , A.DPST_ACNTR_NM			AS 입금계좌예금주명
+	     , A.DLNG_AMT				AS 입금금액
+	     , REPLACE(REPLACE(A.DPST_DTL_CN, CHR(13), ''), CHR(10), '')    AS 입금명세
+	--   , NVL(A.세목코드참조여부, 'N') AS 세목코드참조여부
+	--   , A.세목코드					AS 세목코드
+	     , NVL(A.SLRY_CHLT_CD,'00') AS 압류방지코드 /* 급여성격코드 */
+	     , DECODE(A.DPST_TY_CD, '50', A.CMS_NO, ' ')                    AS CMS번호
+	  FROM TFE2170 A  							/* 입금명세 */
+	 WHERE 1=1
+	   AND A.DLNG_YMD = #{거래일자}
+	   AND A.TRNX_NO  = #{TRNX_NO}  			/* 거래번호 (지급원장의 거래번호와 동일)*/
+	   AND A.TRSFR_RSLT_PRCS_YN = 'N'  			/* 이체결과처리여부 */
+
+    <!--  ASIS 쿼리
+        SELECT A.입금일련번호                           AS 입금일련번호
+             , A.입금유형                               AS 입금유형
+             , A.거래일자                               AS 거래일자
+             , A.입금은행코드                           AS 입금은행코드
+             , REPLACE(REPLACE(A.입금계좌번호, '-',''),' ','')             AS 입금계좌번호
+             , A.입금계좌예금주명                       AS 입금계좌예금주명
+             , A.입금금액                               AS 입금금액
+             , REPLACE(REPLACE(A.입금명세, CHR(13), ''), CHR(10), '')   AS 입금명세
+             , NVL(A.세목코드참조여부, 'N')             AS 세목코드참조여부
+             , A.세목코드                               AS 세목코드
+             , NVL(A.압류방지코드,'00')                   AS 압류방지코드
+             , DECODE(A.입금유형, '50', A.CMS번호, ' ') AS CMS번호
+          FROM 입금명세     A
+         WHERE A.거래일자                   = #{거래일자}
+           AND A.요청ID                     = #{요청ID}
+           AND A.요청기관구분               = #{요청기관구분}
+           AND A.자치단체코드               = #{자치단체코드}
+           AND A.관서코드                   = #{관서코드}
+           AND A.부서코드                   = #{지급부서코드}
+           AND A.회계연도                   = #{회계연도}
+           AND A.회계코드                   = #{회계코드}
+           AND A.자료구분                   = #{자료구분}
+           AND A.지급명령등록번호           = #{지급명령등록번호}
+           AND A.재배정여부                 = #{재배정여부}
+           AND A.결과처리여부               = 'N'
+     -->
+    </select>
+
+	<!-- 파일생성완료 후 작업상태 업데이트 -->
+    <update id="updateFileMakeOK" parameterType="MyMap">
+    	/*updateFileMakeOK-파일생성완료 후 작업상태 업데이트*/
+        UPDATE TFE2190   			/* 지급원장 */
+           SET JOB_STAT_CD = '11'  	/* 작업상태코드 */
+           	, STBX_TRSM_TRGT_DV_CD = (CASE WHEN #{trnxGbn} = 'Y' THEN 'Y'
+								   			WHEN #{trnxGbn} = 'A' THEN 'R' ELSE 'N' END)
+         WHERE DLNG_YMD     = #{거래일자}
+           AND TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD  = '01'  	/* 작업시스템코드 */
+		   AND JOB_STAT_CD = '01'  	/* 작업상태코드 */
+    </update>
+
+	<!-- 파일생성완료 후 작업상태 업데이트 -->
+    <update id="updateStbxFileMakeOK" parameterType="MyMap">
+    	/*updateStbxFileMakeOK-파일생성완료 후 작업상태 업데이트*/
+        UPDATE TFE2190   			/* 지급원장 */
+           SET STBX_TRSM_TRGT_DV_CD = (CASE WHEN #{trnxGbn} = 'Y' THEN 'Y'
+								   WHEN #{trnxGbn} = 'A' THEN 'A' ELSE 'N' END)
+         WHERE 1=1
+           AND TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD  = '01'  	/* 작업시스템코드 */
+		   AND JOB_STAT_CD = DECODE(#{trnxGbn}, 'A', '32', '01')  	/* 작업상태코드 */
+    </update>
+
+    <update id="update2" parameterType="MyMap">
+    <!--  ASIS 쿼리 안쓰는듯!!!!!
+        UPDATE 지급원장
+           SET 작업시스템코드='02',
+                작업상태코드= '12'
+         WHERE 거래일자         = #{거래일자}
+           AND 요청ID           = #{요청ID}
+           AND 요청기관구분     = #{요청기관구분}
+           AND 자치단체코드     = #{자치단체코드}
+           AND 관서코드         = #{관서코드}
+           AND 지급부서코드     = #{지급부서코드}
+           AND 회계연도         = #{회계연도}
+           AND 회계코드         = #{회계코드}
+           AND 자료구분         = #{자료구분}
+           AND 지급명령등록번호 = #{지급명령등록번호}
+           AND 작업시스템코드   = '01'
+           AND 작업상태코드     = '05'
+           AND 재배정여부       = #{재배정여부}
+     -->
+    </update>
+
+    <update id="updateTFE2190_ERR"  parameterType="MyMap">
+    	/*updateTFE2190_ERR*/
+		UPDATE TFE2190 								/* 지급원장 */
+		   SET TRSFR_PRCS_RSLT_CD  = '9900'    		/* 이체처리결과코드 */
+			 , TRSFR_PRCS_RSLT_CN      = '입금 가능한 계좌가 없습니다.(반려가능)'
+			 , TRSFR_RSLT_DLPS_NM      = '대구은행'  	/* 이체결과처리자명 */
+			 , TRSFR_RSLT_PRCS_YN      = 'Y'       	/* 이체처리결과여부 */
+			 , TRSFR_PRCS_RSLT_RCTN_DT   = SYSDATE
+			 , PRCT_CNT       = '0'  				/* 처리건수 */
+			 , PRCT_AMT       = '0'  				/* 처리금액 */
+			 , ERR_CNT        = #{입금총건수}  			/* 오류건수 */
+			 , ERR_AMT        = #{출금금액} 			/* 오류금액 */
+			 , JOB_SYS_CD     = '01'  				/* 작업시스템코드 */
+			 , JOB_STAT_CD    = '31'  				/* 작업상태코드 */
+		WHERE DLNG_YMD           = #{거래일자}
+		  AND TRNX_NO            = #{TRNX_NO}  		/* 거래번호 */
+		  AND TRSFR_RSLT_PRCS_YN = 'N'   			/* 이체처리결과처리여부 */
+
+     <!--  ASIS 쿼리
+        UPDATE 지급원장
+           SET 결과코드       = '9900'
+             , 결과설명       = '입금 가능한 계좌가 없습니다.(반려가능)'
+             , 결과처리자명   = '대구은행'
+             , 결과처리여부   = 'Y'
+             , 결과처리일시   = SYSDATE
+             , 처리건수       = '0'
+             , 처리금액       = '0'
+             , 오류건수       = #{입금총건수}
+             , 오류금액       = #{출금금액}
+             , 작업시스템코드 = '01'
+             , 작업상태코드   = '31'
+         WHERE 거래일자         = #{거래일자}
+           AND 거래번호         = #{거래번호}
+           AND 요청ID           = #{요청ID}
+           AND 요청기관구분     = #{요청기관구분}
+           AND 자치단체코드     = #{자치단체코드}
+           AND 관서코드         = #{관서코드}
+           AND 지급부서코드     = #{지급부서코드}
+           AND 회계연도         = #{회계연도}
+           AND 회계코드         = #{회계코드}
+           AND 자료구분         = #{자료구분}
+           AND 지급명령등록번호 = #{지급명령등록번호}
+           AND 재배정여부       = #{재배정여부}
+           AND 결과처리여부     = 'N'
+           -->
+    </update>
+
+<!--     <select id="getCashCnt" parameterType="MyMap" resultType="int"> -->
+<!--     	/*getCashCnt*/ -->
+<!--         SELECT   COUNT(*) AS NOTRAN_CNT -->
+<!--           FROM   지급원장 A -->
+<!--                , 입금명세 B -->
+<!--          WHERE 1=1 -->
+<!--            AND A.거래일자          	= B.거래일자 -->
+<!--            AND A.요청ID          = B.요청ID -->
+<!--            AND A.요청기관구분      	= B.요청기관구분 -->
+<!--            AND A.자치단체코드      	= B.자치단체코드 -->
+<!--            AND A.관서코드          	= B.관서코드 -->
+<!--            AND A.지급부서코드      	= B.부서코드 -->
+<!--            AND A.회계연도          	= B.회계연도 -->
+<!--            AND A.회계코드          	= B.회계코드 -->
+<!--            AND A.자료구분          	= B.자료구분 -->
+<!--            AND A.지급명령등록번호  	= B.지급명령등록번호 -->
+<!--            AND A.거래일자          	= #{거래일자} -->
+<!--            AND A.요청ID          = #{요청ID} -->
+<!--            AND A.요청기관구분      	= #{요청기관구분} -->
+<!--            AND A.자치단체코드      	= #{자치단체코드} -->
+<!--            AND A.관서코드          	= #{관서코드} -->
+<!--            AND A.지급부서코드      	= #{지급부서코드} -->
+<!--            AND A.회계연도          	= #{회계연도} -->
+<!--            AND A.회계코드          	= #{회계코드} -->
+<!--            AND A.자료구분          	= #{자료구분} -->
+<!--            AND A.지급명령등록번호  	= #{지급명령등록번호} -->
+<!--            AND A.재배정여부        	= #{재배정여부} -->
+<!--            AND (B.입금유형 IN ('40', '60', '99') AND SUBSTR(REPLACE(A.출금계좌번호,'-',''),4,2) != '48' ) -->
+<!--     </select> -->
+
+<!--     <select id="nConTranCnt" parameterType="MyMap" resultType="int"> -->
+<!--     	/*nConTranCnt*/ -->
+<!--         SELECT COUNT(*) AS NOTRAN_CNT -->
+<!--           FROM 지급원장 A -->
+<!--              , 입금명세 B -->
+<!--          WHERE 1=1 -->
+<!--            AND A.거래일자         		= B.거래일자 -->
+<!--            AND A.요청ID      	= B.요청ID -->
+<!--            AND A.요청기관구분    	= B.요청기관구분 -->
+<!--            AND A.자치단체코드     	= B.자치단체코드 -->
+<!--            AND A.관서코드         		= B.관서코드 -->
+<!--            AND A.지급부서코드     	= B.부서코드 -->
+<!--            AND A.회계연도         		= B.회계연도 -->
+<!--            AND A.회계코드         		= B.회계코드 -->
+<!--            AND A.자료구분         		= B.자료구분 -->
+<!--            AND A.지급명령등록번호 	= B.지급명령등록번호 -->
+<!--            AND A.재배정여부       	= B.재배정여부 -->
+<!--            AND A.거래일자         		= #{거래일자} -->
+<!--            AND A.요청ID          = #{요청ID} -->
+<!--            AND A.요청기관구분     	= #{요청기관구분} -->
+<!--            AND A.자치단체코드     	= #{자치단체코드} -->
+<!--            AND A.관서코드         		= #{관서코드} -->
+<!--            AND A.지급부서코드     	= #{지급부서코드} -->
+<!--            AND A.회계연도         		= #{회계연도} -->
+<!--            AND A.회계코드         		= #{회계코드} -->
+<!--            AND A.자료구분         		= #{자료구분} -->
+<!--            AND A.지급명령등록번호 	= #{지급명령등록번호} -->
+<!--            AND A.재배정여부       	= #{재배정여부} -->
+<!--            AND B.입금유형         		= '40' -->
+<!--     </select> -->
+
+<!--     <select id="nConCashCnt" parameterType="MyMap" resultType="int"> -->
+<!--         호출부분 주석으로막혀있음 (입금유형 40:수표, 99:현금) -->
+<!--         /*nConCashCnt*/ -->
+<!--         SELECT COUNT(*) AS NOTRAN_CNT -->
+<!--           FROM 지급원장 A -->
+<!--              , 입금명세 B -->
+<!--          WHERE 1=1 -->
+<!--            AND A.거래일자          	= B.거래일자 -->
+<!--            AND A.요청ID          = B.요청ID -->
+<!--            AND A.요청기관구분      	= B.요청기관구분 -->
+<!--            AND A.자치단체코드      	= B.자치단체코드 -->
+<!--            AND A.관서코드          	= B.관서코드 -->
+<!--            AND A.지급부서코드      	= B.부서코드 -->
+<!--            AND A.회계연도          	= B.회계연도 -->
+<!--            AND A.회계코드          	= B.회계코드 -->
+<!--            AND A.자료구분          	= B.자료구분 -->
+<!--            AND A.지급명령등록번호  	= B.지급명령등록번호 -->
+<!--            AND A.거래일자          	= #{거래일자} -->
+<!--            AND A.요청ID          = #{요청ID} -->
+<!--            AND A.요청기관구분      	= #{요청기관구분} -->
+<!--            AND A.자치단체코드      	= #{자치단체코드} -->
+<!--            AND A.관서코드          	= #{관서코드} -->
+<!--            AND A.지급부서코드      	= #{지급부서코드} -->
+<!--            AND A.회계연도          	= #{회계연도} -->
+<!--            AND A.회계코드          	= #{회계코드} -->
+<!--            AND A.자료구분          	= #{자료구분} -->
+<!--            AND A.지급명령등록번호  	= #{지급명령등록번호} -->
+<!--            AND A.재배정여부        	= #{재배정여부} -->
+<!--            AND B.입금유형 IN ('60', '99') -->
+<!--     </select> -->
+
+    <select id="nCntSelect_5020" parameterType="MyMap" resultType="Long">
+    	/*nCntSelect_5020*/
+		SELECT COUNT(*) AS NCNT
+		  FROM TFC0005  			/* 파일순번 */
+		 WHERE DLNG_CD 	= #{거래구분}
+		   AND DLNG_YMD = #{거래일자}
+		   AND JUM_NO 	= #{JUMBUN}
+  	</select>
+
+  	<insert id="SqNoInsert_5020">
+	  	/*SqNoInsert_5020*/
+	  	INSERT INTO TFC0005  /* 파일순번 */
+			(
+			 DLNG_CD	/* 거래구분 */
+			,DLNG_YMD	/* 거래일자 */
+			,JUM_NO		/* 점번 */
+			,SEQ_NO		/* 순번 */
+			,RGSTR_DT	/* 등록일시 */
+			)
+		VALUES (
+			 #{거래구분}
+			,#{거래일자}
+			,#{JUMBUN}
+			,#{FILESQNO}
+			,SYSDATE
+			)
+  	</insert>
+
+  	<select id="SqNoSelect_5020" parameterType="MyMap" resultType="Long">
+	  	/*SqNoSelect_5020*/
+		SELECT SEQ_NO  AS FILESQNO
+		  FROM TFC0005  			/* 파일순번 */
+		 WHERE DLNG_CD 	= #{거래구분}
+		   AND DLNG_YMD = #{거래일자}
+		   AND JUM_NO 	= #{JUMBUN}
+		   FOR UPDATE
+  	</select>
+
+   	<update id="SqNoUpdate_5020" parameterType="MyMap">
+		/*SqNoUpdate_5020*/
+		UPDATE TFC0005  /* 파일순번 */
+		   SET SEQ_NO 	= #{FILESQNO}
+		 WHERE DLNG_CD  = #{거래구분}
+		   AND DLNG_YMD = #{거래일자}
+		   AND JUM_NO   = #{JUMBUN}
+  	</update>
+
+  	<update id="updateSendBankRealTime" parameterType="MyMap">
+		/*updateSendBankRealTime*/
+        UPDATE TFE2190   /* 지급원장 */
+           SET JOB_STAT_CD = '05'  /* 작업상태코드 */
+           , STBX_TRSM_TRGT_DV_CD = (CASE WHEN #{trnxGbn} = 'Y' THEN 'Y'
+								   			WHEN #{trnxGbn} = 'A' THEN 'R' ELSE 'N' END)
+		   , DATA_RCTN_DT = SYSDATE
+         WHERE DLNG_YMD    = #{거래일자}
+           AND TRNX_NO     = #{TRNX_NO}
+		   AND JOB_SYS_CD  = '01'  /* 작업시스템코드 */
+		   AND JOB_STAT_CD = '01'  /* 작업상태코드 */
+	</update>
+
+
+	<update id="updateSendBankRealTime2" parameterType="MyMap">
+		/*updateSendBankRealTime*/
+        UPDATE TFE2190   /* 지급원장 */
+           SET JOB_SYS_CD  = '02' ,
+                JOB_STAT_CD = '12'  /* 작업상태코드 */
+         WHERE DLNG_YMD    = #{거래일자}
+           AND TRNX_NO     = #{TRNX_NO}
+	</update>
+
+	<select id="selectRestoreTFE2190" parameterType="MyMap" resultType="MyMap">
+		/*selectSendBankRealTimeRestore-온라인블럭요청 후 결과를 받지 못할경우 30분 후에 재전송을 위해 조회 */
+        SELECT *
+         FROM  TFE2190   /* 지급원장 */
+         WHERE 1=1
+           AND DLNG_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+		   AND JOB_SYS_CD  = '01'  /* 작업시스템코드 */
+		   AND JOB_STAT_CD = '05'  /* 작업상태코드 */
+		   AND ROUND((TO_DATE(TO_CHAR(SYSDATE ,'YYYYMMDDHH24MISS'),'YYYYMMDDHH24MISS') - TO_DATE(TO_CHAR(DATA_RCTN_DT ,'YYYYMMDDHH24MISS') ,'YYYYMMDDHH24MISS')) * 24 * 60, 1) <![CDATA[ > ]]> 30
+	</select>
+
+  	<update id="updateSendBankRealTimeRestore" parameterType="MyMap">
+		/*updateSendBankRealTimeRestore-온라인블럭요청 후 결과를 받지 못할경우 30분 후에 재전송을 위해 상태를 변경*/
+        UPDATE TFE2190   /* 지급원장 */
+           SET JOB_STAT_CD = '01'  /* 작업상태코드 */
+           	, DATA_RCTN_DT = SYSDATE
+           	, STBX_TRSM_TRGT_DV_CD = 'N'
+         WHERE 1=1
+           AND TRNX_NO = #{TRNX_NO}
+	</update>
+
+  	<update id="updateSendBankRealTimeStbx" parameterType="MyMap">
+		/*updateSendBankRealTimeStbx*/
+        UPDATE TFE2190   /* 지급원장 */
+           SET JOB_STAT_CD = '06'  /* 작업상태코드 */
+			, DATA_RCTN_DT = SYSDATE
+         WHERE DLNG_YMD    = #{거래일자}
+           AND TRNX_NO     = #{TRNX_NO}
+	</update>
+
+  	<update id="updateSendBankRealTimeCaseAStbx" parameterType="MyMap">
+		/*updateSendBankRealTimeCaseAStbx-한도 A건 재전송을 위한 상태 업데이트*/
+        UPDATE TFE2190   /* 지급원장 */
+           SET DATA_RCTN_DT = SYSDATE + 30/(24*60) /* 수신일자 */
+         WHERE DLNG_YMD    = #{거래일자}
+           AND TRNX_NO     = #{TRNX_NO}
+	</update>
+
+
+	<select id="selectStbxRestoreTFE2190" parameterType="MyMap" resultType="MyMap">
+		/*selectSendBankRealTimeRestore-온라인블럭요청 후 결과를 받지 못할경우 30분 후에 재전송을 위해 조회 */
+        SELECT *
+         FROM  TFE2190   /* 지급원장 */
+         WHERE 1=1
+           AND DLNG_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+		   AND JOB_STAT_CD = '06'  /* 작업상태코드 */
+		   AND ROUND((TO_DATE(TO_CHAR(SYSDATE ,'YYYYMMDDHH24MISS'),'YYYYMMDDHH24MISS') - TO_DATE(TO_CHAR(DATA_RCTN_DT ,'YYYYMMDDHH24MISS') ,'YYYYMMDDHH24MISS')) * 24 * 60, 1) <![CDATA[ > ]]> 30
+	</select>
+
+  	<update id="updateSendBankRealTimeStbxRestore" parameterType="MyMap">
+		/*updateSendBankRealTimeStbxRestore-온라인블럭요청 후 결과를 받지 못할경우 30분 후에 재전송을 위해 상태를 변경*/
+        UPDATE TFE2190   /* 지급원장 */
+           SET JOB_STAT_CD = '01'  /* 작업상태코드 */
+           	, DATA_RCTN_DT = SYSDATE
+         WHERE 1=1
+           AND TRNX_NO = #{TRNX_NO}
+	</update>
+
+	<!-- 금고로 보낼(파일생성할) 지급원장 조회(한도계좌) -->
+    <select id="selectTFE2190Stbx" parameterType="MyMap" resultType="MyMap">
+    	/*selectTFE2190Stbx-금고로 보낼(파일생성할) 지급원장 조회(한도계좌)*/
+		SELECT A.TRNX_NO   /* 거래번호 PK1 */
+		     , A.LINK_SNUM /* 연계일련번호 */
+		     , A.DMND_ID                AS 요청ID
+		     , A.TRSFR_DMND_INST_DV_CD  AS 요청기관구분
+		     , A.LAF_CD                 AS 자치단체코드
+		     , A.GOF_CD                 AS 관서코드
+		     , A.GIVE_DEPT_CD           AS 지급부서코드
+		     , A.FYR                    AS 회계연도
+		     , A.ACNT_DV_CD             AS 회계코드
+		     , A.TRSFR_DATA_DV_CD       AS 자료구분
+		     , A.PMOD_RGSTR_NO          AS 지급명령등록번호
+		     , A.DLNG_YMD               AS 거래일자
+		     , A.PMOD_NO                AS 지급명령번호
+		     , A.TRSFR_YMD              AS 이체일자  		/* 세출용 */
+		     , A.RAT_YN                 AS 재배정여부
+		     , A.DPST_CNT               AS 입금총건수
+		     , A.DLNG_AMT               AS 출금금액
+		     , A.DRW_ECRP_ACTNO         AS 출금계좌번호
+		     , A.DRW_REAL_ACTNO         AS 출금실제계좌번호
+		     , A.DRW_DTL_BANK_NM        AS 출금명세
+		     , A.SPC_ACCT_NO            AS 별단계좌번호  	/* 세출용 */
+		     , A.TRNX_NO                AS 거래번호  		/* 세출용 */
+		     , A.ANE_STMK_CD            AS 예산과목코드  	/* 세출통계목코드 */
+		     , DECODE( NVL(B.SLRY_DV_CD,'0'), '0', '0', B.SLRY_DV_CD)  AS 급여구분	/*[result]널체크가 이상해서 NVL로 변경*/
+		     , NVL(DECODE( B.DPST_DTL_CD , '' , '0', B.DPST_DTL_CD) , '0') AS 입금명세구분
+		     , A.LAF_NM                 AS 자치단체명
+		     , A.GOF_NM                 AS 관서명
+		     , A.GIVE_DEPT_NM           AS 지급부서명
+		     , A.DND_DEPT_CD						/* 요구부서코드 */
+		     , A.TRSFR_PRCS_RSLT_CD					/* 이체처리결과코드 */
+		     , A.TRSFR_PRCS_RSLT_CN					/* 이체처리결과내용 */
+		     ,(SELECT CD_NM FROM TFC0001 WHERE CLS_CD='INCNT' AND CD='INCNT' AND CD_USE_YN='Y') AS INCNT
+		  FROM TFE2190 A  							/* 지급원장 */
+		     , TFC0002 B  							/* 급여관리 */
+		 WHERE A.LAF_CD      = B.LAF_CD(+)       	/* 자치단체코드 */
+		   AND A.ANE_STMK_CD = B.ANE_STMK_CD(+)  	/* 예산과목코드 */
+		   AND A.JOB_SYS_CD  = '01'  				/* 작업시스템코드 */
+		   AND A.JOB_STAT_CD = '01'  				/* 작업상태코드 */
+		   AND A.STBX_TRSM_TRGT_DV_CD = 'R'			/* 금고전송대상구분코드 */
+		 UNION ALL
+		SELECT A.TRNX_NO   /* 거래번호 PK1 */
+		     , A.LINK_SNUM /* 연계일련번호 */
+		     , A.DMND_ID                AS 요청ID
+		     , A.TRSFR_DMND_INST_DV_CD  AS 요청기관구분
+		     , A.LAF_CD                 AS 자치단체코드
+		     , A.GOF_CD                 AS 관서코드
+		     , A.GIVE_DEPT_CD           AS 지급부서코드
+		     , A.FYR                    AS 회계연도
+		     , A.ACNT_DV_CD             AS 회계코드
+		     , A.TRSFR_DATA_DV_CD       AS 자료구분
+		     , A.PMOD_RGSTR_NO          AS 지급명령등록번호
+		     , A.DLNG_YMD               AS 거래일자
+		     , A.PMOD_NO                AS 지급명령번호
+		     , A.TRSFR_YMD              AS 이체일자  		/* 세출용 */
+		     , A.RAT_YN                 AS 재배정여부
+		     , A.DPST_CNT               AS 입금총건수
+		     , A.DLNG_AMT               AS 출금금액
+		     , A.DRW_ECRP_ACTNO         AS 출금계좌번호
+		     , A.DRW_REAL_ACTNO         AS 출금실제계좌번호
+		     , A.DRW_DTL_BANK_NM        AS 출금명세
+		     , A.SPC_ACCT_NO            AS 별단계좌번호  	/* 세출용 */
+		     , A.TRNX_NO                AS 거래번호  		/* 세출용 */
+		     , A.ANE_STMK_CD            AS 예산과목코드  	/* 세출통계목코드 */
+		     , DECODE( NVL(B.SLRY_DV_CD,'0'), '0', '0', B.SLRY_DV_CD)  AS 급여구분	/*[result]널체크가 이상해서 NVL로 변경*/
+		     , NVL(DECODE( B.DPST_DTL_CD , '' , '0', B.DPST_DTL_CD) , '0') AS 입금명세구분
+		     , A.LAF_NM                 AS 자치단체명
+		     , A.GOF_NM                 AS 관서명
+		     , A.GIVE_DEPT_NM           AS 지급부서명
+		     , A.DND_DEPT_CD						/* 요구부서코드 */
+		     , A.TRSFR_PRCS_RSLT_CD					/* 이체처리결과코드 */
+		     , A.TRSFR_PRCS_RSLT_CN					/* 이체처리결과내용 */
+		     ,(SELECT CD_NM FROM TFC0001 WHERE CLS_CD='INCNT' AND CD='INCNT' AND CD_USE_YN='Y') AS INCNT
+		  FROM TFE2190 A  							/* 지급원장 */
+		     , TFC0002 B  							/* 급여관리 */
+		 WHERE A.LAF_CD      = B.LAF_CD(+)       	/* 자치단체코드 */
+		   AND A.ANE_STMK_CD = B.ANE_STMK_CD(+)  	/* 예산과목코드 */
+		   AND A.JOB_SYS_CD  = '01'  				/* 작업시스템코드 */
+		   AND A.JOB_STAT_CD = '32'  				/* 작업상태코드 */
+		   AND A.STBX_TRSM_TRGT_DV_CD = 'R'			/* 금고전송대상구분코드 */
+		   AND ROUND((TO_DATE(TO_CHAR(DATA_RCTN_DT ,'YYYYMMDDHH24MISS'),'YYYYMMDDHH24MISS') - TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS') ,'YYYYMMDDHH24MISS')) * 24 * 60, 1) <![CDATA[ < ]]> 0
+    </select>
+
+	<!-- 금고대상건으로 업데이트(한도계좌) -->
+    <update id="updateStbxMarking" parameterType="MyMap">
+    	/*updateStbxMarking-금고대상건으로 업데이트(한도계좌)*/
+        UPDATE TFE2190   				/* 지급원장 */
+           SET STBX_TRSM_TRGT_DV_CD = 'R'
+         WHERE DLNG_YMD     = #{거래일자}
+           AND TRNX_NO 		= #{TRNX_NO}
+		   AND JOB_SYS_CD  	= '01'  	/* 작업시스템코드 */
+		   AND JOB_STAT_CD 	= '01'  	/* 작업상태코드 */
+    </update>
+
+	<!-- 은행으로 보낼(파일생성할) 입금명세 조회(한도계좌) -->
+    <select id="selectTFE2170Stbx"  parameterType="MyMap" resultType="MyMap">
+    	/*selectTFE2170-은행으로 보낼(파일생성할) 입금명세 조회(한도계좌)*/
+	    SELECT A.DPST_SNUM			AS 입금일련번호
+	     , A.DPST_TY_CD				AS 입금유형
+	     , A.DLNG_YMD				AS 거래일자
+	     , A.DPST_BANK_CD			AS 입금은행코드
+	     , REPLACE(REPLACE(A.DPST_ECRP_ACTNO, '-',''),' ','')           AS 입금계좌번호
+	     , A.DPST_ACNTR_NM			AS 입금계좌예금주명
+	     , A.DLNG_AMT				AS 입금금액
+	     , REPLACE(REPLACE(A.DPST_DTL_CN, CHR(13), ''), CHR(10), '')    AS 입금명세
+	     , NVL(A.SLRY_CHLT_CD,'00') AS 압류방지코드 /* 급여성격코드 */
+	     , DECODE(A.DPST_TY_CD, '50', A.CMS_NO, ' ')                    AS CMS번호
+	     , TRSFR_PRCS_RSLT_CD					/* 이체처리결과코드 */
+	     , TRSFR_RSLT_PRCS_YN					/* 이체결과처리여부 */
+		 , TRSFR_PRCS_RSLT_CN					/* 이체처리결과내용 */
+	  FROM TFE2170 A  							/* 입금명세 */
+	 WHERE 1=1
+	   AND A.DLNG_YMD = #{거래일자}
+	   AND A.TRNX_NO  = #{TRNX_NO}  			/* 거래번호 (지급원장의 거래번호와 동일)*/
+    </select>
+
+
+    <!-- 온라인 지급원장 요청응답 상태코드 12 조회 -->
+    <select id="cntListTFE2190" parameterType="MyMap" resultType="int" useCache="false" flushCache="true">
+    	/*selectTFE2190-온라인 요청응답 상태코드 12  조회*/
+		SELECT COUNT(*) AS PRCCNT
+		  FROM TFE2190  							/* 지급원장 */
+		 WHERE TRNX_NO      = #{TRNX_NO}       	/* 거래번호 */
+		   AND JOB_SYS_CD  = '02'  				/* 작업시스템코드 */
+		   AND JOB_STAT_CD = '12'  				/* 작업상태코드 */
+    </select>
+
+		<!-- 온라인 이체결과 응답코드 0000 아닐 때 지급원장 -->
+     <update id="update_online_result_restore_TFE2190" parameterType="MyMap">
+		/*update_online_result_restore_TFE2190 - 거래번호 기준으로 처리*/
+		UPDATE TFE2190
+		   SET TRSFR_PRCS_RSLT_CD = '0006'  	/* 이체처리결과코드 */
+		     , TRSFR_PRCS_RSLT_CN = #{RESULT_EX}  	/* 이체처리결과내용 */
+		     , TRSFR_RSLT_DLPS_NM = #{RESULT_NM}  	/* 이체처리결과처리자명 */
+		     , TRSFR_RSLT_PRCS_YN = 'Y'  			/* 이체결과처리여부 */
+		     , TRSFR_PRCS_RSLT_RCTN_DT = SYSDATE  	/* 이체처리결과수신일시 */
+		     , DATA_RCTN_CD   	  = 'D'   			/* 자료수신코드 */
+		     , JOB_SYS_CD 		  = '01'   			/* 작업시스템코드 */
+		     , JOB_STAT_CD   	  = #{작업상태코드}  	/* 작업상태코드 */
+		 WHERE TRNX_NO                = #{파일코드}  	/* 거래번호 */
+		   AND DATA_RCTN_CD           = 'Y'  		/* 자료수신코드 */
+		   AND TRSFR_RSLT_PRCS_YN     = 'N'  		/* 이체처리결과여부 */
+    </update>
+
+    	<!-- 온라인 이체결과 응답코드 0000 아닐 때 입금명세 -->
+    <update id="update_online_result_restore_TFE2170" parameterType="MyMap">
+		/*update_online_result_restore_TFE2170 - 거래번호 기준으로 처리*/
+		UPDATE TFE2170 								/* 입금명세 */
+		   SET DATA_RCTN_CD = 'D'  					/* 자료수신코드 */
+		     , TRSFR_PRCS_RSLT_CD = '0006'  	/* 이체처리결과코드 */
+		     , TRSFR_PRCS_RSLT_CN = #{RESULT_EX}  	/* 이체처리결과내용 */
+		     , TRSFR_RSLT_DLPS_NM = #{RESULT_NM}  	/* 이체처리결과처리자명 */
+		     , TRSFR_RSLT_PRCS_YN = 'Y'  			/* 이체결과처리여부 */
+		     , TRSFR_PRCS_RSLT_RCTN_DT = SYSDATE	/* 이체처리결과수신일시 */
+		 WHERE 1=1
+		 	AND TRNX_NO  = #{파일코드}
+		   	AND DATA_RCTN_CD = 'Y'  		/* 자료수신코드 */
+		   	AND TRSFR_RSLT_PRCS_YN = 'N' 	/* 이체결과처리여부*/
+    </update>
+</mapper>

@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper3010">
+
+	<select id="selectTFE2311S" parameterType="MyMap" resultType="MyMap">
+		/*selectTFE2311S - 신규 등록된 데이터 확인*/
+        SELECT A.VERI_CNT
+			, A.LINK_TRSC_ID
+			, A.LAF_CD        		/* 지방자치단체코드 LOCAL_GOV_CD */
+			, A.EP_BYLV_DV_CD       /* 지출단계별구분코드 EXP_STEP */
+			, A.EP_NO_DV_CD         /* 지출번호구분코드(지출번호구분) EXP_NO_BG */
+			, A.EP_SNUM        	    /* 지출일련번호(지출순번) EXP_SNO  */
+			, A.JUM_NO				/* 점번정보 */
+			, A.OFC_NM				/* 구청명 */
+            , A.ACC_TOTAL_CNT_RESILT    /* 전체건수와 등록된 건수가 맞는지 검증결과 */
+          FROM (
+                SELECT 	VERIFY.VERI_CNT
+                        , '' AS LINK_TRSC_ID
+                        , VERIFY.LAF_CD        		/* 지방자치단체코드 LOCAL_GOV_CD */
+                        , VERIFY.EP_BYLV_DV_CD      /* 지출단계별구분코드 EXP_STEP */
+                        , VERIFY.EP_NO_DV_CD        /* 지출번호구분코드(지출번호구분) EXP_NO_BG */
+                        , VERIFY.EP_SNUM        	/* 지출일련번호(지출순번) EXP_SNO  */
+                        , '' AS JUM_NO				/* 점번정보 */
+                        , '' AS OFC_NM				/* 구청명 */
+                        , VERIFY.ACC_TOTAL_CNT      /* 전체건수 */
+                        , (CASE WHEN VERIFY.ACC_TOTAL_CNT <![CDATA[ <= ]]> VERIFY.VERI_CNT AND MOD(VERIFY.VERI_CNT, VERIFY.ACC_TOTAL_CNT) = 0 THEN 'Y' ELSE 'N' END) AS ACC_TOTAL_CNT_RESILT
+                  FROM (
+                        SELECT COUNT(*) AS VERI_CNT
+                            , LAF_CD
+                            , EP_BYLV_DV_CD
+                            , EP_NO_DV_CD
+                            , EP_SNUM
+                            , MAX(ACC_TOTAL_CNT) AS ACC_TOTAL_CNT
+                            FROM TFE2311S a												/*  VERIFY_NM (기존 DB Link) */
+                           WHERE a.ACC_VRFC_STAT_CD = 'R'								/*  계좌검증상태코드 E : 완료,   R : 요청중,  S : 진행중 */
+                             AND TO_CHAR(a.ACC_VRFC_DMND_DT,'YYYYMMDD') = #{CURR_DATE}	/* 요청일자(계좌검증요청일시) */
+                             AND LINK_TRSM_STAT_CD = 'N' 								/* 연계전송상태(S:성공, N:요청건) */
+                           GROUP BY  LAF_CD												/* 지방자치단체코드 */
+                                   , EP_BYLV_DV_CD										/* 지출단계별구분코드 필요한가?키만하면 될듯한데 */
+                                   , EP_NO_DV_CD										/* 지출번호구분코드 필요한가??키만하면 될듯한데 */
+                                   , EP_SNUM											/* 지출일련번호 필요한가?????키만하면 될듯한데  */
+                    ) VERIFY
+            ) A
+          WHERE 1=1
+          AND A.ACC_TOTAL_CNT_RESILT = 'Y'
+    </select>
+
+    <select id="checkTFE2311Data" parameterType="MyMap" resultType="Long">
+    	/*checkTFE2311Data - 완료된 계좌검증 파일이 있는지 확인(checkLocalData)*/
+    	SELECT COUNT(LAF_CD) CHECK_CNT
+          FROM TFE2311									/* 이뱅킹계좌검증 */
+         WHERE LINK_TRSC_ID = #{LINK_TRSC_ID}			/* 연계트랜잭션ID */
+           AND LAF_CD = #{LAF_CD}						/* 자치단체코드 */
+           AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}			/* 지출단계별구분코드 */
+           AND EP_NO_DV_CD = #{EP_NO_DV_CD}				/* 지출번호구분코드 */
+           AND EP_SNUM = #{EP_SNUM}						/* 지출일련번호 */
+           AND JOB_STAT_CD = '32'						/* 완료 */
+    </select>
+
+    <select id="checkTFE2311Before" parameterType="MyMap" resultType="Long">
+    	/*checkTFE2311Before-중복된 계좌검증 파일이 있는지 확인(checkBeforeData)*/
+        SELECT  COUNT(LAF_CD) CHECK_CNT
+          FROM TFE2311 A
+         WHERE 1=1				/* 연계트랜잭션ID */
+           AND LAF_CD = #{LAF_CD}							/* 자치단체코드 */
+           AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}				/* 지출단계별구분코드 */
+           AND EP_NO_DV_CD = #{EP_NO_DV_CD}					/* 지출번호구분코드 */
+           AND EP_SNUM = #{EP_SNUM}							/* 지출일련번호 */
+           AND TO_CHAR(ACC_VRFC_DMND_DT,'YYYYMMDD') = #{CURR_DATE}	/* 요청일자(계좌검증요청일시) */
+           AND JOB_STAT_CD <![CDATA[ <> ]]> 32
+           AND EXISTS (
+                        SELECT 1
+                          FROM TFE2311S
+                         WHERE LAF_CD = A.LAF_CD					/* 자치단체코드 */
+                           AND EP_BYLV_DV_CD = A.EP_BYLV_DV_CD		/* 지출단계별구분코드 */
+                           AND EP_NO_DV_CD = A.EP_NO_DV_CD			/* 지출번호 구분코드 */
+                           AND EP_SNUM = A.EP_SNUM					/* 지출일련번호 */
+                           /*AND LINK_SNUM = A.LINK_SNUM*/              /* 연계일련번호 */
+                           AND ACC_VRFC_STAT_CD = 'R'				/* 계좌검증상태코드 */
+                           AND LINK_TRSM_STAT_CD = 'N' 				/* 연계전송상태(S:성공, N:요청건) */
+                           AND TO_CHAR(ACC_VRFC_DMND_DT,'YYYYMMDD') = #{CURR_DATE}	/* 계좌검증요청일시 */
+                       )
+           AND ROWNUM = 1
+    </select>
+
+    <delete id="delTFE2311" parameterType="MyMap">
+    	/*delTFE2311 - 완료된 계좌검증 파일이 있다면 삭제한다.(delLocalData)*/
+        DELETE  FROM  TFE2311
+         WHERE LAF_CD 			= #{LAF_CD}						/* 자치단체코드 */
+           AND EP_BYLV_DV_CD 	= #{EP_BYLV_DV_CD}				/* 지출단계별구분코드 */
+           AND EP_NO_DV_CD 		= #{EP_NO_DV_CD}				/* 지출번호구분코드 */
+           AND EP_SNUM 			= #{EP_SNUM}					/* 지출일련번호 */
+<!--            AND  요청상태 = 'E' -->
+           AND ACC_VRFC_STAT_CD = 'E'
+    </delete>
+
+    <select id="getTFE2311S" parameterType="MyMap" resultType="MyMap">
+    	/*getTFE2311S - e-호조 테이블에서 대상 데이타 조회  DB링크에서  TFE2311S DBToDB(getVerifyData)*/
+	    SELECT LINK_SNUM					/* 연계일련번호 */
+    		, LINK_TRSC_ID     				/* 연계트랜잭션ID */
+    		, LAF_CD         				/* 지방자치단체코드 */
+    		, EP_BYLV_DV_CD        			/* 지출단계별구분코드 */
+    		, EP_NO_DV_CD         			/* 지출번호구분코드 */
+    		, EP_SNUM         				/* 지출일련번호 */
+    		, ACC_VRFC_SNUM         		/* 계좌검증일련번호 */
+    		, FNIS_CD						/* 금융기관코드  은행 */
+    		, TRIM(REPLACE(ECRP_ACTNO, '-')) AS ECRP_ACTNO
+    		, DPOR_NM
+    		, GIVE_AMT
+	      FROM  TFE2311S
+	     WHERE LAF_CD = #{LAF_CD}					/* 자치단체코드 */
+	       AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}		/* 지출단계별구분코드 */
+	       AND EP_NO_DV_CD = #{EP_NO_DV_CD}			/* 지출번호 구분코드 */
+	       AND EP_SNUM = #{EP_SNUM}					/* 지출일련번호 */
+	       AND ACC_VRFC_STAT_CD = 'R'				/* 계좌검증상태코드 */
+	       AND LINK_TRSM_STAT_CD = 'N' 				/* 연계전송상태(S:성공, N:요청건) */
+	       AND TO_CHAR(ACC_VRFC_DMND_DT,'YYYYMMDD') = #{CURR_DATE}	/* 계좌검증요청일시 */
+    </select>
+
+	<insert id="insertTFE2311" parameterType="MyMap">
+		/*insertTFE2311*/
+        INSERT INTO TFE2311			/* 이뱅킹계좌검증 */
+        	( TRNX_NO         		/* 거래번호 */
+			, LINK_SNUM         	/* 연계일련번호 */
+			, LINK_TRSC_ID         	/* 연계트랜잭션ID */
+			, LAF_CD         		/* 지방자치단체코드 */
+			, EP_BYLV_DV_CD         /* 지출단계별구분코드 */
+			, EP_NO_DV_CD         	/* 지출번호구분코드 */
+			, EP_SNUM         		/* 지출일련번호 */
+			, ACC_VRFC_SNUM         /* 계좌검증일련번호 */
+			, CLT_NM         		/* 거래처명 */
+			, DPOR_NM         		/* 예금주명 */
+			, FNIS_CD         		/* 금융기관코드 */
+			, ECRP_ACTNO         	/* 암호화계좌번호 */
+			, GIVE_AMT         		/* 지급금액 */
+			, DPOR_ECRP_RRNO        /* 예금주암호화주민등록번호 */
+			, ACC_VRFC_STAT_CD      /* 계좌검증상태코드 */
+			, ACC_VRFC_RSLT_CD      /* 계좌검증결과코드 */
+			, ERR_RSON_CN         	/* 오류사유내용 */
+			, NOM_DPOR_NM         	/* 정상예금주명 */
+			, ACC_VRFC_DMND_DT      /* 계좌검증요청일시 */
+			, ACC_VRFC_DMND_USR_ID  /* 계좌검증요청사용자ID */
+			, ACC_VRFC_DT         	/* 계좌검증일시 */
+			, ACC_VRFC_INPT_NO      /* 계좌검증입력번호 */
+			, ACC_VRFC_GIVE_NO      /* 계좌검증지급번호 */
+			, ATH_BAN_SLRY_CHLT_CD  /* 압류금지급여성격코드 */
+			, STBX_BANK_CD         	/* 금고은행코드 */
+			, LINK_PRCS_DV_CD       /* 연계처리구분코드 */
+			, LINK_TRSM_STAT_CD     /* 연계전송상태코드 */
+<!-- 		, LINK_ERR_MSG_CN         /* 연계오류메시지내용 */ -->
+<!-- 		, PRCT_PRCS_DT         /* 응용처리일시 */ -->
+<!-- 		, LINK_STAT_PRCS_DT         /* 연계상태처리일시 */ -->
+			, JOB_SYS_CD         	/* 작업시스템코드 */
+			, JOB_STAT_CD         	/* 작업상태코드 */
+			, RGSTR_DT         		/* 등록일시 */
+			, DMND_YMD         		/* 요청일자 */
+            )
+        SELECT
+			 #{TRNX_NO}
+			, LINK_SNUM         	/* 연계일련번호 */
+			, LINK_TRSC_ID         	/* 연계트랜잭션ID */
+			, LAF_CD         		/* 지방자치단체코드 */
+			, EP_BYLV_DV_CD         /* 지출단계별구분코드 */
+			, EP_NO_DV_CD         	/* 지출번호구분코드 */
+			, EP_SNUM         		/* 지출일련번호 */
+			, ACC_VRFC_SNUM         /* 계좌검증일련번호 */
+			, CLT_NM         		/* 거래처명 */
+			, REPLACE(NVL(DPOR_NM,'없음'), CHR(10), '')						/* 예금주명 */
+			, FNIS_CD         		/* 금융기관코드 */
+			, ECRP_ACTNO         	/* 암호화계좌번호 */
+			, GIVE_AMT         		/* 지급금액 */
+			, DPOR_ECRP_RRNO        /* 예금주암호화주민등록번호 */
+			, ACC_VRFC_STAT_CD      /* 계좌검증상태코드 */
+			, ACC_VRFC_RSLT_CD      /* 계좌검증결과코드 */
+			, ERR_RSON_CN         	/* 오류사유내용 */
+			, NOM_DPOR_NM         	/* 정상예금주명 */
+			, ACC_VRFC_DMND_DT      /* 계좌검증요청일시 */
+			, ACC_VRFC_DMND_USR_ID  /* 계좌검증요청사용자ID */
+			, ACC_VRFC_DT         	/* 계좌검증일시 */
+			, ACC_VRFC_INPT_NO      /* 계좌검증입력번호 */
+			, ACC_VRFC_GIVE_NO      /* 계좌검증지급번호 */
+			, ATH_BAN_SLRY_CHLT_CD  /* 압류금지급여성격코드 */
+			, STBX_BANK_CD         	/* 금고은행코드 */
+			, #{LINK_PRCS_DV_CD}    /* 연계처리구분코드 */
+			, #{LINK_TRSM_STAT_CD}  /* 연계전송상태코드 */
+<!-- 		, LINK_ERR_MSG_CN       /* 연계오류메시지내용 */ -->
+<!-- 		, PRCT_PRCS_DT         	/* 응용처리일시 */ -->
+<!-- 		, LINK_STAT_PRCS_DT     /* 연계상태처리일시 */ -->
+			, #{JOB_SYS_CD}         /* 작업시스템코드 */
+			, #{JOB_STAT_CD}        /* 작업상태코드 */
+			, SYSDATE         		/* 등록일시 */
+			, #{DMND_YMD}         	/* 요청일자(현재일자 SETTING 된것) */
+		 FROM TFE2311S
+		WHERE 1=1					/* 연계트랜잭션ID */
+		   AND LAF_CD = #{LAF_CD}								/* 자치단체코드 */
+           AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}					/* 지출단계별구분코드 */
+           AND EP_NO_DV_CD = #{EP_NO_DV_CD}						/* 지출번호구분코드 */
+           AND EP_SNUM = #{EP_SNUM}								/* 지출일련번호 */
+    	   AND ACC_VRFC_STAT_CD = 'R'							/*  계좌검증상태코드 E : 완료,   R : 요청중,  S : 진행중 */
+    	   AND TO_CHAR(ACC_VRFC_DMND_DT,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+
+<!--     	   AND ACC_VRFC_SNUM = ${ACC_VRFC_SNUM}				/* 계좌검증일련번호 삭제할것 20220830  */ -->
+<!-- 		   LINK_SNUM = #{LINK_SNUM}							/* 연계일련번호 PK */ -->
+<!--                 #{TRNX_NO}, -->
+<!--                 #{지출단계}, -->
+<!--                 #{지출번호구분}, -->
+<!--                 #{지출순번}, -->
+<!--                 #{검증순번}, -->
+<!--                 #{예금주주민번호,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 #{거래처명,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 #{예금주,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 #{은행,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 #{계좌번호,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 #{지급금액}, -->
+<!--                 #{요청상태}, -->
+<!--                 #{검증결과,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 #{오류사유,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 TO_DATE(#{요청일시},'YYYYMMDD HH24MISS'), -->
+<!--                 #{요청자ID}, -->
+<!--                 #{거래번호}, -->
+<!--                 #{작업시스템코드}, -->
+<!--                 #{작업상태코드}, -->
+<!--                 #{압류방지코드,javaType=String,jdbcType=VARCHAR}, -->
+<!--                 #{요청일자} -->
+    </insert>
+
+    <update id="updateTFE2311S" parameterType="MyMap">
+    	/*updateTFE2311S - TFE2311S 송신테이블 update*/
+   		UPDATE TFE2311S
+   		 	  SET ACC_VRFC_STAT_CD = 'S'						/* R:검증의뢰상태 S:E뱅킹/E세출 검증 진행중 E:검증완료 이호조에서 요청시 R E뱅킹/E세출에서 S,E */
+   		 	    , ACC_VRFC_INPT_NO = #{ACC_VRFC_INPT_NO}		/* 계좌검증입력번호 현재일자 */
+   		 	    , ACC_VRFC_GIVE_NO = #{ACC_VRFC_GIVE_NO}		/* 계좌검증지급번호 SEQ 딴것?? */
+   		 	    , LINK_TRSM_STAT_CD = 'A'
+          WHERE 1=1					/* 연계트랜잭션ID */
+            AND LAF_CD = #{LAF_CD}								/* 자치단체코드 */
+            AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}
+            AND EP_NO_DV_CD = #{EP_NO_DV_CD}
+            AND EP_SNUM = #{EP_SNUM}
+            AND ACC_VRFC_STAT_CD = 'R'							/*  계좌검증상태코드 E : 완료,   R : 요청중,  S : 진행중 */
+            AND TO_CHAR(ACC_VRFC_DMND_DT,'YYYYMMDD') = #{CURR_DATE}	/* 계좌검증요청일시 */
+    </update>
+
+	<!-- 호출하는곳 없음 -->
+<!--     <update id="ehohojoSuccessBit" parameterType="MyMap"> -->
+<!--         UPDATE -->
+<!--         ( -->
+<!--             SELECT -->
+<!--                   B.정상예금주 -->
+<!--             FROM  ${VERIFY_NM} A, 이뱅킹계좌검증 B -->
+<!--             WHERE  A.LOCAL_GOV_CD = B.자치단체코드 -->
+<!--             AND    A.EXP_STEP = B.지출단계 -->
+<!--             AND    A.EXP_NO_BG = B.지출번호구분 -->
+<!--             AND    A.EXP_SNO = B.지출순번 -->
+<!--             AND    B.자치단체코드 = #{자치단체코드} -->
+<!--             AND    B.지출단계 = #{지출단계} -->
+<!--             AND    B.지출번호구분 = #{지출번호구분} -->
+<!--             AND    B.지출순번 = #{지출순번} -->
+<!--             AND    REPLACE(REPLACE(A.ACCT_NO, CHR(10), ''), '''', '') = B.계좌번호 -->
+<!--             AND    B.검증결과 = 'Y' -->
+<!--         ) -->
+<!--         SET -->
+<!--             REQ_STAT = 'E', -->
+<!--             VERI_RSLT = 'Y', -->
+<!--             ERR_RSN = '', -->
+<!--             NORMAL_DEPOSITOR_NM = 정상예금주, -->
+<!--             VERI_DATE = SYSDATE -->
+<!--     </update> -->
+
+<!-- 	호출하는곳 없음 -->
+<!--     <select id="CountVerifyData"  resultType="Long"> -->
+<!--         SELECT  COUNT(자치단체코드) AS LOCAL_CNT -->
+<!--           FROM  이뱅킹계좌검증 -->
+<!--          WHERE  자치단체코드 = #{자치단체코드} -->
+<!--            AND  지출단계 = #{지출단계} -->
+<!--            AND  지출번호구분 = #{지출번호구분} -->
+<!--            AND  지출순번 = #{지출순번} -->
+<!--            AND  거래번호 = '00000000000000' -->
+<!--            AND  작업시스템코드 = '00' -->
+<!--            AND  작업상태코드 = '00' -->
+<!--            AND  요청상태 = 'R' -->
+<!--     </select> -->
+
+<!-- 	호출하는곳 없음 -->
+<!--     <update id="updateLocalSuccessBit" parameterType="MyMap"> -->
+<!--         UPDATE  이뱅킹계좌검증_ENC -->
+<!--            SET  작업시스템코드 = '01', -->
+<!--                 작업상태코드 = '01', -->
+<!--                 거래번호 = #{거래번호} -->
+<!--          WHERE  자치단체코드 = #{자치단체코드} -->
+<!--            AND  지출단계 = #{지출단계} -->
+<!--            AND  지출번호구분 = #{지출번호구분} -->
+<!--            AND  지출순번 = #{지출순번} -->
+<!--            AND  거래번호 = '00000000000000' -->
+<!--            AND  작업시스템코드 = '00' -->
+<!--            AND  작업상태코드 = '00' -->
+<!--            AND  요청상태 = 'R' -->
+<!--     </update> -->
+
+<!-- 	호출하는곳 없음 -->
+<!--     <update id="updateLocalFaultBit" parameterType="MyMap"> -->
+<!--         UPDATE  이뱅킹계좌검증_ENC -->
+<!--            SET  거래번호 = #{거래번호} -->
+<!--          WHERE  자치단체코드 = #{자치단체코드} -->
+<!--            AND  지출단계 = #{지출단계} -->
+<!--            AND  지출번호구분 = #{지출번호구분} -->
+<!--            AND  지출순번 = #{지출순번} -->
+<!--            AND  거래번호 = '00000000000000' -->
+<!--            AND  작업시스템코드 = '01' -->
+<!--            AND  작업상태코드 = '31' -->
+<!--            AND  요청상태 = 'E' -->
+<!--     </update> -->
+
+<!-- 	<select id="getVerifyKey_del" parameterType="MyMap" resultType="MyMap"> -->
+<!-- 		/*getVerifyKey_del*/ -->
+<!-- 		SELECT VERI_CNT -->
+<!-- 			, VERIFY.LAF_CD     /* 지방자치단체코드 LOCAL_GOV_CD */ -->
+<!-- 			, EP_BYLV_DV_CD     /* 지출단계별구분코드 EXP_STEP */ -->
+<!-- 			, EP_NO_DV_CD       /* 지출번호구분코드(지출번호구분) EXP_NO_BG */ -->
+<!-- 			, EP_SNUM        	/* 지출일련번호(지출순번) EXP_SNO  */ -->
+<!-- 			, C.JUM_NO			/* 점번정보 */ -->
+<!-- 			, C.OFC_NM			/* 구청명 */ -->
+<!-- 	      FROM (SELECT COUNT(*) AS VERI_CNT -->
+<!--       			   , LAF_CD -->
+<!--       			   , EP_BYLV_DV_CD -->
+<!--       			   , EP_NO_DV_CD -->
+<!--       			   , EP_SNUM -->
+<!--       			   , NVL( -->
+<!--       				   		(SELECT STBK_YN														/* 금고유무 */ -->
+<!--                                 FROM TCM1482 b													/* 회계정보 */ -->
+<!--                                WHERE a.LAF_CD = b.LAF_CD										/*  지출번호구분코드, 자치단체코드 */ -->
+<!--                                   AND SUBSTR (a.EP_NO_DV_CD, 1, 4) = b.FYR						/* 회계연도 */ -->
+<!--                                   AND SUBSTR (a.EP_NO_DV_CD, 5, 3) = b.ACNT_DV_CD),'N' -->
+<!--                          ) AS KEUM_YN				/* 회계코드(회계구분코드) */ -->
+<!--                 FROM TFE2311S a																	/*  ${VERIFY_NM}(기존 DB Link) */ -->
+<!-- 	           WHERE a.ACC_VRFC_STAT_CD = 'R'													/*  계좌검증상태코드 E : 완료,   R : 요청중,  S : 진행중 */ -->
+<!-- 	             AND TO_CHAR(a.ACC_VRFC_DMND_DT,'YYYYMMDD') = TO_CHAR(SYSDATE,'YYYYMMDD') 		/* 요청일자(계좌검증요청일시) */ -->
+<!-- 	 		   GROUP BY LAF_CD					/* 지방자치단체코드 */ -->
+<!-- 	 		   		  , EP_BYLV_DV_CD			/* 지출단계별구분코드 */ -->
+<!-- 	 		   		  , EP_NO_DV_CD				/* 지출번호구분코드 */ -->
+<!-- 	 		   		  , EP_SNUM					/* 지출일련번호 */ -->
+<!-- 	            ) VERIFY -->
+<!-- 	        LEFT OUTER JOIN -->
+<!-- 	    (SELECT A.JUM_NO -->
+<!-- 	             , A.OFC_NM -->
+<!-- 	             , A.LAF_CD -->
+<!-- 	       FROM TFC0004	A 		/* 점번정보 */ -->
+<!-- 	              ,TFC0001	B 	/* 공통코드 */ -->
+<!-- 	         WHERE A.LAF_CD = B.CD -->
+<!-- 	           AND B.CLS_CD = 'GOVCD' -->
+<!-- 	           AND B.CD_USE_YN = 'Y' -->
+<!-- 	           ) C -->
+<!-- 	           ON VERIFY.LAF_CD = C.LAF_CD -->
+<!-- 	    WHERE KEUM_YN = 'Y' -->
+<!-- 	</select> -->
+
+<!--     <insert id="insertLocalData2_OLD" parameterType="MyMap"> -->
+<!--         INSERT INTO -->
+<!--             이뱅킹계좌검증 -->
+<!--             ( -->
+<!--                 자치단체코드, -->
+<!--                 지출단계, -->
+<!--                 지출번호구분, -->
+<!--                 지출순번, -->
+<!--                 검증순번, -->
+<!--                 예금주주민번호, -->
+<!--                 거래처명, -->
+<!--                 예금주, -->
+<!--                 은행, -->
+<!--                 계좌번호, -->
+<!--                 지급금액, -->
+<!--                 요청상태, -->
+<!--                 검증결과, -->
+<!--                 오류사유, -->
+<!--                 요청일시, -->
+<!--                 요청자ID, -->
+<!--                 거래번호, -->
+<!--                 작업시스템코드, -->
+<!--                 작업상태코드, -->
+<!--                 압류방지코드, -->
+<!--                 요청일자 -->
+<!--             ) -->
+<!--     SELECT -->
+<!--     LOCAL_GOV_CD, -->
+<!--     EXP_STEP, -->
+<!--     EXP_NO_BG, -->
+<!--     EXP_SNO, -->
+<!--     VERI_SNO, -->
+<!--     '', -->
+<!--     CUST_NM, -->
+<!--     REPLACE(NVL(DEPOSITOR_NM,'없음'), CHR(10), '') , -->
+<!--     REPLACE(NVL(BANKING_INST_CD,'999'), CHR(10), ''), -->
+<!--     REPLACE(REPLACE(REPLACE(NVL(${ACCT_NO_DEC},'9999999999'), CHR(10), ''), '''', ''),' ',''), -->
+<!--     PAY_AMT, -->
+<!--     'R', -->
+<!--     '', -->
+<!--     '', -->
+<!--     TO_DATE(TO_CHAR(REQ_DATE, 'YYYYMMDD HH24MISS'),'YYYYMMDD HH24MISS'), -->
+<!--     REQ_USER_ID, -->
+<!--      #{거래번호}, -->
+<!--      '01', -->
+<!--      '01', -->
+<!--      DECODE(SAL_CHR_CD,null,'00','N','00',SAL_CHR_CD), -->
+<!--      #{요청일자} -->
+<!--     FROM ${VERIFY_NM} -->
+<!--     WHERE -->
+<!--     LOCAL_GOV_CD = #{자치단체코드} -->
+<!--     AND EXP_STEP = #{지출단계} -->
+<!--     AND EXP_NO_BG = #{지출번호구분} -->
+<!--     AND EXP_SNO = #{지출순번} -->
+<!--     AND REQ_STAT = 'R' -->
+<!--     </insert> -->
+
+<!-- 	지차체별로 count(지차체별로 따로 돌리는게 맞을듯(필요없을듯) 일단 두자  ) 					-->
+<!-- 	<select id="getCountByLaf" parameterType="MyMap" resultType="MyMap"> 		-->
+<!-- 		SELECT COUNT(LAF_CD) CNT -->
+<!-- 			, LAF_CD								/* 지방자치단체코드 */ 			-->
+<!-- 	 	FROM TFE2311S							 								-->
+<!--     	WHERE ACC_VRFC_STAT_CD = 'R'		/*  계좌검증상태코드 E : 완료,   R : 요청중,  S : 진행중 */ -->
+<!--       	AND TO_CHAR(ACC_VRFC_DMND_DT,'YYYYMMDD') = TO_CHAR(SYSDATE,'YYYYMMDD') 	-->
+<!--     	GROUP BY LAF_CD 	 													-->
+<!-- 	</select> 																	-->
+</mapper>

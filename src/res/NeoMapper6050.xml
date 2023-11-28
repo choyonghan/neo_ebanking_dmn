@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper6050">
+
+	<insert id="insertTfma060R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfma060R / FB_FM_XXX_RD_00001	수입일계표(I) 수신*/
+		INSERT
+		  INTO TFMA060R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , DTMK_CD
+			 , DTMK_NM
+			 , CAP_NTAX_DV_CD
+			 , ACNT_YMD
+			 , PSNTY_CNT
+			 , PSNTY_AMT
+			 , PSTY_CNT
+			 , PSTY_AMT
+			 , TXRV_SUM_CNT
+			 , TXRV_TOTL_AMT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFMA060R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{DTMK_CD}
+			 , #{DTMK_NM}
+			 , #{CAP_NTAX_DV_CD}
+			 , #{ACNT_YMD}
+			 , #{PSNTY_CNT}
+			 , #{PSNTY_AMT}
+			 , #{PSTY_CNT}
+			 , #{PSTY_AMT}
+			 , #{TXRV_SUM_CNT}
+			 , #{TXRV_TOTL_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfma070R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfma070R / FB_FM_XXX_RD_00002	수입일계표(II) 수신*/
+		INSERT
+		  INTO TFMA070R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , DTMK_CD
+			 , DTMK_NM
+			 , CAP_NTAX_DV_CD
+			 , ACNT_YMD
+			 , RCVMT_AMT
+			 , RFN_AMT
+			 , TXRV_SBJ_RVSN_AMT
+			 , TXRV_DD_SUM_AMT
+			 , NTRCT_RCVMT_CNT
+			 , NTRCT_RFN_CNT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFMA070R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{DTMK_CD}
+			 , #{DTMK_NM}
+			 , #{CAP_NTAX_DV_CD}
+			 , #{ACNT_YMD}
+			 , #{RCVMT_AMT}
+			 , #{RFN_AMT}
+			 , #{TXRV_SBJ_RVSN_AMT}
+			 , #{TXRV_DD_SUM_AMT}
+			 , #{NTRCT_RCVMT_CNT}
+			 , #{NTRCT_RFN_CNT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfma080R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfma080R / FB_FM_XXX_RD_00003	세입일계표 수신*/
+		INSERT
+		  INTO TFMA080R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , ACNT_YMD
+			 , LDY_TXRV_AGGR_AMT
+			 , RCVMT_AMT
+			 , RFN_AMT
+			 , TXRV_SBJ_RVSN_AMT
+			 , TXRV_AMT
+			 , TXRV_AGGR_AMT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFMA080R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{ACNT_YMD}
+			 , #{LDY_TXRV_AGGR_AMT}
+			 , #{RCVMT_AMT}
+			 , #{RFN_AMT}
+			 , #{TXRV_SBJ_RVSN_AMT}
+			 , #{TXRV_AMT}
+			 , #{TXRV_AGGR_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfma090R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfma090R / FB_FM_XXX_RD_00004	세입세출일계표 수신*/
+		INSERT
+		  INTO TFMA090R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , ACNT_YMD
+			 , RCVMT_AMT
+			 , RFN_AMT
+			 , TXRV_SBJ_RVSN_AMT
+			 , TXRV_DD_SUM_AMT
+			 , FDAC_AMT
+			 , FDAC_RTN_AMT
+			 , FDAC_RAMT_AMT
+			 , EP_AMT
+			 , RTN_AMT
+			 , ANE_SBJ_RVSN_AMT
+			 , ANE_AMT
+			 , PMOD_NPYM_AMT
+			 , FD_BDTR_AMT
+			 , FD_OP_DPI_AMT
+			 , FD_OP_CNLT_AMT
+			 , FD_OP_AMT
+			 , STBX_RAMT_AMT
+			 , UNDL_TRSFR_AMT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFMA090R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{ACNT_YMD}
+			 , #{RCVMT_AMT}
+			 , #{RFN_AMT}
+			 , #{TXRV_SBJ_RVSN_AMT}
+			 , #{TXRV_DD_SUM_AMT}
+			 , #{FDAC_AMT}
+			 , #{FDAC_RTN_AMT}
+			 , #{FDAC_RAMT_AMT}
+			 , #{EP_AMT}
+			 , #{RTN_AMT}
+			 , #{ANE_SBJ_RVSN_AMT}
+			 , #{ANE_AMT}
+			 , #{PMOD_NPYM_AMT}
+			 , #{FD_BDTR_AMT}
+			 , #{FD_OP_DPI_AMT}
+			 , #{FD_OP_CNLT_AMT}
+			 , #{FD_OP_AMT}
+			 , #{STBX_RAMT_AMT}
+			 , #{UNDL_TRSFR_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfma100R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfma100R / FB_FM_XXX_RD_00005	세출일계표 수신*/
+		INSERT
+		  INTO TFMA100R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , ACNT_YMD
+			 , FDAC_AMT
+			 , FDAC_AGGR_AMT
+			 , LDY_ANE_AGGR_AMT
+			 , GIVE_AMT
+			 , NPYM_AMT
+			 , PMOD_AGGR_AMT
+			 , RTN_AMT
+			 , ANE_SBJ_RVSN_AMT
+			 , ANE_AGGR_AMT
+			 , FD_RAMT_AMT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFMA100R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{ACNT_YMD}
+			 , #{FDAC_AMT}
+			 , #{FDAC_AGGR_AMT}
+			 , #{LDY_ANE_AGGR_AMT}
+			 , #{GIVE_AMT}
+			 , #{NPYM_AMT}
+			 , #{PMOD_AGGR_AMT}
+			 , #{RTN_AMT}
+			 , #{ANE_SBJ_RVSN_AMT}
+			 , #{ANE_AGGR_AMT}
+			 , #{FD_RAMT_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfma110R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfma110R / FB_FM_XXX_RD_00006	세입세출외현금일계표 수신*/
+		INSERT
+		  INTO TFMA110R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , ACNT_YMD
+			 , LDY_RLR_DPO_RAMT_AMT
+			 , LDY_CASH_STG_RAMT_AMT
+			 , LDY_RAMT_SUM_AMT
+			 , RCVMT_CNT
+			 , RCVMT_AMT
+			 , GIVE_CNT
+			 , GIVE_AMT
+			 , RLR_DPO_RAMT_AMT
+			 , CASH_STG_RAMT_AMT
+			 , RAMT_SUM_AMT
+			 , STBX_BANK_CD
+			 , DPSV_DV_CD
+			 , DPSV_KND_NM
+			 , DEPT_CD
+			 , DEPT_NM
+			 , STBX_ECRP_ACTNO
+			 , GCC_DEPT_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFMA110R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{ACNT_YMD}
+			 , #{LDY_RLR_DPO_RAMT_AMT}
+			 , #{LDY_CASH_STG_RAMT_AMT}
+			 , #{LDY_RAMT_SUM_AMT}
+			 , #{RCVMT_CNT}
+			 , #{RCVMT_AMT}
+			 , #{GIVE_CNT}
+			 , #{GIVE_AMT}
+			 , #{RLR_DPO_RAMT_AMT}
+			 , #{CASH_STG_RAMT_AMT}
+			 , #{RAMT_SUM_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{DPSV_DV_CD}
+			 , #{DPSV_KND_NM}
+			 , #{DEPT_CD}
+			 , #{DEPT_NM}
+			 , #{STBX_ECRP_ACTNO}
+			 , #{GCC_DEPT_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfm3130R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfm3130R / FR_FM_XXX_RD_00025 지역개발기금수입지출일계표수신연계*/
+		INSERT
+		  INTO TFM3130R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , ACNT_YMD
+			 , PBN_SL_RV_AMT
+			 , FLA_WDRW_RV_PRN_AMT
+			 , FLA_WDRW_RV_INT_AMT
+			 , DPM_INT_RV_AMT
+			 , DPO_INT_RV_AMT
+			 , ETC_RV_AMT
+			 , DPI_WDRW_RV_AMT
+			 , FND_FLA_EP_AMT
+			 , DPM_EP_AMT
+			 , PBN_RPM_EP_PRN_AMT
+			 , PBN_RPM_EP_INT_AMT
+			 , ADIT_EP_AMT
+			 , FND_MGCT_EP_AMT
+			 , ETC_EP_AMT
+			 , AVFD_PRN_AMT
+			 , AVFD_INT_AMT
+			 , AVFD_ADIT_AMT
+			 , AVFD_MTRY_INT_AMT
+			 , AVFD_MDRD_RPM_INT_AMT
+			 , NRA_DPI_AMT
+			 , NRA_DRFT_AMT
+			 , RLR_DPO_ACM_DPI_AMT
+			 , RLR_DPO_ACM_DRFT_AMT
+			 , RLR_DPO_ISD_DPI_AMT
+			 , RLR_DPO_ISD_DRFT_AMT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFM3130R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{ACNT_YMD}
+			 , #{PBN_SL_RV_AMT}
+			 , #{FLA_WDRW_RV_PRN_AMT}
+			 , #{FLA_WDRW_RV_INT_AMT}
+			 , #{DPM_INT_RV_AMT}
+			 , #{DPO_INT_RV_AMT}
+			 , #{ETC_RV_AMT}
+			 , #{DPI_WDRW_RV_AMT}
+			 , #{FND_FLA_EP_AMT}
+			 , #{DPM_EP_AMT}
+			 , #{PBN_RPM_EP_PRN_AMT}
+			 , #{PBN_RPM_EP_INT_AMT}
+			 , #{ADIT_EP_AMT}
+			 , #{FND_MGCT_EP_AMT}
+			 , #{ETC_EP_AMT}
+			 , #{AVFD_PRN_AMT}
+			 , #{AVFD_INT_AMT}
+			 , #{AVFD_ADIT_AMT}
+			 , #{AVFD_MTRY_INT_AMT}
+			 , #{AVFD_MDRD_RPM_INT_AMT}
+			 , #{NRA_DPI_AMT}
+			 , #{NRA_DRFT_AMT}
+			 , #{RLR_DPO_ACM_DPI_AMT}
+			 , #{RLR_DPO_ACM_DRFT_AMT}
+			 , #{RLR_DPO_ISD_DPI_AMT}
+			 , #{RLR_DPO_ISD_DRFT_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfm3160R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfm3160R / FR_FM_XXX_RD_00026 지역개발공채발행내역수신연계*/
+		INSERT
+		  INTO TFM3160R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , SL_YMD
+			 , CLCN_YMD
+			 , BANK_CD
+			 , BANK_BOFF_CD
+			 , BANK_BOFF_NM
+			 , CLTN_INST_NM
+			 , USWY_DV_NO
+			 , USWY_DV_NM
+			 , CT_SELL_DV_CD
+			 , ISU_TMS
+			 , ISU_AMT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFM3160R
+			   )
+			 , ''
+			 , #{SL_YMD}
+			 , #{CLCN_YMD}
+			 , #{BANK_CD}
+			 , #{BANK_BOFF_CD}
+			 , #{BANK_BOFF_NM}
+			 , #{CLTN_INST_NM}
+			 , #{USWY_DV_NO}
+			 , #{USWY_DV_NM}
+			 , #{CT_SELL_DV_CD}
+			 , #{ISU_TMS}
+			 , #{ISU_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfm3170R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfm3170R / FR_FM_XXX_RD_00027 융자금회수이자내역수신연계*/
+		INSERT
+		  INTO TFM3170R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , GOF_CD
+			 , GOF_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , FL_BGNG_YMD
+			 , BANK_CD
+			 , BANK_NM
+			 , ENP_NM
+			 , ECRP_BNO
+			 , FL_AMT
+			 , ARP_AMT
+			 , RPM_RAMT_AMT
+			 , RPM_IRT
+			 , RPM_YMD
+			 , RPM_AMT
+			 , INT_AMT
+			 , RAMT_AMT
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFM3170R
+			   )
+			 , ''
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{FL_BGNG_YMD}
+			 , #{BANK_CD}
+			 , #{BANK_NM}
+			 , #{ENP_NM}
+			 , #{ECRP_BNO}
+			 , #{FL_AMT}
+			 , #{ARP_AMT}
+			 , #{RPM_RAMT_AMT}
+			 , #{RPM_IRT}
+			 , #{RPM_YMD}
+			 , #{RPM_AMT}
+			 , #{INT_AMT}
+			 , #{RAMT_AMT}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<insert id="insertTfe2551R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfe2551R / FB_FE_XXX_RD_08028  금고은행시스템일상경비월별잔액수신*/
+		INSERT
+		  INTO TFE2551R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , FYR
+			 , ACNT_DV_CD
+			 , GOF_CD
+			 , GCC_DEPT_CD
+			 , EXE_YM
+			 , ACC_SNUM
+			 , DPI_ECRP_ACTNO
+			 , ACNT_DV_NM
+			 , LAF_NM
+			 , GOF_NM
+			 , DEPT_CD
+			 , DEPT_NM
+			 , RAMT_AMT
+			 , DATA_RCTN_YN
+			 , DATA_RCTN_DT
+			 , RTN_RSLT_PRCS_STAT_CD
+			 , RSLT_PRCS_USR_ID
+			 , PRCS_RSLT_RCTN_DT
+			 , STBX_BANK_CD
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD,javaType=String,jdbcType=VARCHAR}
+			 , SEQ_TFE2551R.NEXTVAL || #{STBX_BANK_CD,javaType=String,jdbcType=VARCHAR}
+			 , ''
+			 , #{FYR,javaType=String,jdbcType=VARCHAR}
+			 , #{ACNT_DV_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{GOF_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{GCC_DEPT_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{EXE_YM,javaType=String,jdbcType=VARCHAR}
+			 , '1'    /* ACC_SNUM */
+			 , #{DPI_ECRP_ACTNO,javaType=String,jdbcType=VARCHAR}
+			 , #{ACNT_DV_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{LAF_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{GOF_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{DEPT_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{DEPT_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{RAMT_AMT}
+			 , #{DATA_RCTN_YN,javaType=String,jdbcType=VARCHAR}
+			 , SYSDATE
+			 , #{RTN_RSLT_PRCS_STAT_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{RSLT_PRCS_USR_ID,javaType=String,jdbcType=VARCHAR}
+			 , SYSDATE
+			 , #{STBX_BANK_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{LINK_PRCS_DV_CD,javaType=String,jdbcType=VARCHAR}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN,javaType=String,jdbcType=VARCHAR}
+			 , #{PRCT_PRCS_DT,javaType=String,jdbcType=VARCHAR}
+			 , #{LINK_STAT_PRCS_DT,javaType=String,jdbcType=VARCHAR}
+			 )
+	]]>
+	</insert>
+
+	<select id="selectTfma050aByRamt" parameterType="MyMap" resultType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.selectTfma050aByRamt / 세출한도계좌 월별잔액*/
+		SELECT  A.LAF_CD ,
+			       A.FYR ,
+			       A.ACNT_DV_CD ,
+			       B.GOF_CD ,
+			       REGEXP_SUBSTR(B.GCC_DEPT_CD, '[^-]+', 1, 3) AS GCC_DEPT_CD,
+			       SUBSTR(to_char(SYSDATE, 'YYYYMMDD'), 1, 6) AS EXE_YM ,
+			       A.STBX_ECRP_ACTNO AS DPI_ECRP_ACTNO ,
+			       ( SELECT C.ACNT_DV_NM FROM TCM1482 C WHERE C.LAF_CD = A.LAF_CD AND C.ACNT_DV_CD = A.ACNT_DV_CD AND C.FYR = A.FYR AND ROWNUM = 1 )  AS ACNT_DV_NM ,
+			       REGEXP_SUBSTR(B.GCC_DEPT_CD, '[^-]+', 1, 1) AS LAF_NM,
+			       REGEXP_SUBSTR(B.GCC_DEPT_CD, '[^-]+', 1, 2) AS GOF_NM,
+			       B.DEPT_CD ,
+			       B.DPOR_NM AS DEPT_NM ,
+			       SUM(
+			            CASE A.ACC_DLNG_DV_CD
+			            WHEN '01' THEN DLNG_AMT
+			            WHEN '02' THEN DLNG_AMT*-1
+			            ELSE 0
+			            END) AS RAMT_AMT, /*계좌거래구분코드(01:입금,02:출금)*/
+			       'N' AS DATA_RCTN_YN ,
+			       SYSDATE AS DATA_RCTN_DT ,
+			       '' AS RTN_RSLT_PRCS_STAT_CD ,
+			       '' AS RSLT_PRCS_USR_ID ,
+			       SYSDATE AS PRCS_RSLT_RCTN_DT ,
+			       '031' AS STBX_BANK_CD ,
+			       'C' AS LINK_PRCS_DV_CD ,
+			       'N' AS LINK_TRSM_STAT_CD ,
+			       '' AS LINK_ERR_MSG_CN ,
+			       '' AS PRCT_PRCS_DT ,
+			       '' AS LINK_STAT_PRCS_DT
+			  FROM TFMA050A A,
+			       V_TFC0011 B
+			 WHERE 1=1
+			   AND A.STBX_ECRP_ACTNO = B.ANE_LIM_ACC_NO
+			   AND A.TRNMT_YN in ( 'Y' , 'C' )
+			   AND A.STBX_BANK_CD = '031'
+			   AND (A.PRCS_RSLT_CD = '0000'
+			            OR A.PRCS_RSLT_CD IS NULL )
+			   AND A.DDAM_DLNG_DV_CD in ( '20' , '30' , '90' , '96' , '15' )
+			   AND B.ANE_LIM_ACC_NO like '9600%'
+			 GROUP BY A.LAF_CD ,
+			       A.FYR ,
+			       A.ACNT_DV_CD ,
+			       B.GOF_CD ,
+			       B.GCC_DEPT_CD ,
+			       B.DEPT_CD ,
+			       B.DPOR_NM ,
+			       A.STBX_ECRP_ACTNO
+	]]>
+	</select>
+
+	<update id="updateTfma050aTrnmtYn" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.updateTfma050aTrnmtYn*/
+		UPDATE TFMA050A
+		   SET TRNMT_YN = 'C' /*잔액전송완료*/
+		   	 , TRNMT_DT = SYSDATE
+		 WHERE 1=1
+		   AND STBX_ECRP_ACTNO 		= #{DPI_ECRP_ACTNO}
+		   AND TRNMT_YN = 'Y'
+	]]>
+	</update>
+
+	<insert id="insertTfma130R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6050.insertTfma130R / FB_FM_XXX_RD_00009 자금마감재무건전성평가수신연계*/
+		INSERT
+		  INTO TFMA130R
+		  	 (
+			   LINK_SNUM
+			 , LINK_TRSC_ID
+			 , FYR
+			 , BANK_NM
+			 , QTR_DV_CD
+			 , CRTR_YMD
+			 , TAC_RT
+			 , FXUD_CRDT_RT
+			 , ABD_RTAC_RT
+			 , TAC_RT_EVL_GRDE_NUM
+			 , FXUD_CRDT_RT_EVL_GRDE_NUM
+			 , ABD_ACM_RT_EVL_GRDE_NUM
+			 , MDS_LTM_CRDV_GRDE_NM
+			 , MDS_STM_CRDV_GRDE_NM
+			 , SNP_LTM_CRDV_GRDE_NM
+			 , SNP_STM_CRDV_GRDE_NM
+			 , FTCH_LTM_CRDV_GRDE_NM
+			 , FTCH_STM_CRDV_GRDE_NM
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+		  	 , PRCT_PRCS_DT
+		  	 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   (
+			 	SELECT NVL(MAX(TRUNC(LINK_SNUM,-3)/1000)+1, 1) || #{STBX_BANK_CD}
+			 	  FROM TFMA130R
+			   )
+			 , ''
+			 , #{FYR}
+			 , #{BANK_NM}
+			 , #{QTR_DV_CD}
+			 , #{CRTR_YMD}
+			 , #{TAC_RT}
+			 , #{FXUD_CRDT_RT}
+			 , #{ABD_RTAC_RT}
+			 , #{TAC_RT_EVL_GRDE_NUM}
+			 , #{FXUD_CRDT_RT_EVL_GRDE_NUM}
+			 , #{ABD_ACM_RT_EVL_GRDE_NUM}
+			 , #{MDS_LTM_CRDV_GRDE_NM}
+			 , #{MDS_STM_CRDV_GRDE_NM}
+			 , #{SNP_LTM_CRDV_GRDE_NM}
+			 , #{SNP_STM_CRDV_GRDE_NM}
+			 , #{FTCH_LTM_CRDV_GRDE_NM}
+			 , #{FTCH_STM_CRDV_GRDE_NM}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+</mapper>

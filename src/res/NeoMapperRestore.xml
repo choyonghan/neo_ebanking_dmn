@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapperRestore">
+	<!-- 지급명세 반려(TEF_EFAM026_HIS)의 삭제이력순번의 Max값을 얻기 위함 -->
+	<select id="e_max_his_seq" resultType="MyMap">
+		  SELECT  NVL(MAX(HIST_SEQ), 0) + 1 As MAX_SEQ
+		  FROM ${VERIFY_NM}
+          WHERE  REQ_ID = #{REQ_ID}                                               <!--pk 요청ID-->
+               AND REQ_INST_FG  = #{REQ_INST_FG}                           <!--pk 요청기관구분-->
+               AND LOC_GOV_CD  = #{LOC_GOV_CD}                         <!--pk 자치단체코드-->
+               AND REQ_INST_CD  = #{REQ_INST_CD}                           <!--pk 관서코드-->
+               AND GCC_DEPT_CD  = #{GCC_DEPT_CD}                       <!--pk 지급부서코드-->
+               AND FIS_YEAR  = #{FIS_YEAR}                                        <!--pk 회계연도-->
+               AND FIS_FG_CD  = #{FIS_FG_CD}                                   <!--pk 회계코드(회계구분)-->
+               AND DATA_FG  = #{DATA_FG}                                       <!--pk 자료구분-->
+               AND PAY_CMD_REGI_NO  = #{PAY_CMD_REGI_NO}      <!--pk 지급명령등록번호-->
+               AND RE_ALLO_YN = #{RE_ALLO_YN}                              <!-- pk 재배정여부 -->
+               AND TRNX_YMD  = #{TRNX_YMD}                                 <!-- 거래일자 -->
+	</select>
+
+
+
+	<!-- 지급반려시 지급원장에서 E-호조 테이블의 지급반려 테이블에 INSERT할 쿼리 -->
+	<select id="select_income_cancle"  resultType="MyMap">
+	       SELECT
+               A.요청ID            AS REQ_ID
+              ,A.요청기관구분      AS REQ_INST_FG
+              ,A.자치단체코드      AS LOC_GOV_CD
+              ,A.관서코드          AS REQ_INST_CD
+              ,A.지급부서코드      AS GCC_DEPT_CD
+              ,A.회계연도          AS FIS_YEAR
+              ,A.회계코드          AS FIS_FG_CD
+              ,A.자료구분          AS DATA_FG
+              ,A.지급명령등록번호  AS PAY_CMD_REGI_NO
+              ,A.거래일자          AS TRNX_YMD
+              ,A.기관구분          AS ORG_FG
+              ,A.지급명령번호      AS PAY_CMD_NO
+              ,A.요구부서코드      AS REQ_DEPT_CD
+              ,A.정책사업코드      AS PBIZ_CD
+              ,A.단위사업코드      AS UBIZ_CD
+              ,A.세부사업코드      AS DBIZ_CD
+              ,A.분야코드          AS FLD_CD
+              ,A.부문코드          AS SECT_CD
+              ,A.예산과목코드      AS TE_MNG_MOK_CD
+              ,A.출금은행코드      AS OUT_ACCT_BANKING_INST_CD
+              ,A.출금계좌번호      AS OUT_ACCT_ACCT_NO
+              ,A.출금금액          AS TRNX_AMT
+              ,A.출금명세          AS OUT_ACCT_DETL_ITEM
+              ,A.요청정보          AS REQ_INFO
+              ,A.입금총건수        AS IN_TOT_CNT
+              ,TO_CHAR(A.요청일시, 'yyyy-mm-dd hh24:mi:ss')  AS REQ_DATE
+              ,A.자치단체명        AS LOC_GOV_NM
+              ,A.관서명            AS GOV_OFFICE_NM
+              ,A.지급부서명        AS GCC_DEPT_NM
+              ,A.회계명            AS FIS_FG_NM
+              ,A.정책사업명        AS PBIZ_NM
+              ,A.단위사업명        AS UBIZ_NM
+              ,A.세부사업명        AS DBIZ_NM
+              ,A.분야명            AS FLD_NM
+              ,A.부문명            AS SECT_NM
+              ,A.예산과목명        AS TE_MNG_MOK_NM
+              ,A.요구부서명        AS REQ_DEPT_NM
+              ,A.지출원ID          AS PAY_USER_ID
+              ,A.지출원담당자명    AS PAY_USER_NM
+              ,A.지출원전화번호    AS EXP_USER_TEL_NO
+              ,A.자료수신여부      AS RCPT_YN
+              ,TO_CHAR(A.자료수신일시, 'yyyy-mm-dd hh24:mi:ss')  AS RCPT_DATE
+              ,A.자료수신자명      AS RCPT_NM
+              ,A.결과처리여부      AS DEAL_RSLT_YN
+              ,A.결과코드          AS DEAL_RSLT
+              ,A.결과설명          AS DEAL_DESC_RSLT
+              ,A.결과처리자명      AS DEAL_DESC_NM
+              ,TO_CHAR(A.결과처리일시, 'yyyy-mm-dd hh24:mi:ss')  AS DEAL_RSLT_RECV_DATE
+              ,A.재배정여부        AS RE_ALLO_YN
+              ,A.지급형태          AS GCC_FROM
+              ,A.현금유형코드      AS CASH_TYPE_CD
+              ,A.현금종류코드      AS CASH_SORT_CD
+              ,A.현금종류명        AS CASH_SORT_NM
+              ,A.복지급여여부      AS SAL_YN
+              ,A.거래번호          AS TRNX_NUM
+              ,A.작업시스템코드    AS WORK_SYS_CD
+              ,A.작업상태코드      AS WORK_STA_CD
+              ,A.처리건수          AS RST_CNT
+              ,A.오류건수          AS ERR_CNT
+              ,A.처리금액          AS RST_AMT
+              ,A.오류금액          AS ERR_AMT
+              ,A.등록일시          AS REG_DATE
+              ,A.이체일자          AS ICHE_YMD
+              ,A.에러파일생성여부  AS ERR_FILE_MK_YN
+              ,A.별단계좌번호        AS SPCL_ACCT
+	       FROM 지급원장 A
+           WHERE A.요청ID = #{REQ_ID}
+               AND A.요청기관구분  = #{REQ_INST_FG}
+               AND A.자치단체코드  = #{LOC_GOV_CD}
+               AND A.관서코드  = #{REQ_INST_CD}
+               AND A.지급부서코드  = #{GCC_DEPT_CD}
+               AND A.회계연도  = #{FIS_YEAR}
+               AND A.회계코드  = #{FIS_FG_CD}
+               AND A.자료구분  = #{DATA_FG}
+               AND A.지급명령등록번호  = #{PAY_CMD_REGI_NO}
+               AND A.재배정여부  = #{RE_ALLO_YN}
+               AND A.거래일자 = #{TRNX_YMD}
+	</select>
+
+
+	<!-- e-호조 지급명세(TEF_EFAM026) 자료수신여부(RCPT_YN) Update  Y:수신 , N:미수신, B:반려, D:삭제 -->
+	<update id="update_e_hojo_income_cancle" parameterType="MyMap">
+		   UPDATE  ${VERIFY_ORI_NM}
+		   SET	RCPT_YN = 'D' ,
+		   		    DEAL_DESC_RSLT = #{DEL_CONT} ,
+		            DEAL_RSLT = '9999'
+           WHERE  REQ_ID = #{REQ_ID}                                                 <!--요청ID-->
+               AND REQ_INST_FG  = #{REQ_INST_FG}                              <!--요청기관구분-->
+               AND LOC_GOV_CD  = #{LOC_GOV_CD}                            <!--자치단체코드-->
+               AND REQ_INST_CD  = #{REQ_INST_CD}                              <!--관서코드-->
+               AND GCC_DEPT_CD  = #{GCC_DEPT_CD}                          <!--지급부서코드-->
+               AND FIS_YEAR  = #{FIS_YEAR}                                           <!--회계연도-->
+               AND FIS_FG_CD  = #{FIS_FG_CD}                                      <!--회계코드(회계구분)-->
+               AND DATA_FG  = #{DATA_FG}                                          <!--자료구분-->
+               AND PAY_CMD_REGI_NO  = #{PAY_CMD_REGI_NO}         <!--지급명령등록번호-->
+               AND RE_ALLO_YN  = #{RE_ALLO_YN}                                <!--재배정여부-->
+               AND TRNX_YMD = #{TRNX_YMD}
+	</update>
+
+	<!-- 복지금: e-호조 지급명세(TEF_EFAM026) 자료수신여부(RCPT_YN) Update  Y:수신 , N:미수신, B:반려, D:은행요구반련, / 결과코드 '0000' 아닌코드, DEAL_RSLT_YN = 'D' 추가 -->
+	<update id="update_e_hojo_income_cancle_walfare" parameterType="MyMap">
+		   UPDATE  ${VERIFY_ORI_NM}
+		   SET	RCPT_YN = 'D' ,
+		   		    DEAL_DESC_RSLT = #{DEL_CONT} ,
+		            DEAL_RSLT = '9999',
+		            DEAL_RSLT_YN = 'D'
+           WHERE  REQ_ID = #{REQ_ID}                                                 <!--요청ID-->
+               AND REQ_INST_FG  = #{REQ_INST_FG}                              <!--요청기관구분-->
+               AND LOC_GOV_CD  = #{LOC_GOV_CD}                            <!--자치단체코드-->
+               AND REQ_INST_CD  = #{REQ_INST_CD}                              <!--관서코드-->
+               AND GCC_DEPT_CD  = #{GCC_DEPT_CD}                          <!--지급부서코드-->
+               AND FIS_YEAR  = #{FIS_YEAR}                                           <!--회계연도-->
+               AND FIS_FG_CD  = #{FIS_FG_CD}                                      <!--회계코드(회계구분)-->
+               AND DATA_FG  = #{DATA_FG}                                          <!--자료구분-->
+               AND PAY_CMD_REGI_NO  = #{PAY_CMD_REGI_NO}         <!--지급명령등록번호-->
+               AND RE_ALLO_YN  = #{RE_ALLO_YN}                                <!--재배정여부-->
+               AND TRNX_YMD = #{TRNX_YMD}
+	</update>
+
+	<!-- 지급반려 지급원장 데이터 삭제 -->
+	<delete id="delete_income_cancle" parameterType="MyMap">
+		   DELETE  FROM 지급원장
+           WHERE  요청ID = #{REQ_ID}
+               AND 요청기관구분  = #{REQ_INST_FG}
+               AND 자치단체코드  = #{LOC_GOV_CD}
+               AND 관서코드  = #{REQ_INST_CD}
+               AND 지급부서코드  = #{GCC_DEPT_CD}
+               AND 회계연도  = #{FIS_YEAR}
+               AND 회계코드  = #{FIS_FG_CD}
+               AND 자료구분  = #{DATA_FG}
+               AND 지급명령등록번호  = #{PAY_CMD_REGI_NO}
+               AND 재배정여부  = #{RE_ALLO_YN}
+               AND 거래일자 = #{TRNX_YMD}
+	</delete>
+
+	<!-- e-호조 입금명세(TEF_EFAM0261) 자료수신여부(RCPT_YN) Update  Y:수신 , N:미수신, B:반려, D:삭제 -->
+	<update id="update_e_hojo_income_dt_cancle" parameterType="MyMap">
+		   UPDATE  ${VERIFY_ORI_DETAIL_NM}
+		   SET	RCPT_YN = 'D' ,
+		   		   	DEAL_DESC_RSLT = #{DEL_CONT} ,
+		            DEAL_RSLT = '9999'
+           WHERE  REQ_ID = #{REQ_ID}
+               AND REQ_INST_FG  = #{REQ_INST_FG}
+               AND LOC_GOV_CD  = #{LOC_GOV_CD}
+               AND REQ_INST_CD  = #{REQ_INST_CD}
+               AND GCC_DEPT_CD  = #{GCC_DEPT_CD}
+               AND FIS_YEAR  = #{FIS_YEAR}
+               AND FIS_FG_CD  = #{FIS_FG_CD}
+               AND DATA_FG  = #{DATA_FG}
+               AND PAY_CMD_REGI_NO  = #{PAY_CMD_REGI_NO}
+               AND RE_ALLO_YN  = #{RE_ALLO_YN}
+               AND TRNX_YMD = #{TRNX_YMD}
+	</update>
+
+	<!--복지금: e-호조 입금명세(TEF_EFAM0261) 자료수신여부(RCPT_YN) Update  Y:수신 , N:미수신, B:반려, D:은행요구반려 / 결과코드 '0000', DEAL_RSLT_YN = 'D' 추가 -->
+	<update id="update_e_hojo_income_dt_cancle_walfare" parameterType="MyMap">
+		   UPDATE  ${VERIFY_ORI_DETAIL_NM}
+		   SET	RCPT_YN = 'D' ,
+		   		   	DEAL_DESC_RSLT = #{DEL_CONT} ,
+		            DEAL_RSLT = '9999' ,
+		            DEAL_RSLT_YN = 'D'
+           WHERE  REQ_ID = #{REQ_ID}
+               AND REQ_INST_FG  = #{REQ_INST_FG}
+               AND LOC_GOV_CD  = #{LOC_GOV_CD}
+               AND REQ_INST_CD  = #{REQ_INST_CD}
+               AND GCC_DEPT_CD  = #{GCC_DEPT_CD}
+               AND FIS_YEAR  = #{FIS_YEAR}
+               AND FIS_FG_CD  = #{FIS_FG_CD}
+               AND DATA_FG  = #{DATA_FG}
+               AND PAY_CMD_REGI_NO  = #{PAY_CMD_REGI_NO}
+               AND RE_ALLO_YN  = #{RE_ALLO_YN}
+               AND TRNX_YMD = #{TRNX_YMD}
+	</update>
+
+	<!-- 지급반려 입금명세 데이터 삭제 -->
+	<delete id="delete_income_dt_cancle" parameterType="MyMap">
+		   DELETE  FROM  입금명세
+           WHERE  요청ID = #{REQ_ID}
+               AND 요청기관구분  = #{REQ_INST_FG}
+               AND 자치단체코드  = #{LOC_GOV_CD}
+               AND 관서코드  = #{REQ_INST_CD}
+               AND 부서코드  = #{GCC_DEPT_CD}
+               AND 회계연도  = #{FIS_YEAR}
+               AND 회계코드  = #{FIS_FG_CD}
+               AND 자료구분  = #{DATA_FG}
+               AND 지급명령등록번호  = #{PAY_CMD_REGI_NO}
+               AND 재배정여부  = #{RE_ALLO_YN}
+               AND 거래일자 = #{TRNX_YMD}
+	</delete>
+
+	<!-- Local  지급명세_반려 INSERT쿼리 -->
+	<insert id="insert_local_income_cnl" parameterType="MyMap">
+		INSERT INTO 지급원장_반려(
+               요청ID
+              ,요청기관구분
+              ,자치단체코드
+              ,관서코드
+              ,지급부서코드
+              ,회계연도
+              ,회계코드
+              ,자료구분
+              ,지급명령등록번호
+              ,지급반려일련번호
+              ,거래일자
+              ,기관구분
+              ,지급명령번호
+              ,요구부서코드
+              ,정책사업코드
+              ,단위사업코드
+              ,세부사업코드
+              ,분야코드
+              ,부문코드
+              ,예산과목코드
+              ,출금은행코드
+              ,출금계좌번호
+              ,출금금액
+              ,출금명세
+              ,요청정보
+              ,입금총건수
+              ,요청일시
+              ,자치단체명
+              ,관서명
+              ,지급부서명
+              ,회계명
+              ,정책사업명
+              ,단위사업명
+              ,세부사업명
+              ,분야명
+              ,부문명
+              ,예산과목명
+              ,요구부서명
+              ,지출원ID
+              ,지출원담당자명
+              ,지출원전화번호
+              ,자료수신여부
+              ,자료수신일시
+              ,자료수신자명
+              ,결과처리여부
+              ,결과코드
+              ,결과설명
+              ,결과처리자명
+              ,결과처리일시
+              ,재배정여부
+              ,지급형태
+              ,현금유형코드
+              ,현금종류코드
+              ,현금종류명
+              ,복지급여여부
+              ,거래번호
+              ,작업시스템코드
+              ,작업상태코드
+              ,처리건수
+              ,오류건수
+              ,처리금액
+              ,오류금액
+              ,등록일시
+              ,이체일자
+              ,에러파일생성여부
+              ,별단계좌번호
+        ) VALUES (
+				#{REQ_ID}
+               ,#{REQ_INST_FG}
+               ,#{LOC_GOV_CD}
+               ,#{REQ_INST_CD}
+               ,#{GCC_DEPT_CD}
+               ,#{FIS_YEAR}
+               ,#{FIS_FG_CD}
+               ,#{DATA_FG}
+               ,#{PAY_CMD_REGI_NO}
+               ,#{HIST_SEQ}
+               ,#{TRNX_YMD}
+               ,#{ORG_FG}
+               ,#{PAY_CMD_NO}
+               ,#{REQ_DEPT_CD}
+               ,#{PBIZ_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{UBIZ_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{DBIZ_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{FLD_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{SECT_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{TE_MNG_MOK_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{OUT_ACCT_BANKING_INST_CD}
+               ,#{OUT_ACCT_ACCT_NO}
+               ,#{TRNX_AMT}
+               ,#{OUT_ACCT_DETL_ITEM,javaType=String,jdbcType=VARCHAR}
+               ,#{REQ_INFO,javaType=String,jdbcType=VARCHAR}
+               ,#{IN_TOT_CNT}
+               ,TO_DATE(#{REQ_DATE}, 'yyyy-mm-dd hh24:mi:ss')
+               ,#{LOC_GOV_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{GOV_OFFICE_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{GCC_DEPT_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{FIS_FG_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{PBIZ_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{UBIZ_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{DBIZ_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{FLD_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{SECT_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{TE_MNG_MOK_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{REQ_DEPT_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{PAY_USER_ID,javaType=String,jdbcType=VARCHAR}
+               ,#{PAY_USER_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{EXP_USER_TEL_NO,javaType=String,jdbcType=VARCHAR}
+               ,#{RCPT_YN}
+               ,TO_DATE(#{RCPT_DATE,javaType=String,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss')
+               ,#{RCPT_NM,javaType=String,jdbcType=VARCHAR}
+               ,'D'                   <!--자료수신여부 반려:B 로 셋팅-->
+               ,#{DEAL_RSLT,javaType=String,jdbcType=VARCHAR}
+               ,#{DEL_CONT}     <!-- 결과설명 : 반려시에는 반려 사유를 입력한다. 20101202 : DEAL_DESC_RSLT 대신 DEL_CONT 로 대체 -->
+               ,#{DEL_USER_ID}      <!-- 결과처리자명 : 반려시에는 반려 사용자 및 반려 위치자를 입력한다. 20101202 : DEAL_DESC_NM 대신 DEL_USER_ID로 대체-->
+               ,TO_DATE(#{DEAL_RSLT_RECV_DATE}, 'yyyy-mm-dd hh24:mi:ss')
+               ,#{RE_ALLO_YN}
+               ,#{GCC_FROM}
+               ,#{CASH_TYPE_CD}
+               ,#{CASH_SORT_CD}
+               ,#{CASH_SORT_NM,javaType=String,jdbcType=VARCHAR}
+               ,#{SAL_YN,javaType=String,jdbcType=VARCHAR}
+               ,#{TRNX_NUM}
+               ,#{WORK_SYS_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{WORK_STA_CD,javaType=String,jdbcType=VARCHAR}
+               ,#{RST_CNT,javaType=BigDecimal,jdbcType=NUMERIC}
+               ,#{ERR_CNT,javaType=BigDecimal,jdbcType=NUMERIC}
+               ,#{RST_AMT,javaType=BigDecimal,jdbcType=NUMERIC}
+               ,#{ERR_AMT,javaType=BigDecimal,jdbcType=NUMERIC}
+               ,SYSDATE
+               ,#{ICHE_YMD,javaType=String,jdbcType=VARCHAR}
+               ,#{ERR_FILE_MK_YN,javaType=String,jdbcType=VARCHAR}
+               ,#{SPCL_ACCT,javaType=String,jdbcType=VARCHAR}
+           )
+	</insert>
+
+	<!-- e-호조 지급명세 반려(TEF_EFAM026_HIS) INSERT쿼리 -->
+	<insert id="insert_e_income_cnl" parameterType="MyMap">
+		INSERT INTO ${VERIFY_NM} (
+                REQ_ID
+               ,REQ_INST_FG
+               ,LOC_GOV_CD
+               ,REQ_INST_CD
+               ,GCC_DEPT_CD
+               ,FIS_YEAR
+               ,FIS_FG_CD
+               ,DATA_FG
+               ,PAY_CMD_REGI_NO
+               ,HIST_SEQ
+               ,TRNX_YMD
+               ,ORG_FG
+               ,PAY_CMD_NO
+               ,REQ_DEPT_CD
+               ,PBIZ_CD
+               ,UBIZ_CD
+               ,DBIZ_CD
+               ,FLD_CD
+               ,SECT_CD
+               ,TE_MNG_MOK_CD
+               ,OUT_ACCT_BANKING_INST_CD
+               ,OUT_ACCT_ACCT_NO
+               ,TRNX_AMT
+               ,OUT_ACCT_DETL_ITEM
+               ,REQ_INFO
+               ,IN_TOT_CNT
+               ,REQ_DATE
+               ,LOC_GOV_NM
+               ,GOV_OFFICE_NM
+               ,GCC_DEPT_NM
+               ,FIS_FG_NM
+               ,PBIZ_NM
+               ,UBIZ_NM
+               ,DBIZ_NM
+               ,FLD_NM
+               ,SECT_NM
+               ,TE_MNG_MOK_NM
+               ,REQ_DEPT_NM
+               ,PAY_USER_ID
+               ,PAY_USER_NM
+               ,EXP_USER_TEL_NO
+               ,RCPT_YN
+               ,RCPT_DATE
+               ,RCPT_NM
+               ,DEAL_RSLT_YN
+               ,DEAL_RSLT
+               ,DEAL_DESC_RSLT
+               ,DEAL_DESC_NM
+               ,DEAL_RSLT_RECV_DATE
+               ,DEL_DATE
+               ,DEL_USER_ID
+               ,DEL_CONT
+               ,RE_ALLO_YN
+               ,PAY_TYPE
+               ,TYPE_CD
+               ,LINE_CD
+               ,LINE_NM
+               ,GCC_DEPT_TEL_NO
+               ,SEND_SMS_YN)
+		VALUES (#{REQ_ID}
+               ,#{REQ_INST_FG}
+               ,#{LOC_GOV_CD}
+               ,#{REQ_INST_CD}
+               ,#{GCC_DEPT_CD}
+               ,#{FIS_YEAR}
+               ,#{FIS_FG_CD}
+               ,#{DATA_FG}
+               ,#{PAY_CMD_REGI_NO}
+               ,#{HIST_SEQ}
+               ,#{TRNX_YMD}
+               ,#{ORG_FG}
+               ,#{PAY_CMD_NO}
+               ,#{REQ_DEPT_CD}
+               ,#{PBIZ_CD}
+               ,#{UBIZ_CD}
+               ,#{DBIZ_CD}
+               ,#{FLD_CD}
+               ,#{SECT_CD}
+               ,#{TE_MNG_MOK_CD}
+               ,#{OUT_ACCT_BANKING_INST_CD}
+               ,#{OUT_ACCT_ACCT_NO}
+               ,#{TRNX_AMT}
+               ,#{OUT_ACCT_DETL_ITEM}
+               ,#{REQ_INFO}
+               ,#{IN_TOT_CNT}
+               ,TO_DATE(#{REQ_DATE}, 'yyyy-mm-dd hh24:mi:ss')
+               ,#{LOC_GOV_NM}
+               ,#{GOV_OFFICE_NM}
+               ,#{GCC_DEPT_NM}
+               ,#{FIS_FG_NM}
+               ,#{PBIZ_NM}
+               ,#{UBIZ_NM}
+               ,#{DBIZ_NM}
+               ,#{FLD_NM}
+               ,#{SECT_NM}
+               ,#{TE_MNG_MOK_NM}
+               ,#{REQ_DEPT_NM}
+               ,#{PAY_USER_ID}
+               ,#{PAY_USER_NM}
+               ,#{EXP_USER_TEL_NO}
+               ,'B'                                   <!--자료수신여부 반려:B 로 셋팅-->
+               ,TO_DATE(#{RCPT_DATE}, 'yyyy-mm-dd hh24:mi:ss')
+               ,#{RCPT_NM}
+               ,#{DEAL_RSLT_YN}
+               ,#{DEAL_RSLT}
+               ,#{DEAL_DESC_RSLT}
+               ,#{DEAL_DESC_NM}
+               ,TO_DATE(#{DEAL_RSLT_RECV_DATE}, 'yyyy-mm-dd hh24:mi:ss')
+               ,SYSDATE                          <!-- 삭제일자  -->
+               ,#{DEL_USER_ID}                <!-- 삭제자 ID  -->
+               ,#{DEL_CONT}                    <!-- 삭제사유  -->
+               ,#{RE_ALLO_YN}                <!-- 재배정여부  -->
+               ,'00'                   <!-- 농협추가요청컬럼 PAY_TYPE-->
+               ,'00'                   <!-- 농협추가요청컬럼 TYPE_CD-->
+               ,'000'                 <!-- 농협추가요청컬럼 LINE_CD-->
+               ,' '                   <!-- 농협추가요청컬럼 LINE_NM-->
+               ,' '                   <!-- GCC_DEPT_TEL_NO-->
+               ,' ')                  <!-- SEND_SMS_YN-->
+	</insert>
+
+
+	<!-- E-호조의 접근시 필요한 링크명을 가져오기 위함 -->
+	<select id="getLink" resultType="MyMap">
+		SELECT 	링크명 AS LINK_NM
+		  FROM	점번정보
+		 WHERE	자치단체코드 = #{LOC_GOV_CD}
+	</select>
+
+</mapper>
+

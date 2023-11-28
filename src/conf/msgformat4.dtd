@@ -1,0 +1,30 @@
+<!ELEMENT messageFormats (messageFormat+)>
+<!ELEMENT messageFormat (header+, body+, trailler*)> 
+<!ATTLIST messageFormat 
+	msgNumber CDATA #REQUIRED>
+
+<!ELEMENT header (field+)> 
+
+<!ELEMENT body (field+)> 
+<!ATTLIST body 
+	name CDATA #REQUIRED
+	value CDATA #REQUIRED
+	className CDATA #REQUIRED>
+	
+<!ELEMENT trailler (field*)> 
+
+<!ENTITY % fieldtype "numeric|alpaNumeric">
+<!ENTITY % fieldfmt "figures|string">
+
+<!ELEMENT field (validValues*)> 
+<!ATTLIST field
+   		id CDATA #REQUIRED
+   		repetition CDATA #REQUIRED
+   		name CDATA #REQUIRED
+   		position CDATA #REQUIRED
+   		size CDATA #REQUIRED
+   		type (%fieldtype;) #REQUIRED
+   		format (%fieldfmt;) #REQUIRED>
+
+<!ELEMENT validValues (validValue+)>
+<!ELEMENT validValue (#PCDATA)>

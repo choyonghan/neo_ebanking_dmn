@@ -1,0 +1,994 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <!--
+        stdoutAppender Configuration
+    -->
+    <appender name="stdoutAppender" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="DEBUG"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="fallbackDailyRollingFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/tmp/e-bank_fallback.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dailyRollingFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/tmp/e-bank.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="helloworld" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/tmp/helloworld.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="ActionRunner" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neoactionrunner.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="Action1010" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neoaction1010.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="NewClient" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neonewclient.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="NewServer" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neonewserver.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="NewCommServer" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neonewcommserver.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="NewClientServer" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neonewclientserver.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="QueryBankBalance" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neoquerybankbalance.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="QueryDepositorName" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neoquerydepositorname.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="SimClient" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neosimclient.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="SimServer" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neosimserver.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="SendVerifyToBank" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neosendverifytobank.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="SendTransferToBank" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neosendtransfertobank.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="SendTransferToStbxBank" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neosendtransfertostbxbank.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="SendCoInfoToBank" class="org.apache.log4j.DailyRollingFileAppender">
+		<!-- Error Handler -->
+		<errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+			<root-ref/>
+			<appender-ref ref="fallbackDailyRollingFileAppender" />
+		</errorHandler>
+		<param name="Threshold" value="TRACE"/>
+		<param name="File" value="/dees_tst/log/newapp/neosendcoinfotobank.log"/>
+		<param name="Append" value="true"/>
+		<param name="DatePattern" value=".yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+		</layout>
+	</appender>
+
+    <appender name="SendTransferToBank1" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neosendtransfertobank1.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="RecvFromBank" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neorecvfrombank.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+     <appender name="TimerThread" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="INFO"/>
+        <param name="File" value="/dees_svr/log/newapp/neoTimerThread.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+    <appender name="TimerThread1" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="INFO"/>
+        <param name="File" value="/dees_svr/log/newapp/neoTimerThread1.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+    <appender name="TimerThread2" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="INFO"/>
+        <param name="File" value="/dees_svr/log/newapp/neoTimerThread2.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+    <appender name="TimerThread3" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="INFO"/>
+        <param name="File" value="/dees_svr/log/newapp/neoTimerThread3.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+    <appender name="RecvFromBank1" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neorecvfrombank1.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws3010" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws3010.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+    <appender name="dmws9020" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws9020.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws3020" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws3020.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws3050" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws3050.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws4010" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws4010.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws4020" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws4020.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws4030" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws4030.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws4040" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws4040.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws4050" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws4050.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws4060" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws4060.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws4070" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws4070.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws6020" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6020.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+
+<!--
+    <appender name="dmws6040" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6040.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+ -->
+
+    <appender name="dmws6050" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6050.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws6060" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6060.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+<!--
+    <appender name="dmws6051" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6051.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws6052" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6052.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws6053" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6053.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws6054" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6054.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws6055" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws6055.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+ -->
+    <appender name="dmws5010" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="TRACE"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws5010.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws5020" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws5020.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws5021" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws5021.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws5030" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws5030.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws5031" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws5031.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="dmws5050" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- Error Handler -->
+        <errorHandler class="org.apache.log4j.varia.FallbackErrorHandler">
+            <root-ref/>
+            <appender-ref ref="fallbackDailyRollingFileAppender" />
+        </errorHandler>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="File" value="/dees_tst/log/newapp/neodmws5050.log"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} (%C{1}[%L])-%m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS3010">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws3010"/>
+    </logger>
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS9020">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws9020"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS3020">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws3020"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS3050">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws3050"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS4010">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws4010"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS4020">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws4020"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS4030">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws4030"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS4040">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws4040"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS4050">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws4050"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS4060">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws4060"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS4070">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws4070"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6020">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6020"/>
+    </logger>
+<!--
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6040">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6040"/>
+    </logger>
+ -->
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6050">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6050"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6060">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6060"/>
+    </logger>
+<!--
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6051">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6051"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6052">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6052"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6053">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6053"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6054">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6054"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS6055">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws6055"/>
+    </logger>
+ -->
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS5010">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws5010"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS5020">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws5020"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS5021">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws5021"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS5030">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws5030"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS5031">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws5031"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.daemon.NeoDMWS5050">
+        <level value="DEBUG"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="dmws5050"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.server.SendVerifyToBank">
+        <level value="TRACE"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="SendVerifyToBank"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.server.SendTransferToBank">
+        <level value="TRACE"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="SendTransferToBank"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.server.SendTransferToStbxBank">
+        <level value="TRACE"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="SendTransferToStbxBank"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.server.SendCoInfoToBank">
+		<level value="TRACE"/>
+		<appender-ref ref="stdoutAppender"/>
+		<appender-ref ref="SendCoInfoToBank"/>
+	</logger>
+
+    <logger name="com.uc.expenditure.daegu.server.SendTransferToBank1">
+        <level value="TRACE"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="SendTransferToBank1"/>
+    </logger>
+
+    <logger name="com.uc.expenditure.daegu.server.RecvFromBank">
+        <level value="TRACE"/>
+        <appender-ref ref="stdoutAppender"/>
+        <appender-ref ref="RecvFromBank"/>
+    </logger>
+
+    <logger name="com.uc.framework.nio.io.TimerThread">
+      <level value="TRACE"/>
+      <appender-ref ref="stdoutAppender"/>
+      <appender-ref ref="TimerThread"/>
+    </logger>
+    <logger name="com.uc.framework.nio.io.TimerThread1">
+      <level value="TRACE"/>
+      <appender-ref ref="stdoutAppender"/>
+      <appender-ref ref="TimerThread1"/>
+    </logger>
+    <logger name="com.uc.framework.nio.io.TimerThread2">
+      <level value="TRACE"/>
+      <appender-ref ref="stdoutAppender"/>
+      <appender-ref ref="TimerThread2"/>
+    </logger>
+    <logger name="com.uc.framework.nio.io.TimerThread3">
+      <level value="TRACE"/>
+      <appender-ref ref="stdoutAppender"/>
+      <appender-ref ref="TimerThread3"/>
+    </logger>
+
+    <logger name="org.apache">
+        <level value="ERROR"/>
+        <appender-ref ref="stdoutAppender"/>
+    </logger>
+    <logger name="java">
+        <level value="ERROR"/>
+        <appender-ref ref="stdoutAppender"/>
+    </logger>
+    <logger name="jdbc.resultsettable" additivity="false">
+    <level value="info" />
+    <appender-ref ref="stdoutAppender" />
+  </logger>
+    <logger name="org">
+        <level value="INFO"/>
+    </logger>
+    <logger name="com.opensymphony">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="TldConfig">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="freemarker">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="java.sql">
+    <level value="DEBUG"/>
+    </logger>
+</log4j:configuration>

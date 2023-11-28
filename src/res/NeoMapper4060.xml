@@ -1,0 +1,918 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper4060">
+
+    <!-- ############################################ -->
+    <!-- ############# 공통 ########################### -->
+    <!-- ############################################ -->
+
+    <select id="getFileNameTR"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getFileNameTR2003 - 헤더 파일명 SELECT */
+        SELECT 파일명 FROM TR_HEADER
+        WHERE STATUS_CODE = #{STATUS_CODE,jdbcType=VARCHAR}
+        AND 업무구분 = #{업무구분,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateTRHeader" parameterType="MyMap">
+    UPDATE TR_HEADER SET STATUS_CODE = '01'
+    WHERE 파일명 = #{파일명}
+    </update>
+
+	<!-- ############################################ -->
+	<!-- ############# TR2001 ####################### -->
+	<!-- ############################################ -->
+
+    <!-- Temp 테이블 데이터 읽기  -->
+    <select id="getFileNumberTR2001M"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getFileNumberTR2001M - 마스터 파일넘버 SELECT */
+        SELECT SEQ FROM TR2001_M
+        WHERE 파일명 = #{파일명,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getSelectTR2001"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getSelectTR2001 - 설명 */
+        SELECT M.SEQ AS SEQ_M
+        ,      D.SEQ_D  AS SEQ_D
+        ,      M.전송일시 AS 전송일시_M
+        ,      M.지방자치단체코드 AS 지방자치단체코드_M
+        ,      M.출금총건수 AS 출금총건수_M
+        ,      M.출금총금액 AS 출금총금액_M
+        ,      D.환급금관리번호 AS 환급금관리번호_D
+        ,      D.세목코드 AS 세목코드_D
+        ,      M.회계연도 AS 회계연도_M
+        ,      M.회계일자 AS 회계일자_M
+        ,      D.광역시도세계좌번호 AS 광역시도세계좌번호_D
+        ,      D.시군구세계좌번호 AS 시군구세계좌번호_D
+        ,      D.국세계좌번호 AS 국세계좌번호_D
+        ,      M.광역시도세계좌번호 AS 광역시도세계좌번호_M
+        ,      M.시군구세계좌번호 AS 시군구세계좌번호_M
+        ,      M.국세계좌번호 AS 국세계좌번호_M
+        ,      D.광역시도세세입금액 AS 광역시도세세입금액_D
+        ,      D.광역시도세세가산금 AS 광역시도세세가산금_D
+        ,      D.시군구세세입금액 AS 시군구세세입금액_D
+        ,      D.시군구세가산금 AS 시군구세가산금_D
+        ,      D.국세세입금액 AS 국세세입금액_D
+        ,      D.국세세입가산금 AS 국세세입가산금_D
+        ,      D.본세입금액 AS 본세입금액_D
+        ,      D.도시계획세입금액 AS 도시계획세입금액_D
+        ,      D.지역자원시설세입금액 AS 지역자원시설세입금액_D
+        ,      D.지방교육세입금액 AS 지방교육세입금액_D
+        ,      D.국세농특세입금액 AS 국세농특세입금액_D
+        ,      D.본세가산금 AS 본세가산금_D
+        ,      D.도시계획세가산금 AS 도시계획세가산금_D
+        ,      D.지역자원시설세가산금 AS 지역자원시설세가산금_D
+        ,      D.지방교욱세가산금 AS 지방교욱세가산금_D
+        ,      D.국세농특세가산액 AS 국세농특세가산액_D
+        ,      M.입출금지시거래구분코드 AS 입출금지시거래구분코드_M
+        ,      D.입금부서명 AS 입금부서명_D
+        ,      D.입금상세거래결과코드 AS 입금상세거래결과코드_D
+        ,      DECODE(M.광역시도세현년도출금금액+M.시군구세현년도출금금액+M.국세현년도출금금액,0,'2','1') AS 현과년도구분_M
+        ,      D.납세자번호 AS 납세자번호_D
+        FROM   TR2001_M M, TR2001_D D
+        WHERE  M.SEQ = #{SEQ,jdbcType=VARCHAR}
+        AND    M.파일명 = D.파일명
+        AND    M.SEQ = D.SEQ
+    </select>
+
+	<!--전문 저장 -->
+    <insert id="insertTR2001" parameterType="MyMap">
+        /* NeoMapper4060.insertTR2001 - 반환결의확정 */
+        <![CDATA[
+        INSERT INTO CSTSCYB548
+		(   SEQ                 /* 발생순서                                                        */
+		,   RAISE_TIME          /* 발생일시 - 전송일시   */
+		,   C_SLF_ORG           /* 자치단체코드                                                    */
+		,   JING_NO             /* 결의번호   */
+		,   TOT_CNT             /* 총건수                                                          */
+		,   TOT_AMT             /* 총금액                                                          */
+		,   GWASE_NO            /* 과세번호 */
+		,   OVERPAY_NO          /* 과오납번호/징수촉탁번호                                         */
+		,   TPR_NO              /* 납세자번호                                                      */
+		,   C_SSEMOK            /* 세목코드                                                        */
+		,   ACCT_YY             /* 회계연도                                                        */
+		,   ACCT_DT             /* 회계일자(반환결의일자)               */
+		,   YEAR_GB             /* 현과년도구분(1 현년도, 2 과년도)       */
+		,   OUT_DO_ACC          /* 도세광역시세 출금계좌(당행)           */
+		,   OUT_SI_ACC          /* 시군세 출금계좌(당행)               */
+		,   OUT_KUK_ACC         /* 국세 출금계좌(당행)                */
+		,   TOTAL_AMT           /* 출금액(합계)                     */
+		,   DO_AMT              /* 도세광역시세 입/출금액                                          */
+		,   SI_AMT              /* 시도세 입/출금액                                                */
+		,   KU_AMT              /* 국세 입/출금액                                                  */
+		,   TAX_BON             /* 본세 환부액                                                     */
+		,   TAX_CITY            /* 도시계획세 환부액                                               */
+		,   TAX_PUBLIC          /* 공동시설세 환부액                                               */
+		,   TAX_EDU             /* 지방교육세 환부액                                               */
+		,   TAX_FARM            /* 농어촌특별세 환부액                                             */
+		,   TAX_BON_UPM         /* 본세 이자액                                                     */
+		,   TAX_CITY_UPM        /* 도시계획세 이자액                                               */
+		,   TAX_PUBLIC_UPM      /* 공동시설세 이자액                                               */
+		,   TAX_EDU_UPM         /* 지방교육세 이자액                                               */
+		,   TAX_FARM_UPM        /* 농어촌특별세 이자액                                             */
+		,   GON_TOTAL           /* 과오납금액 합계                                                 */
+		,   UPM_TOTAL           /* 이자금액 합계                                                   */
+		,   TAX_TOTAL           /* 총 이체 금액(출금액과 동일)           */
+		,   DIV_OVERPAY         /* 과오납구분(0 : 과오납)            */
+		,   DIV_EDU             /* 교육세회계구분(1: 국세, 2: 지방세)   */
+		,   RPAY_TOTAL          /* 환부금액 합계                                                   */
+		,   APPR_TOTAL          /* 충당금액 합계                                                   */
+		,   C_BANK              /* 입금거래 은행 코드                                              */
+		,   ACC_OWNER_NAME      /* 예금주 성명                                                     */
+		,   BANK_ACC        /* 입금 계좌번호(-제거)               */
+		,   WORK_USER           /* 담당자 ID                       */
+		,   APP_WORK_USER       /* 담당 ID                        */
+		,   OFFICER_USER        /* 징수관 ID                       */
+		,   ERROR_DESC          /* 지급결과내용                                                    */
+		,   CHG_TYPE            /* 변경구분(1 : 신규)               */
+		,   UPDATE_DT           /* 수신일시(수신후 등록)               */
+		,   TRN_YN              /* 처리여부(0: 대기, 1: 정상, 2: 에러)  */
+		,   ETAX_STATUS_CODE    /* 작업상태코드(01:지방세시스템 자료수신)    */
+		,   ETAX_RESULT_CODE    /* 지급결과코드                                                    */
+		,   ETAX_RESULT_DESC    /* 지급결과설명                                                    */
+		,   ETAX_USE_YN         /* 사용여부                                                        */
+		,   ETAX_REG_DATE       /* 저장일시                                                        */
+		,   ETAX_UPT_DATE       /* 수정일시                                                        */
+		)  VALUES
+		(   #{SEQ_D,jdbcType=VARCHAR}
+		,   #{전송일시_M,jdbcType=VARCHAR}
+		,   #{지방자치단체코드_M,jdbcType=VARCHAR}
+		,   nvl(#{SEQ_M,jdbcType=NUMERIC},0)
+		,   nvl(#{출금총건수_M,jdbcType=NUMERIC}, 0)
+		,   nvl(#{출금총금액_M,jdbcType=NUMERIC}, 0)
+		,   ''
+		,   #{환급금관리번호_D,jdbcType=VARCHAR}
+		,   #{납세자번호_D,jdbcType=VARCHAR}
+		,   #{세목코드_D,jdbcType=VARCHAR}
+		,   #{회계연도_M,jdbcType=VARCHAR}
+		,   #{회계일자_M,jdbcType=VARCHAR}
+		,   #{현과년도구분_M,jdbcType=VARCHAR}      /* 현과년도구분(1 현년도, 2 과년도)  */
+        ,   #{광역시도세계좌번호_D,jdbcType=VARCHAR}
+        ,   #{시군구세계좌번호_D,jdbcType=VARCHAR}
+        ,   #{국세계좌번호_D,jdbcType=VARCHAR}
+		,   nvl(#{TOTAL_AMT,jdbcType=NUMERIC}, 0) /* 총입금금액  */
+		,   nvl(#{DO_AMT,jdbcType=NUMERIC}, 0)   /* 광역시도세현년도출금금액  */
+		,   nvl(#{SI_AMT,jdbcType=NUMERIC}, 0)    /* 시군구세현년도출금금액  */
+		,   nvl(#{KU_AMT,jdbcType=NUMERIC}, 0)    /* 국세현년도출금금액  */
+		,   nvl(#{본세입금액_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{도시계획세입금액_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{지역자원시설세입금액_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{지방교육세입금액_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{국세농특세입금액_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{본세가산금_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{도시계획세가산금_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{지역자원시설세가산금_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{지방교욱세가산금_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{국세농특세가산액_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{과오납금액합계_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{이자금액합계_D,jdbcType=NUMERIC}, 0)
+		,   nvl(#{과오납금액합계_D,jdbcType=NUMERIC},0) + nvl(#{이자금액합계_D,jdbcType=NUMERIC},0)
+		,   DECODE(#{입출금지시거래구분코드_M,jdbcType=VARCHAR},'1001','1','1002','2','1')   /* 과오납구분(0:과오납) */
+		,   ''
+		,   ''
+		,   ''
+		,   '031'
+		,   #{입금부서명_D,jdbcType=VARCHAR}
+		,   DECODE(#{광역시도세계좌번호_D,jdbcType=VARCHAR},NULL,DECODE(#{시군구세계좌번호_D,jdbcType=VARCHAR},NULL,#{국세계좌번호_D,jdbcType=VARCHAR},#{시군구세계좌번호_D,jdbcType=VARCHAR}),#{광역시도세계좌번호_D,jdbcType=VARCHAR})
+		,   ''
+		,   ''
+		,   ''
+		,   #{입금상세거래결과코드_D,jdbcType=VARCHAR}
+		,   '1'
+		,   sysdate
+		,   'Y'
+		,   '01'
+		,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999')  /* 나중에 맨 뒤 '0000' '9999'으로 변경해야 함 */
+		,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류')
+		,   'Y'
+		,   sysdate
+		,   sysdate
+		)
+        ]]>
+    </insert>
+
+
+    <!-- ############################################ -->
+    <!-- ############# TR2002 ####################### -->
+    <!-- ############################################ -->
+
+    <!-- Temp 테이블 데이터 읽기  -->
+    <select id="getFileNumberTR2002M"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getFileNumberTR2002M - 마스터 파일넘버 SELECT */
+        SELECT SEQ FROM TR2002_M
+        WHERE 파일명 = #{파일명,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getSelectTR2002"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getSelectTR2002 - 설명 */
+        SELECT M.파일명                        AS 파일명_M
+		,      M.SEQ            AS SEQ_M
+		,      M.SEQ            AS FILENUMBER_M
+		,      M.업무구분                      AS 업무구분_M
+		,      M.데이터구분                  AS 데이터구분_M
+		,      M.일련번호                     AS 일련번호_M
+		,      M.입출금지시거래구분코드  AS 입출금지시거래구분코드_M
+		,      M.전송일시                    AS 전송일시_M
+		,      M.이용기관지로번호        AS 이용기관지로번호_M
+		,      M.지방자치단체코드        AS 지방자치단체코드_M
+		,      M.지방자치단체명           AS 지방자치단체명_M
+		,      M.부서코드                  AS 부서코드_M
+		,      M.부서명                    AS 부서명_M
+		,      M.결의자명                 AS 결의자명_M
+		,      M.거래요청관리번호        AS 거래요청관리번호_M
+		,      M.회계연도                AS 회계연도_M
+		,      M.회계일자                AS 회계일자_M
+		,      M.납부일자                AS 납부일자_M
+		,      M.자금이체일자            AS 자금이체일자_M
+		,      M.출금총건수              AS 출금총건수_M
+		,      M.출금총금액              AS 출금총금액_M
+		,      M.광역시도세계좌번호         AS 광역시도세계좌번호_M
+		,      M.광역시도세현년도출금금액  AS 광역시도세현년도출금금액_M
+		,      M.광역시도세과년도출금금액  AS 광역시도세과년도출금금액_M
+		,      M.시군구세계좌번호            AS 시군구세계좌번호_M
+		,      M.시군구세현년도출금금액  AS 시군구세현년도출금금액_M
+		,      M.시군구세과년도출금금액  AS 시군구세과년도출금금액_M
+		,      M.국세계좌번호             AS 국세계좌번호_M
+		,      M.국세현년도출금금액      AS 국세현년도출금금액_M
+		,      M.국세과년도출금금액      AS 국세과년도출금금액_M
+		,      M.출금계좌적요             AS 출금계좌적요_M
+		,      M.출금거래결과코드        AS 출금거래결과코드_M
+		,      M.출금거래결과상세        AS 출금거래결과상세_M
+		,      M.은행회계일자             AS 은행회계일자_M
+		,      M.은행납부일자             AS 은행납부일자_M
+		,      M.은행자금이체일자        AS 은행자금이체일자_M
+		,      D.파일명                        AS 파일명_D
+		,      D.SEQ_D           AS SEQ_D
+		,      D.업무구분                        AS 업무구분_D
+		,      D.데이터구분                     AS 데이터구분_D
+		,      D.일련번호                       AS 일련번호_D
+		,      D.광역시도세계좌번호            AS 광역시도세계좌번호_D
+		,      D.시군구세계좌번호              AS 시군구세계좌번호_D
+		,      D.국세계좌번호                  AS 국세계좌번호_D
+		,      D.입금거래순번                  AS 입금거래순번_D
+		,      D.상세내역관리번호              AS 상세내역관리번호_D
+		,      D.입금부서코드                  AS 입금부서코드_D
+		,      D.입금부서명                    AS 입금부서명_D
+		,      D.납세번호                      AS 납세번호_D
+		,      D.부과년도                      AS 부과년도_D
+		,      D.납세자번호                    AS 납세자번호_D
+		,      D.납세자명                      AS 납세자명_D
+		,      D.세목코드                      AS 세목코드_D
+		,      D.세목명                         AS 세목명_D
+		,      D.본세회계구분코드           AS 본세회계구분코드_D
+		,      D.본세입금액                    AS 본세입금액_D
+		,      D.본세가산금                    AS 본세가산금_D
+		,      D.도시계획세회계구분코드     AS 도시계획세회계구분코드_D
+		,      D.도시계획세입금액              AS 도시계획세입금액_D
+		,      D.도시계획세가산금              AS 도시계획세가산금_D
+		,      D.지역자원시설세회계구분코드공동  AS 지역자원시설세회계구분코드공동_D
+		,      D.지역자원시설세입금액             AS 지역자원시설세입금액_D
+		,      D.지역자원시설세가산금            AS 지역자원시설세가산금_D
+		,      D.지방교육세회계구분코드        AS 지방교육세회계구분코드_D
+		,      D.지방교육세입금액              AS 지방교육세입금액_D
+		,      D.지방교욱세가산금              AS 지방교욱세가산금_D
+		,      D.국세농특세입금액              AS 국세농특세입금액_D
+		,      D.국세농특세가산액              AS 국세농특세가산액_D
+		,      D.국세교육세입금액              AS 국세교육세입금액_D
+		,      D.국세교육세가산액              AS 국세교육세가산액_D
+		,      D.국세회계구분코드              AS 국세회계구분코드_D
+		,      D.국세세입금액                  AS 국세세입금액_D
+		,      D.국세가산금                     AS 국세가산금_D
+		,      D.광역시도세회계구분            AS 광역시도세회계구분_D
+		,      D.광역시도세세입금액            AS 광역시도세세입금액_D
+		,      D.광역시도세세가산금            AS 광역시도세세가산금_D
+		,      D.시군구세회계구분              AS 시군구세회계구분_D
+		,      D.시군구세세입금액              AS 시군구세세입금액_D
+		,      D.시군구세가산금                AS 시군구세가산금_D
+		,      D.세입금충당OCR밴드입금부   AS 세입금충당OCR밴드입금부_D
+		,      D.수취인계좌적요                AS 수취인계좌적요_D
+		,      D.입금상세거래결과코드          AS 입금상세거래결과코드_D
+		,      D.입금상세거래결과상세          AS 입금상세거래결과상세_D
+		,      D.환급금관리번호                AS 환급금관리번호_D
+		,      D.광역시도세금융기관코드        AS 광역시도세금융기관코드_D
+		,      D.시군구세금융기관코드          AS 시군구세금융기관코드_D
+		,      D.국세금융기관코드              AS 국세금융기관코드_D
+        FROM   TR2002_M M, TR2002_D D
+        WHERE  M.SEQ = #{SEQ,jdbcType=VARCHAR}
+        AND    M.파일명 = D.파일명
+        AND    M.SEQ = D.SEQ
+    </select>
+
+    <!--전문 저장 -->
+    <insert id="insertTR2002_551" parameterType="MyMap">
+        /* NeoMapper4060.insertTR2002_551 - 세입금 충단 입출금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB551
+		(   SEQ               /* 발생순서                   */
+		,   RAISE_TIME        /* 발생일시                   */
+		,   C_SLF_ORG         /* 자치단체코드               */
+		,   CREATE_DATE       /* 파일생성일자               */
+		,   FILE_NUMBER       /* 파일일련번호               */
+		,   TOT_CNT           /* 총건수                     */
+		,   TOT_AMT           /* 총금액                     */
+		,   EPAY_NO           /* 전자납부번호               */
+		,   OCR_LINE1         /* OCR밴드1       */
+		,   OCR_LINE2         /* OCR밴드2        */
+		,   C_BANK            /* 수납은행코드               */
+		,   D_BANK_SUNAP      /* 수납일자                   */
+		,   D_COM_SOIN        /* 회계일자                   */
+		,   D_BANK_REP        /* 이체일자                   */
+		,   TAX_GDS           /* 과세물건                   */
+		,   TAX_STD           /* 과표                       */
+		,   CRE_DT            /* 고지자료발생일          */
+		,   DIV_APPR          /* 충당구분(1:일반충당, 2:직권충당)   */
+		,   OVERPAY_NO        /* 과오납번호                 */
+		,   SEQ_NUMBER        /* 일련번호                   */
+		,   C_SSEMOK          /* 세목코드                   */
+		,   ACCT_YY           /* 회계연도                   */
+		,   ACCT_DT           /* 반환결의일자               */
+		,   YEAR_GB           /* 현과년도구분               */
+		,   OUT_DO_ACC        /* 도세환부계좌               */
+		,   OUT_SI_ACC        /* 시세환부계좌               */
+		,   OUT_KUK_ACC       /* 국세환부계좌               */
+		,   OUT_AMT           /* 출금액(합계)     */
+		,   OUT_DO_AMT        /* 도세금액                   */
+		,   OUT_SI_AMT        /* 시세금액                   */
+		,   OUT_KUK_AMT       /* 국세금액                   */
+		,   IN_GB             /* 이체 구분(충당지급 : 30)   */
+		,   TAX_BON           /* 본세 환부액                */
+		,   TAX_CITY          /* 도시계획세 환부액          */
+		,   TAX_PUBLIC        /* 공동시설세 환부액          */
+		,   TAX_EDU           /* 교육세 환부액              */
+		,   TAX_FARM          /* 농특세 환부액              */
+		,   TAX_BON_ADD       /* 본세 가산금                */
+		,   TAX_CITY_ADD      /* 도시계획세 가산금          */
+		,   TAX_PUBLIC_ADD    /* 공동시설세 가산금          */
+		,   TAX_EDU_ADD       /* 교육세 가산금              */
+		,   TAX_FARM_ADD      /* 농특세 가산금              */
+		,   A_UPM             /* 이자금액                   */
+		,   A_APPR            /* 충당금액                   */
+		,   A_GON             /* 최초발생액                 */
+		,   DIV_OVERPAY       /* 과오납구분(1:과오납충당) */
+		,   DIV_EDU           /* 교육세회계구분(‘1’국세 ‘2’지방세)  */
+		,   NPAY_DTL_CODE     /*    */
+		,   NPAY_DTL          /* 과오납 사유                */
+		,   DUE_DT            /* 과오납금 납부일자          */
+		,   TPR_NO            /* 납세자번호                  */
+		,   TPR_NM            /* 납세자명                     */
+		,   TAX_OBJ           /* 과세물건                     */
+		,   TAX_GWAPHYO       /* 과표                          */
+		,   GWASE_NO          /* 과세번호(과오납)   */
+		,   ADONG_COD         /* 행정동(과오납)    */
+		,   D_DUE_BF          /* 납기내 일자                */
+		,   D_DUE_AF          /* 납기후 일자                */
+		,   D_OCC             /* 고지자료발생일             */
+		,   WORK_USER         /* 담당자ID         */
+		,   APP_WORK_USER     /* 담당ID           */
+		,   OFFICER_USER      /* 징수관ID         */
+		,   D_RTN             /* 지급예정일(파일생성일과 동일)  */
+		,   PAY_DT            /* 납부일자                   */
+		,   PAYMENT_RESULT    /* 지급결과코드               */
+		,   ERROR_DESC        /* 지급결과내용               */
+		,   CHG_TYPE          /* 변경구분(1: 신규, 2: 수정, 3: 삭제)  */
+		,   UPDATE_DT         /* 수신일시                   */
+		,   RTN_YN            /* 처리여부(0: 대기, A: 전자이체전송, 1: 전자이체 전송 정상, 2: 전자이체 전송 에러, 6:전자이체 결과등록, 7:표준지방세 적용 정상, 8: 표준지방세 적용오류)  */
+		,   ETAX_ACCT_YY      /* ETAX ORC밴드 추출 회계연도 */
+		,   ETAX_SI_AMT       /* ETAX_ORC밴드 추출 시세충당금    */
+		,   ETAX_GU_AMT       /* ETAX_ORC밴드 추출 구세충당금   */
+		,   ETAX_KUK_AMT      /* ETAX_ORC밴드 추출 국세충당금  */
+		,   ETAX_SEQ          /* ETAX사용일련번호           */
+		,   ETAX_STATUS_CODE  /* 작업상태코드(01:지방세시스템 자료수신)  */
+		,   ETAX_RESULT_CODE  /* 지급결과코드               */
+		,   ETAX_RESULT_DESC  /* 지급결과설명               */
+		,   ETAX_USE_YN       /* 사용여부                   */
+		,   ETAX_REG_DATE     /* 저장일시                   */
+		,   ETAX_UPT_DATE     /* 수정일시                   */
+		)  VALUES
+		(   #{SEQ_D,jdbcType=VARCHAR}
+		,   #{전송일시_M,jdbcType=VARCHAR}
+		,   #{지방자치단체코드_M,jdbcType=VARCHAR}
+		,   #{회계일자_M,jdbcType=VARCHAR}
+		,   #{FILENUMBER_M,jdbcType=VARCHAR}
+		,   nvl(#{출금총건수_M,jdbcType=NUMERIC},0)
+		,   nvl(#{출금총금액_M,jdbcType=NUMERIC},0)
+		,   #{거래요청관리번호_M,jdbcType=VARCHAR}
+		,   #{OCR_Line1,jdbcType=VARCHAR}
+		,   #{OCR_Line2,jdbcType=VARCHAR}
+		,   '031'
+		,   #{납부일자_M,jdbcType=VARCHAR}
+		,   #{회계일자_M,jdbcType=VARCHAR}
+		,   #{자금이체일자_M,jdbcType=VARCHAR}
+		,   ''  /* 과세물건_M */
+		,   ''  /* 과표_M */
+		,   ''  /* 고지자료발생일_M */
+		,   '1' /* 충당구분 (1:일반충당 , 2:직권충당)*/
+		,   ''  /* 과오납번호 */
+		,   #{일련번호_D,jdbcType=VARCHAR}
+		,   #{세목코드_D,jdbcType=VARCHAR}
+		,   #{회계연도_M,jdbcType=VARCHAR}
+		,   #{회계일자_M,jdbcType=VARCHAR} /* 반환결의일자 */
+		,   #{현과년도구분_M,jdbcType=VARCHAR} /* 현과년도구분  */
+		,   #{광역시도세계좌번호_M,jdbcType=VARCHAR}
+		,   #{시군구세계좌번호_M,jdbcType=VARCHAR}
+		,   #{국세계좌번호_M,jdbcType=VARCHAR}
+		,   nvl(#{OUT_AMT,jdbcType=NUMERIC},0)    /* OUT_DO_AMT+OUT_SI_AMT+OUT_KUK_AMT */
+        ,   nvl(#{OUT_DO_AMT,jdbcType=NUMERIC}, 0)   /* 광역시도세세입금액+광역시도세세가산금  */
+        ,   nvl(#{OUT_SI_AMT,jdbcType=NUMERIC}, 0)    /* 시군구세세입금액+시군구세가산금  */
+        ,   nvl(#{OUT_KUK_AMT,jdbcType=NUMERIC}, 0)    /* 국세세입금액+국세가산금  */
+		,   '30' /* 고정 */
+		,   nvl(#{본세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{도시계획세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지역자원시설세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지방교육세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{국세농특세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{본세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{도시계획세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지역자원시설세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지방교육세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{국세농특세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{이자금액_M,jdbcType=NUMERIC},0)
+		,   nvl(#{충당금액_M,jdbcType=NUMERIC},0)
+		,   nvl(#{최초발생액_M,jdbcType=NUMERIC},0)
+		,   '1' /* 1:과오납구분 */
+		,   '2' /* 1:국세 , 2:지방세 */
+		,   #{처리여부_M,jdbcType=VARCHAR}
+		,   #{과오납사유_M,jdbcType=VARCHAR}
+		,   #{납부일자_M,jdbcType=VARCHAR}
+		,   #{납세자번호_D,jdbcType=VARCHAR}
+		,   #{납세자명_D,jdbcType=VARCHAR}
+		,   #{과세물건_M,jdbcType=VARCHAR}
+		,   #{과표_M,jdbcType=VARCHAR}
+		,   #{과세번호과오납_M,jdbcType=VARCHAR}
+		,   #{행정동과오납_M,jdbcType=VARCHAR}
+		,   #{납기내일자_M,jdbcType=VARCHAR}
+		,   #{납기후일자_M,jdbcType=VARCHAR}
+		,   #{고지자료발생일_M,jdbcType=VARCHAR}
+		,   #{담당자ID_M,jdbcType=VARCHAR}
+		,   #{담당ID_M,jdbcType=VARCHAR}
+		,   #{징수관ID_M,jdbcType=VARCHAR}
+		,   #{회계일자_M,jdbcType=VARCHAR}
+		,   #{납부일자_M,jdbcType=VARCHAR}
+		,   ''
+        ,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류')
+		,   '1'  /* 1 고정 */
+		,   SYSDATE
+		,   '7'   /* 7:표준지방세 적용 정상 */
+        ,   nvl(#{ETAX_ACCT_YY,jdbcType=NUMERIC},0)
+		,   nvl(#{ETAX_SI_AMT,jdbcType=NUMERIC},0)
+		,   nvl(#{ETAX_GU_AMT,jdbcType=NUMERIC},0)
+		,   nvl(#{ETAX_KUK_AMT,jdbcType=NUMERIC},0)
+		,   #{FILENUMBER_M,jdbcType=VARCHAR}
+		,   '01'
+        ,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999')  /* 나중에 맨 뒤 '0000' '9999'으로 변경해야 함 */
+        ,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류')
+        ,   'Y'
+        ,   sysdate
+        ,   sysdate
+		)
+        ]]>
+    </insert>
+
+    <insert id="insertTR2002_553" parameterType="MyMap">
+        /* NeoMapper4060.insertTR2002_553 - 세입금 충단 입출금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB553
+        (   SEQ
+		,   RAISE_TIME
+		,   C_SLF_ORG
+		,   N_LAW_EVE
+		,   S_NO
+		,   SUNAP_SEQ
+		,   TOT_CNT
+		,   TOT_AMT
+		,   EPAY_NO
+		,   C_BANK
+		,   D_BANK_SUNAP
+		,   D_COM_SOIN
+		,   D_BANK_REP
+		,   ACCOUNT
+		,   TPR_NO
+		,   TPR_NM
+		,   SUNAP_GWASE_NO
+		,   SUNAP_C_SSEMOK
+		,   SUNAP_ACCT_YY
+		,   SUNAP_GWASE_YY
+		,   SUNAP_YEAR_GB
+		,   SUNAP_DIV_EDU
+		,   SUNAP_AMT
+		,   SUNAP_DO_AMT
+		,   SUNAP_SI_AMT
+		,   SUNAP_KUK_AMT
+		,   SUNAP_TAX_BON
+		,   SUNAP_TAX_CITY
+		,   SUNAP_TAX_PUBLIC
+		,   SUNAP_TAX_EDU
+		,   SUNAP_TAX_FARM
+		,   SUNAP_TAX_BON_ADD
+		,   SUNAP_TAX_CITY_ADD
+		,   SUNAP_TAX_PUBLIC_ADD
+		,   SUNAP_TAX_EDU_ADD
+		,   SUNAP_TAX_FARM_ADD
+		,   D_CREATE
+		,   N_USER
+		,   UPDATE_DT
+		,   RTN_YN
+		,   PAYMENT_RESULT
+		,   ERROR_DESC
+		,   RTN_MSG
+		,   ACCT_YY_KUK
+		,   ETAX_ACCT_YY
+		,   ETAX_SI_AMT
+		,   ETAX_GU_AMT
+		,   ETAX_KUK_AMT
+		,   ETAX_SEQ
+		,   ETAX_STATUS_CODE
+		,   ETAX_RESULT_CODE
+		,   ETAX_RESULT_DESC
+		,   ETAX_USE_YN
+		,   ETAX_REG_DATE
+		,   ETAX_UPT_DATE
+		,   C_ACCCD
+		,   DIV_GB
+        )  VALUES
+        (   #{SEQ_D,jdbcType=VARCHAR}
+		,   #{전송일시_M,jdbcType=VARCHAR}
+		,   #{지방자치단체코드_M,jdbcType=VARCHAR}
+		,   #{FILENUMBER_M,jdbcType=VARCHAR}
+        ,   '001'  /* 001로 고정 */
+		,   nvl(SUBSTR(#{FILENUMBER_M,jdbcType=VARCHAR},-6),0)
+		,   nvl(#{출금총건수_M,jdbcType=NUMERIC},0)
+		,   nvl(#{출금총금액_M,jdbcType=NUMERIC},0)
+		,   #{거래요청관리번호_M,jdbcType=VARCHAR}
+		,   '031'
+		,   #{납부일자_M,jdbcType=VARCHAR}
+		,   #{회계일자_M,jdbcType=VARCHAR}
+		,   #{자금이체일자_M,jdbcType=VARCHAR}
+		,   DECODE(#{광역시도세계좌번호_M,jdbcType=VARCHAR},NULL,DECODE(#{시군구세계좌번호_M,jdbcType=VARCHAR},NULL,#{국세계좌번호_M,jdbcType=VARCHAR},#{시군구세계좌번호_M,jdbcType=VARCHAR}),#{광역시도세계좌번호_M,jdbcType=VARCHAR})
+		,   #{납세자번호_D,jdbcType=VARCHAR}
+        ,   #{납세자명_D,jdbcType=VARCHAR}
+		,   ''
+		,   #{세목코드_D,jdbcType=VARCHAR}
+		,   #{회계연도_D,jdbcType=VARCHAR}
+		,   ''
+		,   #{현과년도구분_M,jdbcType=VARCHAR}
+		,   '2' /* 2 고정 */
+		,   nvl(#{SUNAP_AMT,jdbcType=NUMERIC},0)
+		,   nvl(#{SUNAP_DO_AMT,jdbcType=NUMERIC},0)
+		,   nvl(#{SUNAP_SI_AMT,jdbcType=NUMERIC},0)
+        ,   nvl(#{SUNAP_KUK_AMT,jdbcType=NUMERIC},0)
+		,   nvl(#{본세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{도시계획세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지역자원시설세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지방교육세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{국세농특세입금액_D,jdbcType=NUMERIC},0)
+		,   nvl(#{본세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{도시계획세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지역자원시설세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{지방교육세가산금_D,jdbcType=NUMERIC},0)
+		,   nvl(#{국세농특세가산금_D,jdbcType=NUMERIC},0)
+		,   '20'||substr(#{전송일시_M,jdbcType=VARCHAR},0,6)
+		,   ''
+		,   SYSDATE
+		,   '7'   /* 7:표준지방세 적용 정상 */
+		,   ''
+        ,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류')
+		,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류')
+		,   #{회계연도_M,jdbcType=VARCHAR}
+		,   #{ETAX_ORC밴드추출회계연도_M,jdbcType=VARCHAR}
+        ,   nvl(#{ETAX_SI_AMT,jdbcType=NUMERIC},0)
+        ,   nvl(#{ETAX_GU_AMT,jdbcType=NUMERIC},0)
+        ,   nvl(#{ETAX_KUK_AMT,jdbcType=NUMERIC},0)
+		,   '1' /* AS-IS에서도 무조건 1이 발생 되는 구조로 되어 있어 고정 */
+		,   '01'
+        ,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999')  /* 나중에 맨 뒤 '0000' '9999'으로 변경해야 함 */
+        ,   DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류')
+        ,   'Y'
+        ,   sysdate
+        ,   sysdate
+		,   ''
+		,   DECODE(#{입출금지시거래구분코드_M,jdbcType=VARCHAR},'2002','0','2003','1','2004','2','2005','3','2006','4')
+        )
+        ]]>
+    </insert>
+
+    <!-- ############################################ -->
+    <!-- ############# TR2003 ####################### -->
+    <!-- ############################################ -->
+
+    <select id="getFileNumberTR2003M"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getFileNumberTR2003M - 마스터 파일넘버 SELECT */
+        SELECT SEQ FROM TR2003_M
+        WHERE 파일명 = #{파일명,jdbcType=VARCHAR}
+    </select>
+
+    <select id="get543InsertData"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.get543InsertData - 파일번호 채번 */
+        SELECT
+            D.SEQ_D AS SEQ_D,
+			M.지방자치단체코드 AS 지방자치단체코드_M,
+			M.회계일자 AS 회계일자_M,
+			M.SEQ AS FILENUMBER_M,
+			M.출금총건수 AS 출금총건수_M,
+			M.출금총금액 AS 출금총금액_M,
+			D.환급금관리번호 AS 환급금관리번호_D,
+			D.입금거래순번 AS 입금거래순번_D,
+			D.일련번호 AS 일련번호_D,
+			D.세목코드 AS 세목코드_D,
+			M.회계연도 AS 회계연도_M,
+			M.회계일자 AS 회계일자_M,
+			DECODE(M.광역시도세현년도출금금액+M.시군구세현년도출금금액+M.국세현년도출금금액,0,'2','1') AS YEAR_GB_M,
+			M.광역시도세계좌번호 AS 광역시도세계좌번호_M,
+			M.시군구세계좌번호 AS 시군구세계좌번호_M,
+			M.국세계좌번호 AS 국세계좌번호_M,
+			D.지급액 AS 지급액_D,
+			M.시군구세현년도출금금액 AS 시군구세현년도출금금액_M,
+			M.국세현년도출금금액 AS 국세현년도출금금액_M,
+			D.수취인금융기관코드 AS 수취인금융기관코드_D,
+			D.수취인계좌예금주명 AS 수취인계좌예금주명_D,
+			D.수취인전화번호 AS 수취인전화번호_D,
+			D.수취인계좌번호 AS 수취인계좌번호_D,
+			M.출금총금액 AS 출금총금액_M,
+			D.수취인계좌예금주번호 AS 수취인계좌예금주번호_D,
+			M.입출금지시거래구분코드 AS 입출금지시거래구분코드_M,
+			D.수취인금융기관코드 AS 수취인금융기관코드_D,
+			D.입금상세거래결과코드 AS 입금상세거래결과코드_D,
+			D.입금상세거래결과코드 AS 입금상세거래결과코드_D
+		FROM TR2003_M M, TR2003_D D
+		WHERE M.SEQ = #{SEQ,jdbcType=VARCHAR}
+		AND M.파일명 = D.파일명
+		AND M.SEQ = D.SEQ
+    </select>
+
+	<insert id="insertTR2003" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2003 - 환급급지금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB543 (
+            SEQ, RAISE_TIME, C_SLF_ORG, CREATE_DATE, FILE_NUMBER, TOT_CNT,
+            TOT_AMT, OVERPAY_NO, SEQ_NUMBER, C_SSEMOK, ACCT_YY, ACCT_DT,
+            YEAR_GB, OUT_DO_ACC, OUT_SI_ACC, OUT_KUK_ACC, OUT_AMT, OUT_DO_AMT,
+            OUT_SI_AMT, OUT_KUK_AMT, C_BANK, ACC_OWNER_NAME, MO_TEL, BANK_ACC,
+            TAX_TOTAL, IN_DTL, ACC_OWNER_NO, DIV_OVERPAY, PAYMENT_RESULT, RTN_YN,
+            ETAX_C_BANK, ETAX_STATUS_CODE, ETAX_RESULT_CODE, ETAX_RESULT_DESC, ETAX_USE_YN, ETAX_REG_DATE, ETAX_UPT_DATE
+        )
+        VALUES (
+            #{SEQ_D,jdbcType=VARCHAR}, TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS'), #{지방자치단체코드_M,jdbcType=VARCHAR}, #{회계일자_M,jdbcType=VARCHAR}, #{FILENUMBER_M,jdbcType=VARCHAR}, NVL(#{출금총건수_M,jdbcType=NUMERIC},0),
+            NVL(#{출금총금액_M,jdbcType=NUMERIC},0), #{환급금관리번호_D,jdbcType=VARCHAR}, SUBSTR(#{입금거래순번_D,jdbcType=VARCHAR},1,7), #{세목코드_D,jdbcType=VARCHAR}, #{회계연도_M,jdbcType=VARCHAR}, #{회계일자_M,jdbcType=VARCHAR},
+            #{YEAR_GB_M, jdbcType=VARCHAR}, #{광역시도세계좌번호_M,jdbcType=VARCHAR}, #{시군구세계좌번호_M,jdbcType=VARCHAR}, #{국세계좌번호_M,jdbcType=VARCHAR}, NVL(#{지급액_D,jdbcType=NUMERIC},0), NVL(#{지급액_D,jdbcType=NUMERIC},0),
+            '0','0', #{수취인금융기관코드_D,jdbcType=VARCHAR}, #{수취인계좌예금주명_D,jdbcType=VARCHAR}, #{수취인전화번호_D,jdbcType=VARCHAR}, #{수취인계좌번호_D,jdbcType=VARCHAR},
+            NVL(#{지급액_D,jdbcType=NUMERIC},0), '', #{수취인계좌예금주번호_D,jdbcType=VARCHAR}, DECODE(#{입출금지시거래구분코드_M,jdbcType=VARCHAR},'3001','1','3002','2','3003','3','1'),'000','0',
+            SUBSTR(#{수취인금융기관코드_D,jdbcType=VARCHAR},0,3), '01', DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999'), DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류'), DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','Y','N'), SYSDATE, SYSDATE
+        )
+        ]]>
+    </insert>
+
+    <!-- ############################################ -->
+    <!-- ############# TR2004 ####################### -->
+    <!-- ############################################ -->
+
+	<select id="getFileNumberTR2004"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4060.getFileNumberTR2004 - 등록된 데이터가 있는지 확인 */
+        SELECT 파일명 FROM TR_HEADER
+        WHERE STATUS_CODE = #{STATUS_CODE,jdbcType=VARCHAR}
+        AND 업무구분 = #{업무구분,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getFileNumberTR2004M"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getFileNumberTR2004M - 마스터 파일넘버 SELECT */
+        SELECT SEQ FROM TR2004_M
+        WHERE 파일명 = #{파일명,jdbcType=VARCHAR}
+    </select>
+
+    <select id="get543InsertData2004"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.get543InsertData2004 - 파일번호 채번 */
+        SELECT
+        D.SEQ_D AS SEQ_D,
+        M.SEQ AS FILENUMBER_M,
+		M.지방자치단체코드 AS 지방자치단체코드_M,
+		M.출금총건수 AS 출금총건수_M,
+		M.출금총금액 AS 출금총금액_M,
+		D.입금거래순번 AS 입금거래순번_D,
+		D.일련번호 AS 일련번호_D,
+		D.세목코드 AS 세목코드_D,
+		M.회계연도 AS 회계연도_M,
+		M.회계일자 AS 회계일자_M,
+		M.출금계좌번호 AS 출금계좌번호_M,
+		D.지급액 AS 지급액_D,
+		D.수취인금융기관코드 AS 수취인금융기관코드_D,
+		D.수취인계좌예금주명 AS 수취인계좌예금주명_D,
+		D.수취인전화번호 AS 수취인전화번호_D,
+		D.수취인계좌번호 AS 수취인계좌번호_D,
+		D.수취인계좌예금주번호 AS 수취인계좌예금주번호_D,
+		D.수취인금융기관코드 AS 수취인금융기관코드_D,
+		D.입금상세거래결과코드 AS 입금상세거래결과코드_D
+        FROM TR2004_M M, TR2004_D D
+        WHERE M.SEQ = #{SEQ,jdbcType=VARCHAR}
+        AND M.파일명 = D.파일명
+        AND M.SEQ = D.SEQ
+    </select>
+
+    <insert id="insertTR2004" parameterType="MyMap">
+        /* NeoMapper4060.insertTR2004 - 환급급지금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB543 (
+           SEQ,              /* 발생순서 */
+           RAISE_TIME,       /* 발생일시 */
+           C_SLF_ORG,        /* 자치단체코드 */
+           CREATE_DATE,      /* 파일생성일자 */
+           FILE_NUMBER,      /* 파일일련번호 */
+           TOT_CNT,          /* 총건수 */
+           TOT_AMT,          /* 총금액 */
+           SEQ_NUMBER,       /* 일련번호 */
+           C_SSEMOK,         /* 세목코드 */
+           ACCT_YY,          /* 회계연도 */
+           ACCT_DT,          /* 반환결의일자 */
+           YEAR_GB,          /* 현과년도구분 */
+           OUT_DO_ACC,       /* 도세환부계좌(출금계좌) */
+           OUT_SI_ACC,
+           OUT_KUK_ACC,
+           OUT_AMT,          /* 출금액 */
+           OUT_DO_AMT,       /* 도세금액 */
+           OUT_SI_AMT,
+           OUT_KUK_AMT,
+           C_BANK,           /* 수취인 거래 은행코드 */
+           ACC_OWNER_NAME,   /* 수취 예금주 성명 */
+           MO_TEL,           /* 수취인 휴대폰번호 */
+           BANK_ACC,         /* 수취인 입금 계좌번호 */
+           TAX_TOTAL,        /* 지급총액 */
+           IN_DTL,           /* 입금적요 */
+           ACC_OWNER_NO,     /* 예금주 주민번호 */
+           DIV_OVERPAY,      /* 지급구분 4001~4005 */
+           PAYMENT_RESULT,   /* 지급결과코드 */
+           RTN_YN,           /* 처리여부 */
+           ETAX_C_BANK,
+           ETAX_STATUS_CODE, /* 작업상태코드 */
+           ETAX_RESULT_CODE, /* 지급결과코드 */
+           ETAX_RESULT_DESC, /* 지급결과설명 */
+           ETAX_USE_YN,      /* 사용여부 */
+           ETAX_REG_DATE,    /* 저장일시 */
+           ETAX_UPT_DATE     /* 수정일시 */
+        )
+        VALUES (
+           #{SEQ_D,jdbcType=VARCHAR},
+	       TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+	       #{지방자치단체코드_M},
+	       #{회계일자_M,          jdbcType=VARCHAR},
+	       #{FILENUMBER_M},
+	       #{출금총건수_M,	       jdbcType=VARCHAR},
+	       #{출금총금액_M,	       jdbcType=VARCHAR},
+	       #{입금거래순번_D,      jdbcType=VARCHAR},
+	       #{세목코드_D,	       jdbcType=VARCHAR},
+	       #{회계연도_M,	       jdbcType=VARCHAR},
+	       #{회계일자_M,	       jdbcType=VARCHAR},
+	       '1',
+           #{출금계좌번호_M,           jdbcType=VARCHAR},
+           '',
+           '',
+	       #{지급액_D,	       jdbcType=VARCHAR},
+	       #{지급액_D,           jdbcType=VARCHAR},
+	       '0',
+	       '0',
+	       SUBSTR(#{수취인금융기관코드_D,jdbcType=VARCHAR},0,3),
+	       #{수취인계좌예금주명_D,	       jdbcType=VARCHAR},
+	       #{수취인전화번호_D,	       jdbcType=VARCHAR},
+	       #{수취인계좌번호_D,	       jdbcType=VARCHAR},
+	       #{지급액_D,	       jdbcType=VARCHAR},
+	       '',
+	       #{수취인계좌예금주번호_D,	       jdbcType=VARCHAR},
+	       '8',
+	       '000',
+	       '0',
+	       SUBSTR(#{수취인금융기관코드_D, jdbcType=VARCHAR}, 0, 3),
+	       '01',
+	       DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999'),
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류'),
+	       DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','Y','N'),
+	       SYSDATE,
+	       SYSDATE
+        )
+        ]]>
+    </insert>
+
+
+    <!-- ############################################ -->
+    <!-- ############# TR2005 ####################### -->
+    <!-- ############################################ -->
+
+        <select id="getFileNumberTR2005"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4060.getFileNumberTR2005 - 등록된 데이터가 있는지 확인 */
+        SELECT 파일명 FROM TR_HEADER
+        WHERE STATUS_CODE = #{STATUS_CODE,jdbcType=VARCHAR}
+        AND 업무구분 = #{업무구분,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getFileNumberTR2005M"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.getFileNumberTR2005M - 마스터 파일넘버 SELECT */
+        SELECT SEQ FROM TR2005_M
+        WHERE 파일명 = #{파일명,jdbcType=VARCHAR}
+    </select>
+
+    <select id="get543InsertData2005"  parameterType="MyMap" resultType="MyMap">
+        /* NeoMapper4060.get543InsertData2005 - 파일번호 채번 */
+        SELECT
+        D.SEQ_D AS SEQ_D,
+        M.SEQ AS FILENUMBER_M,
+        M.지방자치단체코드 AS 지방자치단체코드_M,
+        M.출금총건수 AS 출금총건수_M,
+        M.출금총금액 AS 출금총금액_M,
+        D.입금거래순번 AS 입금거래순번_D,
+        D.일련번호 AS 일련번호_D,
+        M.회계연도 AS 회계연도_M,
+        M.회계일자 AS 회계일자_M,
+        M.출금계좌번호 AS 출금계좌번호_M,
+        D.지급액 AS 지급액_D,
+        D.수취인금융기관코드 AS 수취인금융기관코드_D,
+        D.수취인계좌예금주명 AS 수취인계좌예금주명_D,
+        D.수취인전화번호 AS 수취인전화번호_D,
+        D.수취인계좌번호 AS 수취인계좌번호_D,
+        D.수취인계좌예금주번호 AS 수취인계좌예금주번호_D,
+        D.수취인금융기관코드 AS 수취인금융기관코드_D,
+        D.입금상세거래결과코드 AS 입금상세거래결과코드_D
+        FROM TR2005_M M, TR2005_D D
+        WHERE M.SEQ = #{SEQ,jdbcType=VARCHAR}
+        AND M.파일명 = D.파일명
+        AND M.SEQ = D.SEQ
+    </select>
+
+    <insert id="insertTR2005" parameterType="MyMap">
+        /* NeoMapper4060.insertTR2005 - 환급급지금 */
+        <![CDATA[
+        INSERT INTO CSTSCYB543 (
+           SEQ,              /* 발생순서 */
+           RAISE_TIME,       /* 발생일시 */
+           C_SLF_ORG,        /* 자치단체코드 */
+           CREATE_DATE,      /* 파일생성일자 */
+           FILE_NUMBER,      /* 파일일련번호 */
+           TOT_CNT,          /* 총건수 */
+           TOT_AMT,          /* 총금액 */
+           SEQ_NUMBER,       /* 일련번호 */
+           C_SSEMOK,
+           ACCT_YY,          /* 회계연도 */
+           ACCT_DT,          /* 반환결의일자 */
+           YEAR_GB,          /* 현과년도구분 */
+           OUT_DO_ACC,       /* 도세환부계좌 */
+           OUT_SI_ACC,
+           OUT_KUK_ACC,
+           OUT_AMT,          /* 출금액 */
+           OUT_DO_AMT,       /* 도세금액 */
+           OUT_SI_AMT,
+           OUT_KUK_AMT,
+           C_BANK,           /* 수취인 거래 은행코드 */
+           ACC_OWNER_NAME,   /* 수취 예금주 성명 */
+           MO_TEL,           /* 수취인 휴대폰번호 */
+           BANK_ACC,         /* 수취인 입금 계좌번호 */
+           TAX_TOTAL,        /* 지급총액 */
+           IN_DTL,           /* 입금적요 */
+           ACC_OWNER_NO,     /* 예금주 주민번호 */
+           DIV_OVERPAY,      /* 지급구분 5001~5005 */
+           PAYMENT_RESULT,   /* 지급결과코드 */
+           RTN_YN,           /* 처리여부 */
+           ETAX_C_BANK,
+           ETAX_STATUS_CODE, /* 작업상태코드 */
+           ETAX_RESULT_CODE, /* 지급결과코드 */
+           ETAX_RESULT_DESC, /* 지급결과설명 */
+           ETAX_USE_YN,      /* 사용여부 */
+           ETAX_REG_DATE,    /* 저장일시 */
+           ETAX_UPT_DATE     /* 수정일시 */
+        )
+        VALUES (
+           #{SEQ_D,jdbcType=VARCHAR},
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           #{지방자치단체코드_M},
+           #{회계일자_M,           jdbcType=VARCHAR},
+           #{FILENUMBER_M},
+           #{출금총건수_M,          jdbcType=VARCHAR},
+           #{출금총금액_M,          jdbcType=VARCHAR},
+           #{입금거래순번_D,       jdbcType=VARCHAR},
+           '',
+           #{회계연도_M,           jdbcType=VARCHAR},
+           #{회계일자_M,           jdbcType=VARCHAR},
+           '1',
+           #{출금계좌번호_M,        jdbcType=VARCHAR},
+           '',
+           '',
+           #{지급액_D,             jdbcType=VARCHAR},
+           #{지급액_D,             jdbcType=VARCHAR},
+           '0',
+           '0',
+           SUBSTR(#{수취인금융기관코드_D,jdbcType=VARCHAR},0,3),
+           #{수취인계좌예금주명_D,    jdbcType=VARCHAR},
+           #{수취인전화번호_D,       jdbcType=VARCHAR},
+           #{수취인계좌번호_D,       jdbcType=VARCHAR},
+           #{지급액_D,             jdbcType=VARCHAR},
+           '',
+           #{수취인계좌예금주번호_D,         jdbcType=VARCHAR},
+           '9',
+           '000',
+           '0',
+           SUBSTR(#{수취인금융기관코드_D, jdbcType=VARCHAR}, 0, 3),
+           '01',
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','0000','9999'),
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','정상처리 되었습니다.','지급오류'),
+           DECODE(#{입금상세거래결과코드_D,jdbcType=VARCHAR},'00000','Y','N'),
+           SYSDATE,
+           SYSDATE
+        )
+        ]]>
+    </insert>
+
+</mapper>

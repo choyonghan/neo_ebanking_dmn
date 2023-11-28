@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!DOCTYPE header>
+
+<messageFormats desc="계좌검증전문">
+	<messageFormat msgNumber="200" desc="계좌검증파일구조">
+		<head keyname="파일업무구분" sizeName="" includeHead="no">
+			<field id="1" name="파일업무구분" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="2" name="구분코드" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="3" name="파일구분" size="2" position="0" repetition="1" type="AN" format="string" desc="화일구분"/>
+			<field id="4" name="지급명령등록번호" size="8" position="0" repetition="1" type="AN" format="string" desc="지급명령번호"/>
+			<field id="5" name="재배정여부" size="1" position="0" repetition="1" type="AN" format="string" desc="재배정여부"/>
+			<field id="6" name="공란1" size="2" position="0" repetition="1" type="AN" format="string" desc="공란1"/>
+			<field id="7" name="검증일자" size="8" position="0" repetition="1" type="AN" format="string" desc="검증일자"/>
+			<field id="8" name="파일코드" size="14" position="0" repetition="1" type="AN" format="string" desc="파일코드"/>
+			<field id="9" name="공란2" size="156" position="0" repetition="1" type="AN" format="string" desc="공란2"/>
+		</head>
+		<body keyvalue="DGCITY02" className="">
+			<field id="1" name="파일업무구분" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="구분코드" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="일련번호" size="10" position="0" repetition="1" type="N" format="string" desc="일련번호"/>
+			<field id="1" name="은행코드" size="3" position="0" repetition="1" type="AN" format="string" desc="은행코드"/>
+			<field id="1" name="계좌번호" size="16" position="0" repetition="1" type="AN" format="string" desc="계좌번호"/>
+			<field id="1" name="금액" size="11" position="0" repetition="1" type="N" format="string" desc="금액"/>
+			<field id="1" name="거래구분" size="2" position="0" repetition="1" type="AN" format="string" desc="거래구분"/>
+			<field id="1" name="기관예금주" size="21" position="0" repetition="1" type="AN" format="string" desc="기관예금주"/>
+			<field id="1" name="불능코드" size="6" position="0" repetition="1" type="AN" format="string" desc="불능코드"/>
+			<field id="1" name="불능내용" size="50" position="0" repetition="1" type="AN" format="string" desc="불능내용"/>
+			<field id="1" name="실예금주" size="20" position="0" repetition="1" type="AN" format="string" desc="실예금주"/>
+			<field id="1" name="압류방지코드" size="2" position="0" repetition="1" type="AN" format="string" desc="압류방지코드"/>
+			<field id="1" name="공란" size="50" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+		</body>
+		<tail>
+			<field id="1" name="파일업무구분" size="8" position="0" repetition="1" type="AN" format="string" desc="파일업무구분"/>
+			<field id="1" name="구분코드" size="1" position="0" repetition="1" type="AN" format="string" desc="구분코드"/>
+			<field id="1" name="전송레코드수" size="7" position="0" repetition="1" type="N" format="string" desc="전송레코드수"/>
+			<field id="1" name="총의뢰건수" size="7" position="0" repetition="1" type="N" format="string" desc="총의뢰건수"/>
+			<field id="1" name="공란" size="177" position="0" repetition="1" type="AN" format="string" desc="공란"/>
+		</tail>
+	</messageFormat>
+	
+	<messageFormat msgNumber="04" desc="CMS">
+	<head keyname="MsgDsc" sizeName="" includeHead="no">
+		<field id="1" name="Length" size="4" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+        <!-- field id="1" name="TrCd" size="9" position="0" repetition="1" type="AN" format="string" desc="Transaction Code"/-->
+		<field id="2" name="JobDsc" size="3" position="9" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="3" name="BankCd" size="3" position="12" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="4" name="MsgDsc" size="4" position="14" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="5" name="TrxDsc" size="1" position="18" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="6" name="SRFlag" size="1" position="19" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="7" name="FileName" size="8" position="20" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="8" name="ResCd" size="3" position="28" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+	</head>
+	<body keyvalue="0600" className="">
+		<field id="1" name="TrxDtm" size="10" position="0" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="2" name="JobMngInfo" size="3" position="10" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="3" name="SenderNm" size="20" position="13" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="4" name="SenderPw" size="16" position="33" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+	</body>
+	<body keyvalue="0610" className="">
+		<field id="1" name="TrxDtm" size="10" position="0" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="2" name="JobMngInfo" size="3" position="10" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="3" name="SenderNm" size="20" position="13" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="4" name="SenderPw" size="16" position="33" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+	</body>
+	<body keyvalue="0620" className="">
+		<field id="1" name="BlockNo" size="4" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="2" name="LastSeqNo" size="3" position="4" repetition="1" type="N" format="string" desc="Transaction Code"/>
+	</body>
+	<body keyvalue="0630" className="">
+		<field id="1" name="FileName" size="8" position="0" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="2" name="FileSize" size="12" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="3" name="MsgSize" size="4" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+	</body>
+	<body keyvalue="0640" className="">
+		<field id="1" name="FileName" size="8" position="0" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+		<field id="2" name="FileSize" size="12" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="3" name="MsgSize" size="4" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+	</body>
+	<body keyvalue="0300" className="">
+		<field id="1" name="BlockNo" size="4" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="2" name="LastSeqNo" size="3" position="4" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="3" name="LostCnt" size="3" position="4" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="4" name="LostSeq" link="LastSeqNo" size="0" position="4" repetition="1" type="AN" format="string" desc="Transaction Code"/>
+	</body>
+	<body keyvalue="0310" className="">
+		<field id="1" name="BlockNo" size="4" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="2" name="SeqNo" size="3" position="4" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="3" name="DataSize" size="4" position="4" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="4" name="Data" link="DataSize" size="0" position="4" repetition="1" type="B" format="string" desc="Transaction Code"/>
+	</body>
+	<body keyvalue="0320" className="">
+		<field id="1" name="BlockNo" size="4" position="0" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="2" name="SeqNo" size="3" position="4" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="3" name="DataSize" size="4" position="4" repetition="1" type="N" format="string" desc="Transaction Code"/>
+		<field id="4" name="Data" link="DataSize" size="0" position="4" repetition="1" type="B" format="string" desc="Transaction Code"/>
+	</body>
+	</messageFormat>
+</messageFormats>

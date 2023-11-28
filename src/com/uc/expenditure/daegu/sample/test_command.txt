@@ -1,0 +1,66 @@
+
+#데몬 기동종료
+
+ps -ef | grep NeoCTEST3030 | grep -v grep | awk '{print $2}' | xargs kill -9
+
+neostop neodmws5020
+
+cd /dees_svr/neo_ebanking_Rdvc/classes
+./neoDavinchi.sh end
+
+- 중계서버2번 192.168.244.22
+cd /app/dsgate_dev
+./dsgate_dev.sh end
+
+
+#데몬 기동시작
+
+cd /dees_tst/neo_ebanking_cmm/classes
+nohup java -Duser.timezone=Asia/Seoul -DNeoCTEST3030 -cp ".:../lib/*" -Xms1024m -Xmx2048m  com.uc.e_banking.be.DAEMON.DMTI3030 1>/dev/null/ 2>&1 &
+
+neostart neodmws5020
+
+cd /dees_svr/neo_ebanking_Rdvc/classes
+./neoDavinchi.sh start
+
+- 중계서버2번 192.168.244.22
+cd /app/dsgate_dev
+./dsgate_dev.sh start
+
+
+#로그 확인
+
+tail -100f /dees_svr/log/newapp/dmti3030.log
+egrep -n '\[148\]' /dees_svr/log/newapp/dmti3030.log
+
+l5020
+
+tail -100f /dees_svr/log/newapp/RDavinchi.log
+egrep -n '\[133\]' /dees_svr/log/newapp/RDavinchi.log
+
+
+# 소스 배포
+
+cd /jeus/jeus/source/neo_ebanking_cmm
+svn up
+jant compile-test
+
+cd /jeus/jeus/source/neo_ebanking_dmn
+svn up
+jant -buildfile build1.xml deploy-test
+
+cd /jeus/jeus/source/neo_ebanking_dvc2
+svn up
+jant -buildfile build_dg.xml compile-test
+
+
+# 포트 확인
+
+while [ 1 ]; do clear; date && netstat -an | grep  -E "61060" ; sleep 1 ; done
+
+
+# 개발서버 카운트
+select JOB_SYS_CD, JOB_STAT_CD, count(*) as 개수 from tfe2190
+where dlng_ymd = to_char(SYSDATE, 'YYYYMMDD')
+group by JOB_SYS_CD, JOB_STAT_CD
+;

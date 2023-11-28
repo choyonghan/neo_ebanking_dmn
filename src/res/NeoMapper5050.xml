@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper5050">
+	<select id="getVerifyTCM1482"  resultType="MyMap">
+		SELECT TRNX_NO         		/* 거래번호 */
+		 FROM TCM1482					/* 회계구분정보 */
+	    WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+		GROUP BY TRNX_NO
+	</select>
+
+	<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+
+	<select id="selectTCM1482"  parameterType="MyMap" resultType="MyMap">
+		SELECT LINK_SNUM        /* 연계일련번호 */
+				, LAF_CD        /* 자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, ACNT_DV_MSTR_CD        /* 회계구분마스터코드 */
+				, ACNT_DV_CD        /* 회계구분코드 */
+				, LAF_NM        /* 지방자치단체명 */
+				, ACNT_DV_NM        /* 회계구분명 */
+				, ACNT_DV_MSTR_NM        /* 회계구분마스터명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, USE_YN        /* 사용유무 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO        /* 거래번호 */
+				, JOB_SYS_CD        /* 작업시스템코드 */
+				, JOB_STAT_CD        /* 작업상태코드 */
+				, RGSTR_DT        /* 등록일시 */
+				, DMND_YMD        /* 요청일자 */
+		 FROM TCM1482						/* 회계구분정보 */
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+	</select>
+
+	<update id="updateTCM1482" parameterType="MyMap">
+		UPDATE TCM1482
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'								/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'								/* 작업상태코드 */
+   	</update>
+
+	<select id="getVerifyTCM2061"  resultType="MyMap">
+		SELECT TRNX_NO         		/* 거래번호 */
+		 FROM TCM2061						/* 부서정보 */
+		WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+		 GROUP BY TRNX_NO
+	</select>
+
+<!-- 	부서정보 -->
+	<select id="selectTCM2061"  parameterType="MyMap" resultType="MyMap">
+		SELECT
+				 LINK_SNUM        			/* 연계일련번호 */
+				, LAF_CD        					/* 자치단체코드 */
+				, TRNX_NO         				/* 거래번호 */
+				, LINK_TRSC_ID        			/* 연계트랜잭션ID */
+				, NVL(LAF_NM, ' ') AS LAF_NM        					/* 지방자치단체명 */
+				, NVL(GCC_DEPT_CD, ' ') AS GCC_DEPT_CD        			/* GCC부서코드 */
+				, DEPT_CD        				/* 부서코드 */
+				, DEPT_NM        				/* 부서명 */
+				, NVL(GOF_CD, ' ') AS GOF_CD        					/* 관서코드 */
+				, GOF_NM        					/* 관서명 */
+				, NVL(SLNGK_CD, ' ') AS SLNGK_CD        				/* 실국코드 */
+				, NVL(SLNGK_NM , ' ' ) AS SLNGK_NM        				/* 실국명 */
+				, NVL(STBX_BANK_CD, ' ') AS STBX_BANK_CD        		/* 금고은행코드 */
+				<!-- 				, '1234' AS SLNGK_CD        				/* 실국코드 */ -->
+<!-- 				, '실국테스트' AS SLNGK_NM        				/* 실국명 */ -->
+<!-- 				,  '000' AS STBX_BANK_CD        		/* 금고은행코드 */ -->
+				, LINK_PRCS_DV_CD        		/* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD         /* 연계전송상태코드 */
+				, LINK_STAT_PRCS_DT       	/* 연계상태처리일시 */
+		 FROM TCM2061						/* 부서정보 */
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+	</select>
+
+
+	<update id="updateTCM2061" parameterType="MyMap">
+		UPDATE TCM2061
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'								/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'								/* 작업상태코드 */
+   	</update>
+
+   	<!-- 분야부문 -->
+   	<select id="getVerifyTCM1222"   resultType="MyMap">
+		SELECT TRNX_NO         		/* 거래번호 */
+		 FROM TCM1222						/* 분야부문*/
+	    WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+		GROUP BY TRNX_NO
+	</select>
+
+	<select id="selectTCM1222"  parameterType="MyMap" resultType="MyMap">
+		SELECT LINK_SNUM        /* 연계일련번호 */
+				, LAF_CD        /* 지방자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, FLD_CD        /* 분야코드 */
+				, FLD_NM        /* 분야명 */
+				, SECT_CD        /* 부문코드 */
+				, SECT_NM        /* 부문명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO        /* 거래번호 */
+				, JOB_SYS_CD        /* 작업시스템코드 */
+				, JOB_STAT_CD        /* 작업상태코드 */
+				, RGSTR_DT        /* 등록일시 */
+				, DMND_YMD        /* 요청일자 */
+		 FROM TCM1222						/* 분야부문*/
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+	</select>
+
+	<update id="updateTCM1222" parameterType="MyMap">
+		UPDATE TCM1222						/* 분야부문*/
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'								/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'								/* 작업상태코드 */
+   	</update>
+
+   	<!-- 세출통계목 -->
+   	<select id="getVerifyTCM1172"  resultType="MyMap" >
+		SELECT TRNX_NO         		/* 거래번호 */
+		 FROM TCM1172						/* 세출통계목 */
+	    WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+		GROUP BY TRNX_NO
+	</select>
+
+	<select id="selectTCM1172"  parameterType="MyMap" resultType="MyMap">
+		SELECT LINK_SNUM        /* 연계일련번호 */
+				, LAF_CD        /* 지방자치단체코드 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, ANE_CPLBD_CD        /* 세출편성목코드 */
+				, ANE_CPLBD_NM        /* 세출편성목명 */
+				, ANE_STMK_CD        /* 세출통계목코드 */
+				, ANE_STMK_NM        /* 세출통계목명 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO        /* 거래번호 */
+				, JOB_SYS_CD        /* 작업시스템코드 */
+				, JOB_STAT_CD        /* 작업상태코드 */
+				, RGSTR_DT        /* 등록일시 */
+				, DMND_YMD        /* 요청일자 */
+		 FROM TCM1172						/* 세출통계목 */
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+	</select>
+
+	<update id="updateTCM1172" parameterType="MyMap">
+		UPDATE TCM1172						/* 세출통계목 */
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'								/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'								/* 작업상태코드 */
+   	</update>
+
+
+   	<!-- 세입목코드 -->
+   	<select id="getVerifyTFM1051" resultType="MyMap">
+		SELECT TRNX_NO         		/* 거래번호 */
+		 FROM TFM1051						/* 세입목코드 */
+	    WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+		GROUP BY TRNX_NO
+	</select>
+
+	<select id="selectTFM1051"  parameterType="MyMap" resultType="MyMap">
+		SELECT LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, RVJG_CD        /* 세입장코드 */
+				, RVJG_NM        /* 세입장명 */
+				, TXRV_GYAN_CD        /* 세입관코드 */
+				, TXRV_GYAN_NM        /* 세입관명 */
+				, TXRV_HANG_CD        /* 세입항코드 */
+				, TXRV_HANG_NM        /* 세입항명 */
+				, ARMK_CD        /* 세입목코드 */
+				, ARMK_NM        /* 세입목명 */
+				, USE_YN        /* 사용여부 */
+				, CHG_APLCN_YMD        /* 변경적용일자 */
+				, ABL_YMD        /* 폐지일자 */
+				, CHG_YMD        /* 변경일자 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO        /* 거래번호 */
+				, JOB_SYS_CD        /* 작업시스템코드 */
+				, JOB_STAT_CD        /* 작업상태코드 */
+				, RGSTR_DT        /* 등록일시 */
+				, DMND_YMD        /* 요청일자 */
+		 FROM TFM1051						/* 세입목코드 */
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+	</select>
+
+	<update id="updateTFM1051" parameterType="MyMap">
+		UPDATE TFM1051						/* 세입목코드 */
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'								/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'								/* 작업상태코드 */
+   	</update>
+
+
+   	<!-- 세입목맵핑 -->
+   	<select id="getVerifyTFM4020"  resultType="MyMap">
+		SELECT TRNX_NO         		/* 거래번호 */
+		 FROM TFM4020						/* 세입목맵핑 */
+	    WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+		GROUP BY TRNX_NO
+	</select>
+
+	<select id="selectTFM4020"  parameterType="MyMap" resultType="MyMap">
+		SELECT LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, FYR        /* 회계연도 */
+				, RVJG_CD        /* 세입장코드 */
+				, RVJG_NM        /* 세입장명 */
+				, TXRV_GYAN_CD        /* 세입관코드 */
+				, TXRV_GYAN_NM        /* 세입관명 */
+				, TXRV_HANG_CD        /* 세입항코드 */
+				, TXRV_HANG_NM        /* 세입항명 */
+				, ARMK_CD        /* 세입목코드 */
+				, ARMK_NM        /* 세입목명 */
+				, RPRS_TXRV_SBJ_CD        /* 대표세입목코드 */
+				, RPRS_TXRV_SBJ_NM        /* 대표세입과목명 */
+				, USE_YN        /* 사용여부 */
+				, CHG_APLCN_YMD        /* 변경적용일자 */
+				, ABL_YMD        /* 폐지일자 */
+				, CHG_YMD        /* 변경일자 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO        /* 거래번호 */
+				, JOB_SYS_CD        /* 작업시스템코드 */
+				, JOB_STAT_CD        /* 작업상태코드 */
+				, RGSTR_DT        /* 등록일시 */
+				, DMND_YMD        /* 요청일자 */
+		 FROM TFM4020						/* 세입목맵핑 */
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+	</select>
+
+	<update id="updateTFM4020" parameterType="MyMap">
+		UPDATE TFM4020						/* 세입목맵핑 */
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'								/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'								/* 작업상태코드 */
+   	</update>
+
+
+   	<!-- 출금계좌검증정보 -->
+   	<select id="getVerifyTFM6210"  resultType="MyMap">
+		SELECT TRNX_NO         		/* 거래번호 */
+		 FROM TFM6210						/* 금고은행시스템출금계좌검증정보 */
+	    WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+		GROUP BY TRNX_NO
+	</select>
+
+	<select id="selectTFM6210"  parameterType="MyMap" resultType="MyMap">
+		SELECT LAF_CD        /* 지방자치단체코드 */
+				, LINK_SNUM        /* 연계일련번호 */
+				, LINK_TRSC_ID        /* 연계트랜잭션ID */
+				, DRW_ACC_SNUM        /* 출금계좌일련번호 */
+				, FYR        /* 회계연도 */
+				, EP_FD_DV_CD        /* 지출자금구분코드 */
+				, ACNT_DV_CD        /* 회계구분코드 */
+				, EXPS_DV_CD        /* 경비구분코드 */
+				, ADC_DV_CD        /* 회계별업무담당구분코드 */
+				, DEPT_CD        /* 부서코드 */
+				, GOF_CD        /* 관서코드 */
+				, BANK_CD        /* 은행코드 */
+				, ECRP_ACTNO        /* 암호화계좌번호 */
+				, DRW_ACC_MNG_NO        /* 출금계좌관리번호 */
+				, USR_NM        /* 사용자명 */
+				, USE_YN        /* 사용여부 */
+				, RGSTR_USR_ID        /* 등록사용자ID */
+				, CHG_USR_ID        /* 변경사용자ID */
+				, CHG_YMD        /* 변경일자 */
+				, RMKS_CN        /* 비고내용 */
+				, RAT_YN        /* 재배정여부 */
+				, APRV_STAT_CD        /* 승인상태코드 */
+				, APRV_USR_ID        /* 승인사용자ID */
+				, APRV_DT        /* 승인일시 */
+				, APRV_TRGT_USR_ID        /* 승인대상사용자ID */
+				, RJCT_RSON_CN        /* 반려사유내용 */
+				, FRST_RGSTR_USR_ID        /* 최초등록사용자ID */
+				, FRST_RGSTR_DT        /* 최초등록일시 */
+				, LAST_MDFCN_USR_ID        /* 최종수정사용자ID */
+				, LAST_MDFCN_DT        /* 최종수정일시 */
+				, STBX_BANK_CD        /* 금고은행코드 */
+				, LINK_PRCS_DV_CD        /* 연계처리구분코드 */
+				, LINK_TRSM_STAT_CD        /* 연계전송상태코드 */
+				, PRCT_PRCS_DT        /* 응용처리일시 */
+				, LINK_STAT_PRCS_DT        /* 연계상태처리일시 */
+				, TRNX_NO        /* 거래번호 */
+				, JOB_SYS_CD        /* 작업시스템코드 */
+				, JOB_STAT_CD        /* 작업상태코드 */
+				, RGSTR_DT        /* 등록일시 */
+				, DMND_YMD        /* 요청일자 */
+		 FROM TFM6210						/* 금고은행시스템출금계좌검증정보 */
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+	</select>
+
+	<update id="updateTFM6210" parameterType="MyMap">
+		UPDATE TFM6210						/* 금고은행시스템출금계좌검증정보 */
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'								/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'								/* 작업상태코드 */
+   	</update>
+
+	<select id="getVerifyKey"  parameterType="MyMap" resultType="MyMap">
+		SELECT TRNX_NO         		/* 거래번호 */
+			    , LINK_SNUM         	/* 연계일련번호 */
+			    , LINK_TRSC_ID          /* 연계트랜잭션ID */
+			    , LAF_CD         			/* 지방자치단체코드 */
+			    , EP_BYLV_DV_CD       /* 지출단계별구분코드 */
+			    , EP_NO_DV_CD         /* 지출번호구분코드 */
+			    , EP_SNUM         		/* 지출일련번호 */
+		 FROM TCM2061					/* 부서정보 */
+	    WHERE ACC_VRFC_STAT_CD = 'R'				/* 요청상태 계좌검증상태코드 */
+	       AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+<!-- 	       AND DMND_YMD=#{DMND_YMD}			/* 요청일자 */ -->
+		GROUP BY LAF_CD
+				, EP_BYLV_DV_CD
+				, EP_NO_DV_CD
+				, EP_SNUM
+				, TRNX_NO
+<!-- 		SELECT -->
+<!-- 			자치단체코드, -->
+<!-- 			지출단계, -->
+<!-- 			지출번호구분, -->
+<!-- 			지출순번, -->
+<!-- 			거래번호 -->
+<!-- 		  FROM -->
+<!-- 		  	이뱅킹계좌검증 -->
+<!-- 		 WHERE -->
+<!-- 		 	요청상태 = 'R' -->
+<!-- 		   	AND	작업시스템코드 = '01' -->
+<!-- 		   	AND	작업상태코드 = '01' -->
+<!-- 		   	AND 요청일자=#{요청일자} -->
+<!-- 		GROUP BY -->
+<!-- 			자치단체코드, -->
+<!-- 			지출단계, -->
+<!-- 			지출번호구분, -->
+<!-- 			지출순번, -->
+<!-- 			거래번호 -->
+	</select>
+
+    <select id="getVerifyData"  resultType="MyMap">
+    	SELECT FNIS_CD AS BANK_CD													/* 금융기관코드 */
+    			, replace(ECRP_ACTNO, '-') AS ACC_NO									/* 계좌번호 */
+    			, GIVE_AMT AS SUPPLY_AMT												/* 지급금액 */
+    			, REPLACE(NVL(DPOR_NM, ' '), CHR(10), '') AS ORG_NAME			/* 예금주명 */
+    			, ACC_VRFC_SNUM AS SAVE_SEQ										/* 계좌검증일련번호(검증순번) */
+    			, TRNX_NO	AS	거래번호													/* 거래번호 */
+    			, ATH_BAN_SLRY_CHLT_CD AS SAL_CHR_CD							/* 압류금지급여성격코드(압류방지코드) */
+		  FROM TFE2311							/* 이뱅킹계좌검증 */
+		 WHERE TRNX_NO = #{TRNX_NO}
+		 	AND LAF_CD = #{LAF_CD}							/* 자치단체코드 */
+            AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}			/* 지출단계별구분코드 */
+            AND EP_NO_DV_CD = #{EP_NO_DV_CD}			/* 지출번호 구분코드 */
+            AND EP_SNUM = #{EP_SNUM}						/* 지출일련번호(지출순번) */
+		   	AND ACC_VRFC_STAT_CD = 'R'				/* 요청상태(계좌검증상태코드) */
+		   	AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'						/* 작업상태코드 */
+	 ORDER BY
+	 		ACC_VRFC_SNUM								/* 계좌검증일련번호(검증순번)  */
+<!-- 		SELECT -->
+<!-- 			은행 AS BANK_CD, -->
+<!-- 			replace(계좌번호, '-') AS ACC_NO, -->
+<!-- 			지급금액 AS SUPPLY_AMT, -->
+<!-- 			REPLACE(NVL(예금주, ' '), CHR(10), '') AS ORG_NAME, -->
+<!-- 			검증순번 AS SAVE_SEQ, -->
+<!-- 			거래번호, -->
+<!-- 			압류방지코드 AS SAL_CHR_CD -->
+<!-- 		  FROM -->
+<!-- 		  	이뱅킹계좌검증 -->
+<!-- 		 WHERE -->
+<!-- 		 	자치단체코드 = #{자치단체코드} -->
+<!-- 		   	AND 지출단계 = #{지출단계} -->
+<!-- 		   	AND	지출번호구분 = #{지출번호구분} -->
+<!-- 		   	AND 지출순번 = #{지출순번} -->
+<!-- 		   	AND	거래번호 = #{거래번호} -->
+<!-- 		   	AND	요청상태 = 'R' -->
+<!-- 		   	AND	작업시스템코드 = '01' -->
+<!-- 		   	AND	작업상태코드 = '01' -->
+<!-- 	 ORDER BY -->
+<!-- 	 		SAVE_SEQ -->
+	</select>
+
+	<update id="updateVerifyData" parameterType="MyMap">
+		UPDATE TFE2311
+		   	 SET JOB_STAT_CD = '11'								/* 	작업상태코드  */
+		   	     , ACC_VRFC_STAT_CD = 'S'						/* 요청상태(계좌검증상태코드) */
+		 WHERE LAF_CD = #{LAF_CD}								/* 자치단체코드 */
+            AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}			/* 지출단계별구분코드 */
+            AND EP_NO_DV_CD = #{EP_NO_DV_CD}			/* 지출번호 구분코드 */
+            AND EP_SNUM = #{EP_SNUM}						/* 지출일련번호(지출순번) */
+		    AND TRNX_NO = #{TRNX_NO}						/* 거래번호 */
+		    AND ACC_VRFC_STAT_CD = 'R'						/* 요청상태(계좌검증상태코드) */
+		    AND JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'					/* 작업상태코드 */
+<!-- 		UPDATE 	이뱅킹계좌검증_ENC -->
+<!-- 		   SET 	작업상태코드 = '11', -->
+<!-- 		   		요청상태 = 'S' -->
+<!-- 		 WHERE  자치단체코드 = #{자치단체코드} -->
+<!-- 		   AND  지출단계 = #{지출단계} -->
+<!-- 		   AND	지출번호구분 = #{지출번호구분} -->
+<!-- 		   AND  지출순번 = #{지출순번} -->
+<!-- 		   AND	거래번호 = #{거래번호} -->
+<!-- 		   AND	요청상태 = 'R' -->
+<!-- 		   AND  작업시스템코드 = '01' -->
+<!-- 		   AND  작업상태코드 = '01' -->
+	</update>
+
+	<!-- 세출한도계좌개설정보통합금고송신정보 -->
+   	<select id="getVerifyTFC0011"  resultType="MyMap">
+		SELECT TRNX_NO
+		 FROM TFC0011
+	    WHERE JOB_SYS_CD = '01'						/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'					/* 작업상태코드 */
+		GROUP BY TRNX_NO
+	</select>
+
+	<select id="selectTFC0011"  parameterType="MyMap" resultType="MyMap">
+		SELECT   GRAM_TRSM_YMD   /*전송일자*/
+			    ,GRAM_ID         /*전문일련번호*/
+			    ,LOC_GOV_CD      /*자치단체코드*/
+			    ,FYR             /*회계연도*/
+			    ,FB_CD           /*회계구분코드*/
+			    ,EXPS_DV_CD      /*경비구분코드*/
+			    ,GOF_CD          /*관서코드*/
+			    ,DEPT_CD         /*부서코드*/
+			    ,BANK_CD         /*은행코드*/
+			    ,ANE_LIM_ACC_NO  /*세출한도계좌번호*/
+			    ,MTAC_IDT_NO     /*통합지출계좌번호*/
+			    ,DPOR_NM         /*세출한도계좌예금주명*/
+			    ,BIZ_IN_NO       /*사업자등록번호*/
+			    ,ACC_NO_USE_YN   /*계좌사용유무*/
+			    ,BIGO            /*비고*/
+			    ,REQ_ID          /*개설자ID*/
+			    ,REQ_ID_NM       /*개설자명*/
+			    ,OPEN_DT         /*개설일자*/
+			    ,JOB_SYS_CD      /*작업시스템코드*/
+			    ,JOB_STAT_CD     /*작업상태코드*/
+			    ,TRNX_NO         /*거래번호*/
+			    ,TO_CHAR(RGSTR_DT,'YYYYMMDDHH24MISS') RGSTR_DT /*등록일시*/
+        FROM TFC0011			 /*세출한도계좌개설정보통합금고송신정보 */
+		WHERE TRNX_NO = #{TRNX_NO}
+		   AND JOB_SYS_CD = '01'	/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'	/* 작업상태코드 */
+	</select>
+
+	<update id="updateTFC0011" parameterType="MyMap">
+		UPDATE TFC0011						/* 세출한도계좌개설정보통합금고송신정보 */
+		   	 SET JOB_STAT_CD = '11'			/* 	작업상태코드  */
+		 WHERE TRNX_NO = #{TRNX_NO}			/* 지출단계별구분코드 */
+		    AND JOB_SYS_CD = '01'			/* 	작업시스템코드  */
+	     	AND JOB_STAT_CD = '01'			/* 작업상태코드 */
+   	</update>
+</mapper>

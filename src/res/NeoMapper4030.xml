@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper4030">
+
+	<update id="updateVerfifyTFE2311" parameterType="MyMap">
+		/*updateVerfifyTFE2311 (updateVerifyResult)*/
+		UPDATE TFE2311
+		     SET ACC_VRFC_RSLT_CD = #{ACC_VRFC_RSLT_CD}
+		     	 , ERR_RSON_CN = #{ERR_RSON_CN, javaType=String, jdbcType=VARCHAR}
+		      	 /* 이거 체크해야함 */
+	<!-- 	     , NOM_DPOR_NM = encrypt('DEX_USR.이뱅킹계좌검증','정상예금주',#{정상예금주, javaType=String, jdbcType=VARCHAR}) -->
+				 , NOM_DPOR_NM = #{NOM_DPOR_NM, javaType=String, jdbcType=VARCHAR}			/* 정상예금주, 암호화체크필요 Neo 20220829 */
+		      	 , ACC_VRFC_DT = SYSDATE				/* 계좌검증일시 */
+		      	 , JOB_SYS_CD = '01'					/* 작업시스템코드 */
+		      	 , JOB_STAT_CD = '31'					/* 작업상태코드 */
+		      	 , ACC_VRFC_STAT_CD = 'E'				/* 요청상태(계좌검증상태코드)  : 완료 */
+	  	 WHERE TRNX_NO = #{TRNX_NO}						/* 거래번호 */
+	  	 <if test="ECRP_ACTNO != null and ECRP_ACTNO != ''">
+			AND REPLACE( TRIM(ECRP_ACTNO) , '-' , '' ) = #{ECRP_ACTNO}				/* 계좌번호, 암호화체크필요 Neo 20220829 */
+		 </if>
+			AND ACC_VRFC_SNUM = #{ACC_VRFC_SNUM}		/* 계좌검증일련번호(검증순번) */
+			AND ACC_VRFC_STAT_CD = 'S'					/* 요청상태(계좌검증상태코드) */
+	</update>
+
+	<select id="selectTFE2311" resultType="MyMap">
+		/*selectTFE2311 (selectVerifyKey)-로직변경으로 사용하지않음*/
+		SELECT TRNX_NO						/* 거래번호 */
+			, LAF_CD						/* 자치단체코드 */
+			, EP_BYLV_DV_CD 				/* 지출단계 */
+			, EP_NO_DV_CD 					/* 지출번호구분 */
+			, EP_SNUM	 					/* 지출순번 */
+		  FROM TFE2311
+		 WHERE TRNX_NO = #{TRNX_NO}
+		   AND NVL(replace(ECRP_ACTNO, '-'), ' ') = NVL(#{ECRP_ACTNO}, ' ')			/* 계좌번호 */
+		   AND ACC_VRFC_SNUM = #{ACC_VRFC_SNUM}										/* 계좌검증일련번호(검증순번) */
+		   AND ACC_VRFC_STAT_CD = 'S'												/* 요청상태(계좌검증상태코드) */
+		   AND JOB_SYS_CD = '01'													/* 	작업시스템코드  */
+		   AND JOB_STAT_CD = '31'													/* 작업상태코드 */
+	</select>
+
+	<update id="updateTFE2311" parameterType="MyMap">
+		/*updateTFE2311 (updateSuccessbit)-로직변경으로 사용하지않음*/
+		UPDATE TFE2311
+			 SET ACC_VRFC_STAT_CD = 'E'					/* 요청상태(계좌검증상태코드)  : 완료 */
+		 WHERE TRNX_NO = #{TRNX_NO}						/* 거래번호 */
+		 	AND LAF_CD = #{LAF_CD}						/* 자치단체코드 */
+			AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}		/* 지출단계별구분코드 */
+			AND EP_NO_DV_CD = #{EP_NO_DV_CD}			/* 지출번호 구분코드 */
+			AND EP_SNUM = #{EP_SNUM}					/* 지출일련번호(지출순번) */
+			AND JOB_SYS_CD  = '01'						/* 작업시스템코드 */
+			AND JOB_STAT_CD = '31'						/* 작업상태코드 */
+			AND ACC_VRFC_STAT_CD = 'S'					/* 요청상태(계좌검증상태코드) */
+	</update>
+
+	<select id="getErrorCode" resultType="MyMap">
+		/*getErrorCode*/
+		SELECT NVL(MAX(ERRMSG),'기타오류') ERRMSG
+		 FROM (
+		 		SELECT TRIM(CD_NM) || ' ' || TRIM(CD_CN) AS ERRMSG
+				FROM TFC0001
+				WHERE CLS_CD = #{CLS_CD}				/* 분류코드 */
+	            AND CD = #{CD}								/* 코드 */
+	            AND CD_USE_YN = 'Y'						/* 코드사용여부 */
+			   )
+    </select>
+</mapper>

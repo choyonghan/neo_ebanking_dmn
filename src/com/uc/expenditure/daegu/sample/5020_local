@@ -1,0 +1,1014 @@
+/**
+ *  주시스템명 : 대구시 통합자금관리
+ *  업  무  명 : e세출 입금지급 처리
+ *  기  능  명 : e세출업무원장 지급요청건 sam파일 생성처리
+ *  클래스  ID : NeoDMWS5020
+ *  변경  이력 :
+ * -----------------------------------------------------------------------------
+ *  작성자         소속                 일자            Tag                 내용
+ * -----------------------------------------------------------------------------
+ *  이경두       다산(주)      2022.08.29         %01%             최초작성
+ *  하상원       다산(주)      2022.10.07         %01%             수정작성
+ */
+package com.uc.expenditure.daegu.daemon;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Properties;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
+import com.uc.core.MapForm;
+import com.uc.framework.parsing.FormatParserAsMap;
+import com.uc.framework.utils.MyMap;
+import com.uc.framework.utils.NeoUtils;
+import com.uc.framework.utils.Utils;
+
+public class NeoDMWS5020 implements Runnable
+{
+    @SuppressWarnings("unchecked")
+	static Logger	logger = Logger.getLogger(NeoDMWS5020.class);
+    private static SqlSession  session = null;
+    private static SqlSessionFactory sqlMapper = null;
+
+    private static FormatParserAsMap fp = null;
+    private static Thread	self = null;
+    static MyMap    appRes = new MyMap();
+
+    //데몬 실행시 실시간 전송 대상 건수를 파라미터로 받아 로직을 생성(2022-09-13)
+    private static int termCount = 0;
+    private static String FLAG_Y = "Y";
+    private static String FLAG_N = "N";
+    private static String FLAG_ALL = "A";
+
+    private OutputStream os = null;
+    private InputStream is = null;
+
+    private Socket sendSocket = null;
+    private int callCnt = 1;
+
+    public static void main(String args[])
+    {
+	  	DOMConfigurator.configure(NeoDMWS5020.class.getResource("/conf/log4j.xml"));
+
+        logger.debug("##### [" + NeoDMWS5020.class.getSimpleName() + "] 시작 #####");
+
+        if (args.length == 1) {
+            termCount = Integer.parseInt(args[0]);
+        } else {
+            logger.debug("실시간 전송 실행 하지 않음.!!!");
+        }
+
+        logger.info("##### termCount["+termCount+"]");
+
+        NeoDMWS5020  neoDMWS5020 = new NeoDMWS5020();
+
+        self = new Thread(neoDMWS5020);
+        self.setDaemon(true);
+        self.start();
+
+        try {
+        	self.join();
+        } catch (InterruptedException e) {
+        	logger.debug("InterruptedException ::: ["+ e.getMessage() +"]");
+        }
+
+        logger.debug("##### [" + NeoDMWS5020.class.getSimpleName() + "] 끝 #####");
+    }
+
+    /**
+     * 데몬 기본 실행
+     */
+ 	public void run()
+	{
+		logger.debug("쓰레드[" + Thread.currentThread().getName() + "] 실행");
+		Reader reader = null;
+
+        try {
+            reader = Resources.getResourceAsReader("res/Configuration.xml");
+			Properties properties = Resources.getResourceAsProperties( "res/db.properties" );
+
+			String pw = Utils.getDecrypt( properties.getProperty("password"));
+			properties.setProperty("password", pw);
+            sqlMapper = new SqlSessionFactoryBuilder().build(reader, properties);
+        } catch (Exception ex) {
+            logger.error("데이터베이스 접속중 오류[" + ex.getLocalizedMessage() + "]");
+            return;
+        }
+
+		logger.debug("SQLMAPPER생성");
+
+	    fp = new FormatParserAsMap(logger);
+
+	    if (fp.doParsingAsMap("msgformat1") < 0) {
+	    	logger.error("전문포맷 분석오류");
+	    	return;
+	    }
+
+        Utils.getResources("conf/ApplicationResources", appRes);
+
+        if(termCount == 0) {
+        	termCount = appRes.getInteger("ServiceRealSendCnt");
+        }
+
+		while (!Thread.currentThread().isInterrupted()) {
+			mainLoop();
+
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				break;
+			}
+
+			logger.debug("쓰레드[" + Thread.currentThread().getName() + "] 실행");
+		}
+	}
+
+ 	/**
+ 	 * process실행
+ 	 * @return
+ 	 */
+	@SuppressWarnings("unchecked")
+	public int mainLoop()
+	{
+		// 데이터베이스 세션 생성, 자동확약 끔.
+		try {
+		    session = sqlMapper.openSession(false);
+		} catch (Exception ex) {
+	    	logger.error("데이터베이스 오류, 내용[" + ex.getLocalizedMessage() + "]");
+	    	return -1;
+	    }
+
+        String  folder = appRes.getString("NeoDMWS5020.directory");
+
+		MyMap   paramMap      = new   MyMap();
+		MyMap   headerMap     = new   MyMap();
+		MyMap   headerStbxMap = new   MyMap();	//금고전송용
+		MyMap   headerFileKey = new   MyMap();
+//		MyMap   headerStbxFileKey = new   MyMap();	//금고전송용
+		/**
+		 * [delete] 아래 정의 추후 삭제예정(2022-09-23)
+		 */
+//		MyMap   RejectMap     = new   MyMap();
+
+		ArrayList<MyMap>	viewList = null;
+		ArrayList<MyMap>	dataList = null;
+
+		ArrayList<MyMap>	updateList = null;
+
+        logger.debug("##### mainLoop() Started !!!!!");
+
+		paramMap.setString("현재일자", Utils.getCurrentDate());
+
+		try {
+
+			/**
+			 * 실시간 처리 결과 받지 못한 건에 대해서 30분이  지나면 재전송하기 위해 상태코드를 변경해 줌.(20221121)
+			 * SELECT 후 UPDATE로 수정 (20230327)
+			 */
+			MyMap paramRestoreObj = new MyMap();
+
+			updateList = (ArrayList<MyMap>)session.selectList("NeoMapper5020.selectRestoreTFE2190", paramRestoreObj);
+			if (updateList.size() <= 0) {
+				logger.info("실시간 처리결과 받지 못한 건이 없습니다.");
+			}else {
+				logger.info("실시간 처리결과 받지 못한 건이 " + updateList.size() + "개 있습니다.");
+				for (int j= 0 ; j < updateList.size() ; j++) {
+
+				    MyMap	ht = updateList.get(j);
+				    logger.info("거래번호[" + ht.getString("TRNX_NO") + "]");
+				    session.update("NeoMapper5020.updateSendBankRealTimeRestore", ht);
+				}
+				session.commit();
+				logger.info("작업 완료!!!");
+			}
+
+			viewList = (ArrayList<MyMap>)session.selectList("NeoMapper5020.selectTFE2190", paramMap);
+
+			if (viewList.size() <= 0) {
+			    logger.info("신규 등록된 데이터가 없습니다.");
+				session.close();
+				return -1;
+			}
+
+			 try {
+					sendSocket = new Socket();
+					sendSocket.setSoTimeout(10000);//10초 timeout
+					sendSocket.connect(new InetSocketAddress(appRes.getString("ServiceRealTimeIP"), appRes.getInteger("ServiceRealTimePort")),1000);
+					os = sendSocket.getOutputStream();
+					is = sendSocket.getInputStream();
+					logger.info("sendSocket = " + sendSocket);
+				} catch (IOException e1) {
+
+					try {
+						if(sendSocket != null) {
+							sendSocket.close();
+						}
+						if(os != null) {
+							os.close();
+						}
+						if(is != null) {
+							is.close();
+						}
+					}catch(Exception e) {}
+
+					int wi =0 ;
+					while(true){
+						wi++;
+						logger.info(wi + "번째 재연결시도합니다");
+						try {
+							Thread.sleep(1000);
+							sendSocket = new Socket();
+							sendSocket.setSoTimeout(10000);//10초 timeout
+							sendSocket.connect(new InetSocketAddress(appRes.getString("ServiceRealTimeIP"), appRes.getInteger("ServiceRealTimePort")),2000);
+							os = sendSocket.getOutputStream();
+							is = sendSocket.getInputStream();
+							logger.info("sendSocket = " + sendSocket);
+							break;
+						} catch (Exception e) {
+							logger.info(wi + "번째 재연결시도 실패하였습니다");
+						}
+					}
+				}
+
+			String	makeDir = folder + "/dees_trn/send";
+			File dir   = new File(makeDir);
+
+			if (!dir.exists()) {
+			    logger.debug("신규 등록된 지급 원장이 " + viewList.size() + "개 있습니다.");
+				logger.error("파일을 생성할 디렉토리가 존재하지 않습니다.");
+				session.close();
+				return -1;
+			}
+
+			logger.info("신규 등록된 지급 원장이 " + viewList.size() + "개 있습니다.");
+
+	        String strLimAccDvCd = appRes.getString("ServiceAccDvCd");
+
+	        logger.info("##### Header LimAccDvCd ["+ strLimAccDvCd +"]");
+			/******************************************************************************
+			* 파일생성 루프
+			******************************************************************************/
+			for (int i = 0 ; i < viewList.size() ; i++) {
+				/**
+				 * 중복 cast 됨.
+				 */
+			    MyMap	ht = viewList.get(i);
+
+			    ArrayList<MyMap>	dataStbxList = new ArrayList<MyMap>();	//금고전송용
+
+			    /******************************************************************************
+		        * 한도계좌조회
+				******************************************************************************/
+            	MyMap paramObj = new MyMap();
+            	paramObj.setString("TRNX_NO", ht.getString("거래번호"));
+
+            	MyMap mapDrwActno = (MyMap) session.selectOne("NeoMapperFile.getLimitAccount", paramObj);
+            	String trnxGbn = NeoUtils.getGbnCode(mapDrwActno);	//한도계좌여부확인
+            	logger.info("##### trnxGbn["+ trnxGbn +"]");
+
+            	/**
+            	 * [insert]한도계좌건은 5021번 데몬에서 별도 처리하는 것으로 정리 함.
+            	 * 5020번 데몬에서는 기본 이체건에 대해서만 처리하고 5020번 데몬에 추가해 놓은 한도계좌 관련 로직은 일단 살려 둠.
+            	 */
+            	if(FLAG_Y.equals(trnxGbn)) {
+            		logger.info("한도계좌처리는 5021번 데몬에서 처리.[" + ht.getString("거래번호") + "]");
+            		session.update("NeoMapper5020.updateStbxMarking", ht);
+            		session.commit();
+            		ht.clear();
+            		continue;
+            	} else if(FLAG_ALL.equals(trnxGbn)) {
+            		logger.info("지급과 금고 한도계좌처리는 지급처리 후 18시 이후에 금고 처리.[" + ht.getString("거래번호") + "]");
+            	}
+
+            	ht.setString("trnxGbn", trnxGbn);
+
+			    /******************************************************************************
+	            * HEADER 부 조립
+				******************************************************************************/
+			    headerMap.setString("파일업무구분", 	strLimAccDvCd); // 예약이체파일(DGCITY01)
+				headerMap.setString("구분코드", 		"H"); 			// H : Header
+				headerMap.setString("파일구분", 		"B2"); 			// B2 : 업체송신시, 2B : 은행결과송신시
+				headerMap.setString("재배정여부", 		ht.getString("재배정여부")); // Y: 재배정자료, N:일반배정자료
+				headerMap.setString("이체일자", 		ht.getString("이체일자")); // yyyymmdd
+				headerMap.setString("파일코드", 		ht.getString("거래번호")); // 거래번호
+
+				//한도계좌 금고/계정계 모두 대상일 경우 한도계좌에 맵핑 되어 있는 통합 실제 계좌를 세팅
+				if(FLAG_ALL.equals(trnxGbn)) {
+					headerMap.setString("출금계좌번호", 	ht.getString("출금실제계좌번호").replaceAll("-", "")); // 출금계좌번호
+				} else {
+					headerMap.setString("출금계좌번호", 	ht.getString("출금계좌번호").replaceAll("-", "")); // 출금계좌번호
+				}
+
+				headerMap.setString("입금명세구분", 	ht.getString("입금명세구분"));
+				headerMap.setString("요청ID", 		ht.getString("요청ID"));
+				headerMap.setString("요청기관구분", 	ht.getString("요청기관구분"));
+				headerMap.setString("자치단체코드", 	ht.getString("자치단체코드"));
+				headerMap.setString("관서코드", 		ht.getString("관서코드"));
+				headerMap.setString("지급부서코드", 	ht.getString("지급부서코드"));
+				headerMap.setString("회계연도", 		ht.getString("회계연도"));
+				headerMap.setString("회계코드", 		ht.getString("회계코드"));
+				headerMap.setString("자료구분", 		ht.getString("자료구분"));
+				headerMap.setString("지급명령등록번호", ht.getString("지급명령등록번호"));
+				headerMap.setString("지급명령번호", 	ht.getString("거래번호").substring(8));
+				headerMap.setString("자치단체명", 		ht.getString("자치단체명"));
+				headerMap.setString("관서명", 		ht.getString("관서명"));
+				headerMap.setString("지급부서명", 		ht.getString("지급부서명"));
+				headerMap.setString("급여구분", 		ht.getString("급여구분"));
+
+				/**
+				 * 담당지점 별단 처리를 위해 상태'A'일 경우 공란에 한도계좌번호 세트(20230110)
+				 * 온라인이체 한도계좌번호 세트(20230222)
+				 */
+				if(FLAG_ALL.equals(trnxGbn)) {
+					headerMap.setString("공란", 		ht.getString("출금계좌번호").replaceAll("-", ""));
+					headerMap.setString("한도관리가상계좌", 		ht.getString("출금계좌번호").replaceAll("-", ""));
+				} else {
+					headerMap.setString("공란", 		"");
+					headerMap.setString("한도관리가상계좌", 		"");
+				}
+
+				//금고에 보낼전문을 별도로 만듬.
+				headerStbxMap.putAll(headerMap); //header 조립 한 부분 전체 putAll
+
+				//한도계좌 금고/계정계 모두 대상일 경우에는 금고로 보낼 계좌를 한도계좌로 변경
+				if(FLAG_ALL.equals(trnxGbn)) {
+					headerStbxMap.setString("출금계좌번호", 	ht.getString("출금계좌번호").replaceAll("-", "")); // 출금계좌번호
+				}
+
+				//로그정보
+				logger.debug("##### headerMap["+headerMap.toString()+"]");
+				logger.debug("##### headerStbxMap["+headerStbxMap.toString()+"]");
+
+				dataList = (ArrayList<MyMap>)session.selectList("NeoMapper5020.selectTFE2170", ht);
+				logger.info("지급명령등록번호[" + headerMap.getString("지급명령등록번호") + "]의 신규 등록된 입금 명세가 " + dataList.size() + "개 있습니다.");
+
+				if (dataList.size() <= 0) {
+					logger.debug("계정계로 보낼 데이터가 없기 때문에 원장을 완료 상태로 바꿉니다.");
+					session.update("NeoMapper5020.updateTFE2190_ERR", ht);
+					ht.clear();
+					continue;
+				}
+
+				//입금지급용 파일 오브젝트 생성
+				File infofile = new File(makeDir + "/" + ht.getString("거래번호"));
+
+				//금고용 파일 오브젝트 생성
+				logger.info("파일이름[" + makeDir + "/" + ht.getString("거래번호") + "]");
+				logger.info("파일이름[" + makeDir + "/" + ht.getString("거래번호") + "_STBX" + "]");
+
+				logger.debug("termCount " + termCount);
+
+                if (dataList.size() <= termCount) {												// 20230321 1건
+
+                	String dpstBankCd = dataList.get(0).getString("입금은행코드");										//입금은행코드
+                	String dpstTyCd = dataList.get(0).getString("입금유형");										//입금유형(온라인)
+                	logger.debug("입금은행코드 " + dpstBankCd);
+
+                	// 지급요청 대상건 요청
+//                	if(FLAG_N.equals(trnxGbn) || FLAG_ALL.equals(trnxGbn)) {
+            		if( (FLAG_N.equals(trnxGbn) || FLAG_ALL.equals(trnxGbn) ) &&  ( "031".equals(dpstBankCd) || "000".equals(dpstBankCd) ) && "10".equals(dpstTyCd) ) {
+            			logger.debug("온라인 실행 trnxGbn : " + trnxGbn + " dpstBankCd : " + dpstBankCd );
+	                	SendBankRealTime(headerMap, dataList, ht); // 실시간 은행전문전송 호출
+
+	                	/*int j=0;
+
+	                	while(true) {
+
+	                		if (j == 10) {
+	                			logger.info("거래번호[" + ht.getString("TRNX_NO") + "] " + " 응답없음" );
+	                			j = 0;
+	                			break;
+	                		}
+
+	                		int prcCnt = (Integer)session.selectOne("NeoMapper5020.cntListTFE2190", ht);
+
+	                		if (prcCnt > 0) {
+	                			logger.info("거래번호[" + ht.getString("TRNX_NO") + "] " + "정상 요청응답 시스템&상태코드(02, 12) 수신 완료" );
+	                			break;
+		                	}
+
+	                		logger.info("거래번호[" + ht.getString("TRNX_NO") + "] " + "정상 요청응답 시스템&상태코드(01, 05) 수신 대기중" );
+	                		Thread.sleep(500);
+	                		j++;
+	                	}*/
+                	}else {										// 대구은행 요건추가시 추가된부분, 타행도 포함되면 이하 삭제(else 전체)
+                		// 지급요청 대상 건 요청
+                		logger.debug("지급요청 대상 건 요청1 trnxGbn : " + trnxGbn + " dpstBankCd : " + dpstBankCd );
+                    	if(FLAG_N.equals(trnxGbn) || FLAG_ALL.equals(trnxGbn)) {
+                    		logger.debug("파일생성처리" );
+                    		makeFile(infofile, headerMap, headerFileKey, dataList);         // 파일생성 처리
+                    	}
+                	}							// 추가된부분
+
+            		logger.info("한도계좌 금고 대상일 경우 별도 금고파일 생성 trnxGbn[" + trnxGbn + "]");
+                	//한도계좌 금고 대상일 경우 별도 금고파일 생성
+//                	if(FLAG_ALL.equals(trnxGbn) || FLAG_Y.equals(trnxGbn)) {
+                    	/**
+                    	 * 5021데몬에서 처리 함. 해당로직 주석처리 함.(20221025)
+                    	 */
+//                		 dmakeStbxFile(infoStbxfile, headerStbxMap, headerStbxFileKermfoy, dataStbxList);         // 파일생성 처리
+
+                        session.update("NeoMapper5020.updateFileMakeOK", ht); // 금고파일 생성 후 데이타 처리 (금고전송여부 = 'A' or 'Y' 로 업데이트)
+                        ht.clear();
+                        session.commit();
+
+                        logger.info("금고 sam파일 작업 완료!!!");
+//                	}
+                } else {
+                	// 지급요청 대상 건 요청
+                	logger.debug("지급요청 대상 건 요청2 trnxGbn : " + trnxGbn );
+                	if(FLAG_N.equals(trnxGbn) || FLAG_ALL.equals(trnxGbn)) {
+                		makeFile(infofile, headerMap, headerFileKey, dataList);         // 파일생성 처리
+                	}
+
+                	/**
+                	 * 한도계좌 금고 대상일 경우 별도 금고파일 생성(20221007)
+                	 * 5021데몬에서 처리 함. 해당로직 주석처리 함.(20221025)
+                	 */
+//                	if(FLAG_ALL.equals(trnxGbn) || FLAG_Y.equals(trnxGbn)) {
+//                		makeStbxFile(infoStbxfile, headerStbxMap, headerStbxFileKey, dataStbxList);         // 파일생성 처리
+//                	}
+
+                	//한도계좌가 금고 전송건이면 금고전송여부만 상태를 변경하여 금고로만 전송
+                	/**
+                	 * 한도계좌가 금고 전송건이면 금고전송여부만 상태를 변경하여 금고로만 전송
+                	 * 21번 데몬에서 처리 하므로 Y는 처리는 주석 처리함.(20221110)
+                	 */
+                	if(FLAG_Y.equals(trnxGbn)) {
+//                        session.update("NeoMapper5020.updateStbxFileMakeOK", ht); // 금고파일 생성 후 데이타 처리 (금고전송여부 = 'A' or 'Y' 로 업데이트)
+//                        ht.clear();
+//                        session.commit();
+                	} else {
+                        session.update("NeoMapper5020.updateFileMakeOK", ht); // 파일 생성 후 데이타 처리 (작업상태 = '11' and 금고전송여부 = 'A' or 'Y'로 업데이트)
+                        ht.clear();
+                        session.commit();
+                	}
+                    logger.info("작업 완료!!!");
+                }
+			}
+			sendSocket.close();
+			os.close();
+			session.close();
+			return -1;
+		} catch(Exception e) {
+		    logger.error("오류[" + e + "]");
+			e.printStackTrace();
+			session.close();
+			return -1;
+		}
+	}
+
+	/**
+	 * sam 파일 생성
+	 * @param paramFile
+	 * @param headerForm
+	 * @param headerFileKeyForm
+	 * @param dataList
+	 * @return
+	 * @throws Exception
+	 */
+	private int makeFile(File paramFile, MyMap headerForm, MyMap headerFileKeyForm, ArrayList<MyMap> dataList) throws Exception
+	{
+		FileOutputStream	fos = null;
+		try {
+			fos = new FileOutputStream(paramFile);
+		} catch (FileNotFoundException fnfex) {
+			logger.error("오류[" + fnfex.getLocalizedMessage() + "]");
+		}
+
+        logger.debug("##### makeFile() Started !!!!!");
+
+        String strLimAccDvCd = appRes.getString("ServiceAccDvCd");
+
+        logger.info("##### LimAccDvCd ["+ strLimAccDvCd +"]");
+
+        /******************************************************************************
+		* HEADER 섹션 파일 저장
+		******************************************************************************/
+        byte[] bMsg = new byte[1024];
+
+		/**
+		 * [delete]추후 정상 테스트 가능할 때 주석처리해야 함.(2022-08-31)
+		 */
+//        headerForm.setString("파일불능코드", "0000");
+//        headerForm.setString("불능분입금계좌번호", "11122233334444");
+//        headerForm.setString("출금계좌관리점", "018");
+//        headerForm.setString("출금계좌관리점명", "대명동지점");
+
+		int length = fp.assembleMessageByteHeadAsMap(bMsg, 1024, headerForm, "100");
+		fos.write(bMsg, 0, length);
+		fos.write("\n".getBytes(), 0, 1);
+
+		/******************************************************************************
+        * DATA 부 조립 및 저장
+		******************************************************************************/
+		long tot_am = 0;
+		long tmp_am = 0;
+        MyMap DataForm    = new MyMap();
+
+		for (int i = 0; i < dataList.size(); i++) {
+			/**
+			 * 중복 cast 됨.
+			 */
+//			MyMap	ht = (MyMap) dataList.get(i);
+			MyMap	ht = dataList.get(i);
+
+			tmp_am = ht.getLong("입금금액"); // 입금금액
+			tot_am = tot_am + tmp_am;  // 총의뢰금액
+
+			DataForm.setString("파일업무구분", 	strLimAccDvCd);
+			DataForm.setString("구분코드", 	"D");
+			DataForm.setString("입금일련번호", 	ht.getString("입금일련번호"));
+			DataForm.setString("입금은행코드", 	ht.getString("입금은행코드"));
+			DataForm.setString("입금유형", 	ht.getString("입금유형"));
+
+			// 2012.03.23 신상훈 : 입급유형이 고지서(40), 현금(99), 수표(60)인경우 계좌번호값을 '111111' 로 변경
+			if(ht.getString("입금유형").toString().equals("40")||
+			   ht.getString("입금유형").toString().equals("60")||
+			   ht.getString("입금유형").toString().equals("99") ) {
+			    //DataForm.setString("입금은행코드", "031");
+			    DataForm.setString("입금계좌번호", "111111");
+			    logger.info("##### 입급유형 고지서_현금_수표 : ["+DataForm.toString()+"]");
+			} else {
+			    DataForm.setString("입금계좌번호", ht.getString("입금계좌번호").replaceAll("-", ""));
+			}
+
+			DataForm.setString("입금계좌예금주명", 	ht.getString("입금계좌예금주명"));
+			DataForm.setString("입금적요", 		ht.getString("입금명세"));
+
+			logger.debug("자치단체코드:[" + headerForm.getString("자치단체코드") + "]");
+			logger.debug("입금명세구분:[" + headerForm.getString("입금명세구분") + "]");
+			logger.debug("압류방지코드["  + ht.getString("압류방지코드") + "]");
+
+			if (headerForm.getString("입금명세구분").equals("1")) {
+				//PAY_GB : "1" 급여
+				//ht.put("입금적요", "급여");
+				DataForm.setString("입금적요", "급여");
+			} else {
+				DataForm.setString("입금적요", 	ht.getString("입금명세"));
+			}
+
+			DataForm.setLong("이체금액", tmp_am);
+
+			/**
+			 * [delete] @@@@ 자료구분, 거래구분 관련 주석막은 소스 지움 @@@@@
+			 */
+			DataForm.setString("거래구분", headerForm.getString("자료구분"));
+
+			/******************************************************************************
+			* "입금유형"이 50 : CMS 인 경우 CMS계좌번호를 세트 한다.
+			******************************************************************************/
+			if (DataForm.getString("입금유형").equals("50")) {
+				DataForm.setString("CMS번호", ht.getString("CMS번호"));
+			}
+
+			/******************************************************************************
+			* 압류방지코드
+			******************************************************************************/
+			if (ht.getString("압류방지코드") == "") {
+				DataForm.setString("압류방지코드", "00");
+			} else {
+				DataForm.setString("압류방지코드", ht.getString("압류방지코드"));
+			}
+
+			/**
+			 * [delete]추후 정상 테스트 가능할 때 주석처리해야 함.(2022-08-31)
+			 */
+//			DataForm.setString("처리여부", "Y");
+////		DataForm.setString("이체처리불능코드", "BE01513");	// 오류샘플
+//			DataForm.setString("이체처리불능코드", "BN10501");	// 정상샘플
+//			DataForm.setString("이체처리불능내용", "정상처리 되었습니다.");
+
+			length = fp.assembleMessageByteBodyAsMap(bMsg, 1024, DataForm, "100", "DGCITY01");
+			fos.write(bMsg, 0, length);
+			fos.write("\n".getBytes(), 0, 1);
+			DataForm.clear();
+		}
+
+		/******************************************************************************
+        * TRAILER 부 조립
+		******************************************************************************/
+		MyMap TrailerForm = new MyMap();
+
+        logger.debug("TRAILER 부 조립 시작");
+
+		TrailerForm.setString("파일업무구분", 	strLimAccDvCd); 			// 예약이체파일(DGCITY01)
+		TrailerForm.setString("구분코드", 		"E"); 					// 구분코드 E : Tailer
+
+		TrailerForm.setLong("전송레코드수", 	dataList.size() + 2); 	// 파일의 레코드 건수
+
+		TrailerForm.setLong("총의뢰건수", 		dataList.size()); 		// 헤더, 트레일러 제외한 파일레코드 건수
+		TrailerForm.setLong("총의뢰금액", 		tot_am); 				// 데이타부 합계금액
+
+		// 테스트
+		TrailerForm.setLong("정상처리건수", 	dataList.size()); 		// 헤더, 트레일러 제외한 파일레코드 건수
+		TrailerForm.setLong("정상처리금액", 	tot_am); 				// 데이타부 합계금액
+
+		TrailerForm.setLong("미처리건수", 		0); 					// 헤더, 트레일러 제외한 파일레코드 건수
+		TrailerForm.setLong("미처리금액", 		0); 					// 데이타부 합계금액
+
+		TrailerForm.setLong("지급명령총건수", 	dataList.size()); 		// DATA부의 지급총건수
+		TrailerForm.setLong("지급명령총금액", 	tot_am); 				// DATA부의 지급총금액
+
+		length = fp.assembleMessageByteTailAsMap(bMsg, 1024, TrailerForm, "100");
+		fos.write(bMsg, 0, length);
+		fos.write("\n".getBytes(), 0, 1);
+		dataList.clear();
+		fos.close();
+
+		logger.debug("파일 생성 완료");
+		dataList.clear();
+
+		return 0;
+	}
+
+	/**
+	 * 금고용 sam 파일 생성
+	 * @param paramFile
+	 * @param headerForm
+	 * @param headerFileKeyForm
+	 * @param dataList
+	 * @return
+	 * @throws Exception
+	 */
+	private int makeStbxFile(File paramFile, MyMap headerForm, MyMap headerFileKeyForm, ArrayList<MyMap> dataList) throws Exception
+	{
+		FileOutputStream	fos = null;
+		try {
+			fos = new FileOutputStream(paramFile);
+		} catch (FileNotFoundException fnfex) {
+			logger.error("오류[" + fnfex.getLocalizedMessage() + "]");
+		}
+
+        logger.debug("##### makeStbxFile() Started !!!!!");
+
+        String strLimAccDvCd = appRes.getString("ServiceAccDvCd");
+
+        logger.info("##### LimAccDvCd ["+ strLimAccDvCd +"]");
+
+        /******************************************************************************
+		* HEADER 섹션 파일 저장
+		******************************************************************************/
+        byte[] bMsg = new byte[1024];
+
+		int length = fp.assembleMessageByteHeadAsMap(bMsg, 1024, headerForm, "100");
+		fos.write(bMsg, 0, length);
+		fos.write("\n".getBytes(), 0, 1);
+
+		/******************************************************************************
+        * DATA 부 조립 및 저장
+		******************************************************************************/
+		long tot_am = 0;
+		long tmp_am = 0;
+        MyMap DataForm    = new MyMap();
+
+		for (int i = 0; i < dataList.size(); i++) {
+			/**
+			 * 중복 cast 됨.
+			 */
+//			MyMap	ht = (MyMap) dataList.get(i);
+			MyMap	ht = dataList.get(i);
+
+			tmp_am = ht.getLong("입금금액"); // 입금금액
+			tot_am = tot_am + tmp_am;  // 총의뢰금액
+
+			DataForm.setString("파일업무구분", 		strLimAccDvCd);
+			DataForm.setString("구분코드", 		"D");
+			DataForm.setString("입금일련번호", 		ht.getString("입금일련번호"));
+			DataForm.setString("입금은행코드", 		ht.getString("입금은행코드"));
+			DataForm.setString("입금유형", 		ht.getString("입금유형"));
+
+			// 2012.03.23 신상훈 : 입급유형이 고지서(40), 현금(99), 수표(60)인경우 계좌번호값을 '111111' 로 변경
+			if(ht.getString("입금유형").toString().equals("40")||
+			   ht.getString("입금유형").toString().equals("60")||
+			   ht.getString("입금유형").toString().equals("99") ) {
+			    //DataForm.setString("입금은행코드", "031");
+			    DataForm.setString("입금계좌번호", "111111");
+
+			    logger.info("##### 입급유형 고지서_현금_수표 : ["+DataForm.toString()+"]");
+			} else {
+			    DataForm.setString("입금계좌번호", ht.getString("입금계좌번호").replaceAll("-", ""));
+			}
+
+			DataForm.setString("입금계좌예금주명", 	ht.getString("입금계좌예금주명"));
+			DataForm.setString("입금적요", 		ht.getString("입금명세"));
+
+			logger.debug("자치단체코드:[" + headerForm.getString("자치단체코드") + "]");
+			logger.debug("입금명세구분:[" + headerForm.getString("입금명세구분") + "]");
+			logger.debug("압류방지코드["  + ht.getString("압류방지코드") + "]");
+
+			if (headerForm.getString("입금명세구분").equals("1")) {
+				//PAY_GB : "1" 급여
+				//ht.put("입금적요", "급여");
+				DataForm.setString("입금적요", "급여");
+			} else {
+				DataForm.setString("입금적요", 	ht.getString("입금명세"));
+			}
+
+			DataForm.setLong("이체금액", tmp_am);
+
+			/**
+			 * [delete] @@@@ 자료구분, 거래구분 관련 주석막은 소스 지움 @@@@@
+			 */
+			DataForm.setString("거래구분", headerForm.getString("자료구분"));
+
+			/******************************************************************************
+			* "입금유형"이 50 : CMS 인 경우 CMS계좌번호를 세트 한다.
+			******************************************************************************/
+			if (DataForm.getString("입금유형").equals("50")) {
+				DataForm.setString("CMS번호", ht.getString("CMS번호"));
+			}
+
+			/******************************************************************************
+			* 압류방지코드
+			******************************************************************************/
+			if (ht.getString("압류방지코드") == "") {
+				DataForm.setString("압류방지코드", "00");
+			} else {
+				DataForm.setString("압류방지코드", ht.getString("압류방지코드"));
+			}
+
+			length = fp.assembleMessageByteBodyAsMap(bMsg, 1024, DataForm, "100", "DGCITY01");
+			fos.write(bMsg, 0, length);
+			fos.write("\n".getBytes(), 0, 1);
+			DataForm.clear();
+		}
+
+		/******************************************************************************
+        * TRAILER 부 조립
+		******************************************************************************/
+		MyMap TrailerForm = new MyMap();
+
+        logger.debug("TRAILER 부 조립 시작");
+
+		TrailerForm.setString("파일업무구분", 	strLimAccDvCd); 			// 예약이체파일(DGCITY01)
+		TrailerForm.setString("구분코드", 		"E"); 					// 구분코드 E : Tailer
+
+		TrailerForm.setLong("전송레코드수", 	dataList.size() + 2); 	// 파일의 레코드 건수
+
+		TrailerForm.setLong("총의뢰건수", 		dataList.size()); 		// 헤더, 트레일러 제외한 파일레코드 건수
+		TrailerForm.setLong("총의뢰금액", 		tot_am); 				// 데이타부 합계금액
+
+		// 테스트
+		TrailerForm.setLong("정상처리건수", 	dataList.size()); 		// 헤더, 트레일러 제외한 파일레코드 건수
+		TrailerForm.setLong("정상처리금액", 	tot_am); 				// 데이타부 합계금액
+
+		TrailerForm.setLong("미처리건수", 		0); 					// 헤더, 트레일러 제외한 파일레코드 건수
+		TrailerForm.setLong("미처리금액", 		0); 					// 데이타부 합계금액
+
+		TrailerForm.setLong("지급명령총건수", 	dataList.size()); 		// DATA부의 지급총건수
+		TrailerForm.setLong("지급명령총금액", 	tot_am); 				// DATA부의 지급총금액
+
+		length = fp.assembleMessageByteTailAsMap(bMsg, 1024, TrailerForm, "100");
+		fos.write(bMsg, 0, length);
+		fos.write("\n".getBytes(), 0, 1);
+		dataList.clear();
+		fos.close();
+
+		logger.debug("파일 생성 완료");
+		dataList.clear();
+
+		return 0;
+	}
+
+	/**
+	 * 거래번호 조회
+	 * @param mapForm
+	 * @return
+	 * @throws Exception
+	 */
+	public long getSqNo(MyMap mapForm) throws Exception
+	{
+		long sqNo = 0;
+		SqlSession	ss = sqlMapper.openSession(false);
+
+		try {
+			try {
+				long	nCnt = (Long)ss.selectOne("NeoMapper5020.nCntSelect_5020", mapForm);
+				logger.debug("COUNT[" + nCnt + "]");
+
+				if (nCnt > 0) {
+					sqNo = (Long)ss.selectOne("NeoMapper5020.SqNoSelect_5020", mapForm);
+				}
+			} catch (NullPointerException e) {
+				// null 포인터는 무시
+				logger.error("SqNoSelect Null Point Error");
+			}
+
+			sqNo++;
+
+			mapForm.setLong("FILESQNO", sqNo);
+			if (sqNo == 1) {
+				ss.insert("NeoMapper5020.SqNoInsert_5020", mapForm);
+			} else {
+			    ss.update("NeoMapper5020.SqNoUpdate_5020", mapForm);
+			}
+
+			ss.commit();
+		} finally {
+		    ss.close();
+		}
+		return sqNo;
+	}
+
+	/**
+	 * 10건 이하일 경우 실시간 지급 전송 처리
+	 * (10건이하 파일 처리 시 시간 더걸림. 10건이하가 50% 넘음)
+	 * @param headerMap
+	 * @param dataList
+	 * @param ht
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+    private void SendBankRealTime(MyMap headerMap, ArrayList<MyMap> dataList,MyMap ht) throws Exception {
+        Etdm5020Msgfield    sendData = new    Etdm5020Msgfield();
+        MapForm inqMap = new MapForm();
+        /**
+         * [delete] 아래 삭제예정(2022-09-23)
+         */
+//        Etdm5020Msgfield    recvData = new    Etdm5020Msgfield();
+
+        // 공통부 설정 공통부길이 : 59 업무 : 39 반복 : 데이터사이즈 * 23
+        // 현재는 아무값 들어가있지만 ?
+        logger.debug("SendBankRealTime : " +  headerMap);
+//        String TRNX_NO  = headerMap.getMap("파일코드").toString().substring(8); //지급원장 거래번호 뒷자리 6자리.
+        int gLength = (sendData.getHeadLen() + (dataList.size() * sendData.getRepetLen())) - 4;
+
+        MyMap mMap = new MyMap();
+
+        /*전문번호 세팅.*/
+        mMap.setString("JUMBUN", "031");
+        mMap.setString("거래일자", Utils.getCurrentDate());
+        mMap.setString("거래구분", "JB");
+
+        logger.debug("점번 = " + mMap.getString("JUMBUN"));
+        logger.debug("거래일자 = " + mMap.getString("거래일자"));
+        logger.debug("거래구분 = " + mMap.getString("거래구분"));
+
+        long seqNo = getSqNo(mMap);
+        logger.debug("seqNo ::: ["+ seqNo +"]");
+
+        String strLimAccDvCd = appRes.getString("ServiceAccDvCd");
+
+        logger.info("##### LimAccDvCd ["+ strLimAccDvCd +"]");
+
+        inqMap.setMap("전문길이",		gLength);
+        inqMap.setMap("식별코드",		("TRFRB001"));
+        inqMap.setMap("업체번호",		strLimAccDvCd);
+        inqMap.setMap("은행코드",		("31"));
+        inqMap.setMap("전문구분코드",	("6100"));
+        inqMap.setMap("업무구분코드",	("200"));
+        inqMap.setMap("송신횟수",		("1"));
+//      inqMap.setMap("전문번호",		TRNX_NO );
+        inqMap.setMap("전문번호",		seqNo);
+        inqMap.setMap("전송일자",		Utils.getCurrent("yyyyMMdd"));
+        inqMap.setMap("전송시각",		Utils.getCurrent("HHmmss"));
+
+        // 업무설정
+        inqMap.putAll(headerMap); //header 조립 한 부분 전체 putAll
+//        inqMap.setMap("파일불능코드",   "0006"); // 은행 테스트 용 , 0006->반려
+//        inqMap.setMap("파일불능코드",   "0000"); // 은행 테스트 용 , 0000->정상
+
+        long tot_am = 0;
+        long tmp_am = 0;
+
+        /*입금명세 조립.*/
+        for (int i = 0; i < dataList.size(); i++) {
+        	/**
+        	 * 중복 cast 됨.
+        	 */
+//            MyMap   htm = (MyMap) dataList.get(i);
+            MyMap   htm = dataList.get(i);
+
+            tmp_am = htm.getLong("입금금액"); // 입금금액
+            tot_am = tot_am + tmp_am;  // 총의뢰금액
+
+          //입금계좌번호가 숫자가 아니면 , 111111로 셋팅 20230323, 입금유형이 온라인인것만(전송전 이미 체크함)
+//            if(htm.getMap("입금유형").toString().equals("10"))
+//            {
+//            	dataList.get(i).setMap("입금계좌번호", htm.getMap("입금계좌번호").toString().replaceAll("-", ""));
+//            }
+        	if(Utils.isNumber(htm.getMap("입금계좌번호").toString())== false) {
+        		dataList.get(i).setMap("입금계좌번호", "111111");
+        	}
+
+        	dataList.get(i).setMap("입금적요", htm.getMap("입금명세"));
+
+            dataList.get(i).setMap("이체금액", tmp_am);
+            dataList.get(i).setMap("거래구분", headerMap.getMap("자료구분"));
+
+            /**
+             * [result]
+             * 타입이 맞지 않아 전문 생성시 오류로 인해 타입을 일단 맞춰 줌.-추후 한번더 확인(2022-09-07)
+             * 컬럼타입을 VARCHAR로 변경하였기 때문에 형변환 작업이 필요 없음(2022-09-20)
+             */
+//            dataList.get(i).setMap("입금일련번호", String.valueOf(htm.getMap("입금일련번호")));
+            dataList.get(i).setMap("입금일련번호", htm.getMap("입금일련번호"));
+        }
+
+        /* trail 부분 조립. */
+        inqMap.setMap("전송레코드수",		dataList.size());
+        inqMap.setMap("총의뢰건수",		dataList.size());
+        inqMap.setMap("총의뢰금액",		tot_am);
+        inqMap.setMap("정상처리건수",		dataList.size());
+        inqMap.setMap("정상처리금액",		tot_am);
+//        inqMap.setMap("미처리건수",      0);
+//        inqMap.setMap("미처리금액",      0);
+        inqMap.setMap("지급명령총건수",		dataList.size());
+        inqMap.setMap("지급명령총금액",		tot_am);
+
+        //ClientConnService client = new ClientConnService(IP_ADDR,61060);	// 중계서버 개발포트임 로컬에서 안붙음
+
+
+        try {
+            byte[] makeMsgBuff  = null;                                     // 전송할 전문
+            makeMsgBuff = sendData.makeSendReptBuffer(inqMap, dataList);
+
+			logger.debug("##### sendData : ["+makeMsgBuff.toString()+"]");
+            logger.debug("##### sendData : " + new String(makeMsgBuff,"euc-kr") + "," +  (new String(makeMsgBuff)).length()) ;
+            logger.debug("##### sendData : " + dataList) ;
+
+            int sendbankCount = session.update("NeoMapper5020.updateSendBankRealTime", ht); // 01, 05로 수정 . 보낸것은 05 재전송을 막기 위해.
+
+            if ( sendbankCount > 0 ) {
+            	logger.info("01, 05 수정 [ " + sendbankCount + " ] 건 업데이트 되었습니다.");
+            } else {
+            	logger.info("01, 05 수정 [ " + sendbankCount + " ] 건 업데이트 되었습니다. 업데이트 되지 않았음. ");
+            }
+
+            session.commit();
+
+//            ClientConnService client = new ClientConnService(IP_ADDR,61060);	// 중계서버 개발포트임 로컬에서 안붙음
+          //  client.JConnect();
+            os.write(makeMsgBuff);
+            os.flush();
+
+            /**
+             * [result]
+             * 데이터 전송부 임시로 막음(이경두B)
+             * 진행 해야 할 경우 주석 풀어야 함.(2022-08-31)
+             * 일단 진행되지 않도록 해놨기 때문에 주석 풀어 놓음.(2022-09-07)
+             */
+           // client.JSend(makeMsgBuff);
+
+        } catch (Exception e1) {
+            logger.error("### 에러발생 : " + e1);
+            logger.error("### 에러발생 : [" + dataList + "]");
+            session.rollback();
+
+            try {
+    			if(sendSocket != null) {
+    				sendSocket.close();
+    			}
+    			if(os != null) {
+    				os.close();
+    			}
+    			if(is != null) {
+    				is.close();
+    			}
+    			}catch(Exception e) {}
+
+            int wi =0 ;
+			while(true){
+				wi++;
+				logger.info(wi + "번째 재연결시도합니다");
+				try {
+					Thread.sleep(1000);
+					sendSocket = new Socket();
+					sendSocket.setSoTimeout(10000);//10초 timeout
+					sendSocket.connect(new InetSocketAddress(appRes.getString("ServiceRealTimeIP"), appRes.getInteger("ServiceRealTimePort")),2000);
+					os = sendSocket.getOutputStream();
+					is = sendSocket.getInputStream();
+					break;
+				} catch (IOException e) {
+					logger.info(wi + "번째 재연결시도 실패하였습니다");
+				}
+			}
+        } finally {
+           // client.JClose();
+          //os.close();
+
+            /**
+             * [result]시간간격을 줌(2022-10-13)
+             */
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				logger.error("에러발생 : " + e);
+			}
+        }
+        logger.debug("작업 완료!!!");
+    }
+}

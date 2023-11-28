@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper5040">
+    <select id="list"  parameterType="MyMap" resultType="MyMap">
+     SELECT 'LF'           AS 요청ID
+           , '01'      AS 요청기관구분
+           , LOCAL_GOV_CD       AS 자치단체코드
+           , REQ_INST_CD      AS 관서코드
+           , GCC_DEPT_CD      AS 지급부서코드
+           , FIS_YEAR         AS 회계연도
+           , '100'        AS 회계코드
+           , 'EA'          AS 자료구분
+           , REQ_YMD         AS 거래일자
+           , TO_CHAR(SYSDATE, 'YYYYMMDD') AS 이체일자
+           , 'N'              AS 재배정여부
+           , '1'              AS 입금총건수
+           , RECPT_AMT        AS 출금금액
+           , ''               AS 출금계좌번호
+           , '가상계좌지급'   AS 출금명세
+           , ''               AS 별단계좌번호
+           ,TRNX_NO        AS 거래번호
+           , null             AS 예산과목코드
+           , '0'              AS 급여구분
+           , '0'              AS 입금명세구분
+           , LOC_GOV_NM       AS 자치단체명
+           , GOV_OFFICE_NM    AS 관서명
+           , GCC_DEPT_NM      AS 지급부서명
+           , 'N'              AS 복지급여여부
+           , '1'              AS 입금일련번호
+           , '10'             AS 입금유형
+           , '031'            AS 입금은행코드
+           , CASHBOX_ACCT_NO      AS 입금계좌번호
+           , REQ_USER_NM      AS 입금계좌예금주명
+           , RECPT_AMT        AS 입금금액
+           , '가상계좌입금'   AS 입금명세
+           , 'N'              AS 세목코드참조여부
+           , null             AS 세목코드
+           , '00'             AS 압류방지코드
+           , ' '              AS CMS번호
+           , PAIDUP_SNO
+           , VR_ACCT_NO
+     FROM   TEF_CASHBOXRECPTIF A
+     WHERE  REQ_FG = '17'
+     AND    RECPT_REQ_FG = '17'
+     AND    (DEAL_DATE + 10/(24*60))  &lt; SYSDATE
+     ORDER BY TRNX_NO
+  </select>
+
+  <select id="getQryMainAcctNo" parameterType="MyMap" resultType="String">
+    SELECT     /*+ index_asc(A VIR_IDX2)*/MAIN_ACCT_NO
+      FROM    VRACCTNOLIST A
+     WHERE    LOC_GOV_CD = #{자치단체코드}
+       AND      VR_ACCT_NO = #{VR_ACCT_NO}
+  </select>
+
+  <update id = "update" parameterType="MyMap">
+    <![CDATA[
+     UPDATE TEF_CASHBOXRECPTIF
+        SET REQ_FG          = #{REQ_FG}
+          , RECPT_REQ_FG  = #{RECPT_REQ_FG}
+      WHERE TRNX_NO    = #{거래번호}
+      ]]>
+  </update>
+</mapper>

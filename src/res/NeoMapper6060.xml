@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper6060">
+
+	<insert id="insertTfma050R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6060.insertTfma050R / FB_FM_XXX_RD_00007	계좌거래내역 수신*/
+		INSERT
+		  INTO TFMA050R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , DLNG_YMD
+			 , DLNG_TM
+			 , ACC_DLNG_DV_CD
+			 , ACC_DLNG_DV_NM
+			 , FYR
+			 , STBX_ECRP_ACTNO
+			 , DLNG_SNUM
+			 , DLNG_BANK_CD
+			 , DLNG_ECRP_ACTNO
+			 , PWDDA_NM
+			 , DPST_BOFF_NO
+			 , DDAM_DLNG_DV_CD
+			 , DDAM_RV_DV_CD
+			 , DDAM_DV_NM
+			 , IDRK_YMD
+			 , ACC_INPT_DT
+			 , ACC_RGST_NM
+			 , ERP_PRCS_YN
+			 , PAID_TN
+			 , DLNG_AMT
+			 , PSNT_RAMT_AMT
+			 , CRTR_IRT
+			 , DLNG_OTLN_CN
+			 , ATM_DV_CD
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , TRNMT_YN
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD,javaType=String,jdbcType=VARCHAR}
+			 , SEQ_TFMA050R.NEXTVAL || #{STBX_BANK_CD,javaType=String,jdbcType=VARCHAR}
+			 , ''
+			 , #{DLNG_YMD,javaType=String,jdbcType=VARCHAR}
+			 , #{DLNG_TM,javaType=String,jdbcType=VARCHAR}
+			 , #{ACC_DLNG_DV_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{ACC_DLNG_DV_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{FYR,javaType=String,jdbcType=VARCHAR}
+			 , #{STBX_ECRP_ACTNO,javaType=String,jdbcType=VARCHAR}
+			 , #{DLNG_SNUM}
+			 , #{DLNG_BANK_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{DLNG_ECRP_ACTNO,javaType=String,jdbcType=VARCHAR}
+			 , #{PWDDA_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{DPST_BOFF_NO,javaType=String,jdbcType=VARCHAR}
+			 , #{DDAM_DLNG_DV_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{DDAM_RV_DV_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{DDAM_DV_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{IDRK_YMD,javaType=String,jdbcType=VARCHAR}
+			 , TO_DATE(#{ACC_INPT_DT,javaType=String,jdbcType=VARCHAR}, 'YYYYMMDDHH24MISS')
+			 , #{ACC_RGST_NM,javaType=String,jdbcType=VARCHAR}
+			 , #{ERP_PRCS_YN,javaType=String,jdbcType=VARCHAR}
+			 , #{PAID_TN}
+			 , #{DLNG_AMT}
+			 , #{PSNT_RAMT_AMT}
+			 , #{CRTR_IRT}
+			 , #{DLNG_OTLN_CN,javaType=String,jdbcType=VARCHAR}
+			 , #{ATM_DV_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{STBX_BANK_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{BTCH_PRCS_STAT_CD,javaType=String,jdbcType=VARCHAR}
+			 , #{BTCH_PRCS_DT,javaType=String,jdbcType=VARCHAR}
+			 , #{TRNMT_YN,javaType=String,jdbcType=VARCHAR}
+			 , #{LINK_PRCS_DV_CD,javaType=String,jdbcType=VARCHAR}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN,javaType=String,jdbcType=VARCHAR}
+			 , #{PRCT_PRCS_DT,javaType=String,jdbcType=VARCHAR}
+			 , #{LINK_STAT_PRCS_DT,javaType=String,jdbcType=VARCHAR}
+			 )
+	]]>
+	</insert>
+
+
+	<select id="selectTfma050aList" parameterType="MyMap" resultType="MyMap">
+	<![CDATA[
+		/*NeoMapper6060.selectTfma050aList*/
+		SELECT
+			   LAF_CD
+			 /*
+			 , '' AS LINK_SNUM
+			 , '' AS LINK_TRSC_ID
+			 */
+			 , DLNG_YMD
+			 , DLNG_TM
+			 , ACC_DLNG_DV_CD
+			 , ACC_DLNG_DV_NM
+			 , FYR
+			 , STBX_ECRP_ACTNO
+			 , DLNG_SNUM
+			 , DLNG_BANK_CD
+			 , DLNG_ECRP_ACTNO
+			 , PWDDA_NM
+			 , DPST_BOFF_NO
+			 , CASE DDAM_DLNG_DV_CD WHEN '10' THEN '11'
+			 						WHEN '20' THEN '12'
+			 						WHEN '90' THEN '13'
+			 						WHEN '60' THEN '16'
+			 						ELSE DDAM_DLNG_DV_CD END AS DDAM_DLNG_DV_CD
+			 , DDAM_RV_DV_CD
+			 , DDAM_DV_NM
+			 , IDRK_YMD
+			 , ACC_INPT_DT
+			 , ACC_RGST_NM
+			 , ERP_PRCS_YN
+			 , NVL(PAID_TN, 0) AS PAID_TN
+			 , NVL(DLNG_AMT, 0) AS DLNG_AMT
+			 , NVL(PSNT_RAMT_AMT, 0) AS PSNT_RAMT_AMT
+			 , NVL(CRTR_IRT, 0) AS CRTR_IRT
+			 , DLNG_OTLN_CN
+			 , ATM_DV_CD
+			 , STBX_BANK_CD
+			 , ORI_TRNX_NO
+			 , '' AS BTCH_PRCS_STAT_CD
+			 , '' AS BTCH_PRCS_DT
+			 , '' AS TRNMT_YN
+			 , 'C' AS LINK_PRCS_DV_CD
+			 , 'N' AS LINK_TRSM_STAT_CD
+			 , '' AS LINK_ERR_MSG_CN
+			 , '' AS PRCT_PRCS_DT
+			 , '' AS LINK_STAT_PRCS_DT
+		  FROM TFMA050A
+		 WHERE 1=1
+		   AND TRNMT_YN = 'N'
+		   AND STBX_BANK_CD = '031'
+		   AND (PRCS_RSLT_CD = '0000' OR PRCS_RSLT_CD IS NULL )
+		   AND DLNG_YMD < TO_CHAR(SYSDATE, 'YYYYMMDD')
+	]]>
+	</select>
+
+	<update id="updateTfma050aTrnmtYn" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6060.updateTfma050aTrnmtYn*/
+		UPDATE TFMA050A
+		   SET TRNMT_YN = 'Y' /*거래내역전송완료*/
+		   	 , TRNMT_DT = SYSDATE
+		 WHERE 1=1
+		   AND ORI_TRNX_NO = #{ORI_TRNX_NO}
+		   AND LAF_CD = #{LAF_CD}
+		   AND DLNG_YMD = #{DLNG_YMD}
+		   AND DLNG_SNUM = #{DLNG_SNUM}
+	]]>
+	</update>
+
+	<insert id="insertTfma120R" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6060.insertTfma120R / FB_FM_XXX_RD_00008	계좌신규 개설 및 약정정보 수신*/
+		INSERT
+		  INTO TFMA120R
+		  	 (
+			   LAF_CD
+			 , LINK_SNUM
+			 , LINK_TRSC_ID
+			 , STBX_ECRP_ACTNO
+			 , BF_STBX_ECRP_ACTNO
+			 , TRSM_YMD
+			 , ACC_DLNG_DV_CD
+			 , DLNG_SNUM
+			 , GOF_CD
+			 , GOF_NM
+			 , DEPT_CD
+			 , DEPT_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , NEW_ACC_DV_CD
+			 , ACC_PRT_NM
+			 , LAF_ECRP_BNO
+			 , DPOR_NM
+			 , BDE_NM
+			 , ACC_ESTBL_YMD
+			 , MTRY_YMD
+			 , CNLT_YMD
+			 , DPI_PD_NUM
+			 , CRTR_IRT
+			 , ITRT_APLCN_YMD
+			 , ACC_CNLT_YN
+			 , CNLT_DV_CD
+			 , CARD_PYMT_ACC_YN
+			 , ZRPY_ACC_YN
+			 , INBA_USE_YN
+			 , INT_RCG_PRD_CD
+			 , BOR_AMT
+			 , RPM_PRD_MM
+			 , RPM_DV_CD
+			 , RPM_YMD
+			 , PRN_RPM_TOTT_AMT
+			 , RPM_INT_AMT
+			 , BOR_END_YMD
+			 , PRNT_ECRP_ACTNO
+			 , ESTBL_BOFF_NO
+			 , DLNG_BOFF_NM
+			 , PUB_DPO_FYR
+			 , ANE_LIM_ACC_YN
+			 , STBX_BANK_CD
+			 , BTCH_PRCS_STAT_CD
+			 , BTCH_PRCS_DT
+			 , TRNMT_YN
+			 , LINK_PRCS_DV_CD
+			 , LINK_TRSM_STAT_CD
+			 , LINK_ERR_MSG_CN
+			 , PRCT_PRCS_DT
+			 , LINK_STAT_PRCS_DT
+		  	 )
+		VALUES
+			 (
+			   #{LAF_CD}
+			 , SEQ_TFMA120R.NEXTVAL || #{STBX_BANK_CD}
+			 , ''
+			 , #{STBX_ECRP_ACTNO}
+			 , #{BF_STBX_ECRP_ACTNO}
+			 , #{TRSM_YMD}
+			 , #{ACC_DLNG_DV_CD}
+			 , #{DLNG_SNUM}
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{DEPT_CD}
+			 , #{DEPT_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{NEW_ACC_DV_CD}
+			 , #{ACC_PRT_NM}
+			 , #{LAF_ECRP_BNO}
+			 , #{DPOR_NM}
+			 , #{BDE_NM}
+			 , #{ACC_ESTBL_YMD}
+			 , #{MTRY_YMD}
+			 , #{CNLT_YMD}
+			 , #{DPI_PD_NUM}
+			 , #{CRTR_IRT}
+			 , #{ITRT_APLCN_YMD}
+			 , #{ACC_CNLT_YN}
+			 , #{CNLT_DV_CD}
+			 , #{CARD_PYMT_ACC_YN}
+			 , #{ZRPY_ACC_YN}
+			 , #{INBA_USE_YN}
+			 , #{INT_RCG_PRD_CD}
+			 , #{BOR_AMT}
+			 , #{RPM_PRD_MM}
+			 , #{RPM_DV_CD}
+			 , #{RPM_YMD}
+			 , #{PRN_RPM_TOTT_AMT}
+			 , #{RPM_INT_AMT}
+			 , #{BOR_END_YMD}
+			 , #{PRNT_ECRP_ACTNO}
+			 , #{ESTBL_BOFF_NO}
+			 , #{DLNG_BOFF_NM}
+			 , #{PUB_DPO_FYR}
+			 , #{ANE_LIM_ACC_YN}
+			 , #{STBX_BANK_CD}
+			 , #{BTCH_PRCS_STAT_CD}
+			 , #{BTCH_PRCS_DT}
+			 , #{TRNMT_YN}
+			 , #{LINK_PRCS_DV_CD}
+			 , 'N' /*LINK_TRSM_STAT_CD*/
+			 , #{LINK_ERR_MSG_CN}
+			 , #{PRCT_PRCS_DT}
+			 , #{LINK_STAT_PRCS_DT}
+			 )
+	]]>
+	</insert>
+
+	<select id="selectTfma120Cnt" parameterType="MyMap" resultType="int">
+	<![CDATA[
+		/*NeoMapper6060.selectTfma120Cnt*/
+		SELECT COUNT(STBX_ECRP_ACTNO) AS CNT
+		  FROM TFMA120
+		 WHERE STBX_ECRP_ACTNO = #{STBX_ECRP_ACTNO}
+	]]>
+	</select>
+
+	<insert id="insertTfma120" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6060.insertTfma120*/
+		INSERT
+		  INTO TFMA120
+		  	 (
+			   STBX_ECRP_ACTNO
+			 , LAF_CD
+			 , BF_STBX_ECRP_ACTNO
+			 , TRSM_YMD
+			 , ACC_DLNG_DV_CD
+			 , DLNG_SNUM
+			 , GOF_CD
+			 , GOF_NM
+			 , DEPT_CD
+			 , DEPT_NM
+			 , FYR
+			 , ACNT_DV_CD
+			 , ACNT_DV_NM
+			 , NEW_ACC_DV_CD
+			 , ACC_PRT_NM
+			 , LAF_ECRP_BNO
+			 , DPOR_NM
+			 , BDE_NM
+			 , ACC_ESTBL_YMD
+			 , MTRY_YMD
+			 , CNLT_YMD
+			 , DPI_PD_NUM
+			 , CRTR_IRT
+			 , ITRT_APLCN_YMD
+			 , ACC_CNLT_YN
+			 , CNLT_DV_CD
+			 , CARD_PYMT_ACC_YN
+			 , ZRPY_ACC_YN
+			 , INBA_USE_YN
+			 , INT_RCG_PRD_CD
+			 , BOR_AMT
+			 , RPM_PRD_MM
+			 , RPM_DV_CD
+			 , RPM_YMD
+			 , PRN_RPM_TOTT_AMT
+			 , RPM_INT_AMT
+			 , BOR_END_YMD
+			 , PRNT_ECRP_ACTNO
+			 , ESTBL_BOFF_NO
+			 , DLNG_BOFF_NM
+			 , PUB_DPO_FYR
+			 , ANE_LIM_ACC_YN
+			 , STBX_BANK_CD
+			 , DATA_REG_DT
+		  	 )
+		VALUES
+			 (
+			   #{STBX_ECRP_ACTNO}
+			 , #{LAF_CD}
+			 , #{BF_STBX_ECRP_ACTNO}
+			 , #{TRSM_YMD}
+			 , #{ACC_DLNG_DV_CD}
+			 , #{DLNG_SNUM}
+			 , #{GOF_CD}
+			 , #{GOF_NM}
+			 , #{DEPT_CD}
+			 , #{DEPT_NM}
+			 , #{FYR}
+			 , #{ACNT_DV_CD}
+			 , #{ACNT_DV_NM}
+			 , #{NEW_ACC_DV_CD}
+			 , #{ACC_PRT_NM}
+			 , #{LAF_ECRP_BNO}
+			 , #{DPOR_NM}
+			 , #{BDE_NM}
+			 , #{ACC_ESTBL_YMD}
+			 , #{MTRY_YMD}
+			 , #{CNLT_YMD}
+			 , #{DPI_PD_NUM}
+			 , #{CRTR_IRT}
+			 , #{ITRT_APLCN_YMD}
+			 , #{ACC_CNLT_YN}
+			 , #{CNLT_DV_CD}
+			 , #{CARD_PYMT_ACC_YN}
+			 , #{ZRPY_ACC_YN}
+			 , #{INBA_USE_YN}
+			 , #{INT_RCG_PRD_CD}
+			 , #{BOR_AMT}
+			 , #{RPM_PRD_MM}
+			 , #{RPM_DV_CD}
+			 , #{RPM_YMD}
+			 , #{PRN_RPM_TOTT_AMT}
+			 , #{RPM_INT_AMT}
+			 , #{BOR_END_YMD}
+			 , #{PRNT_ECRP_ACTNO}
+			 , #{ESTBL_BOFF_NO}
+			 , #{DLNG_BOFF_NM}
+			 , #{PUB_DPO_FYR}
+			 , #{ANE_LIM_ACC_YN}
+			 , #{STBX_BANK_CD}
+			 , SYSDATE
+			 )
+	]]>
+	</insert>
+
+	<update id="updateTfma120" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6060.updateTfma120*/
+		UPDATE TFMA120
+		   SET
+		   	   LAF_CD             = #{LAF_CD}
+			 , BF_STBX_ECRP_ACTNO = #{BF_STBX_ECRP_ACTNO}
+			 , TRSM_YMD           = #{TRSM_YMD}
+			 , ACC_DLNG_DV_CD     = #{ACC_DLNG_DV_CD}
+			 , DLNG_SNUM          = #{DLNG_SNUM}
+			 , GOF_CD             = #{GOF_CD}
+			 , GOF_NM             = #{GOF_NM}
+			 , DEPT_CD            = #{DEPT_CD}
+			 , DEPT_NM            = #{DEPT_NM}
+			 , FYR                = #{FYR}
+			 , ACNT_DV_CD         = #{ACNT_DV_CD}
+			 , ACNT_DV_NM         = #{ACNT_DV_NM}
+			 , NEW_ACC_DV_CD      = #{NEW_ACC_DV_CD}
+			 , ACC_PRT_NM         = #{ACC_PRT_NM}
+			 , LAF_ECRP_BNO       = #{LAF_ECRP_BNO}
+			 , DPOR_NM            = #{DPOR_NM}
+			 , BDE_NM             = #{BDE_NM}
+			 , ACC_ESTBL_YMD      = #{ACC_ESTBL_YMD}
+			 , MTRY_YMD           = #{MTRY_YMD}
+			 , CNLT_YMD           = #{CNLT_YMD}
+			 , DPI_PD_NUM         = #{DPI_PD_NUM}
+			 , CRTR_IRT           = #{CRTR_IRT}
+			 , ITRT_APLCN_YMD     = #{ITRT_APLCN_YMD}
+			 , ACC_CNLT_YN        = #{ACC_CNLT_YN}
+			 , CNLT_DV_CD         = #{CNLT_DV_CD}
+			 , CARD_PYMT_ACC_YN   = #{CARD_PYMT_ACC_YN}
+			 , ZRPY_ACC_YN        = #{ZRPY_ACC_YN}
+			 , INBA_USE_YN        = #{INBA_USE_YN}
+			 , INT_RCG_PRD_CD     = #{INT_RCG_PRD_CD}
+			 , BOR_AMT            = #{BOR_AMT}
+			 , RPM_PRD_MM         = #{RPM_PRD_MM}
+			 , RPM_DV_CD          = #{RPM_DV_CD}
+			 , RPM_YMD            = #{RPM_YMD}
+			 , PRN_RPM_TOTT_AMT   = #{PRN_RPM_TOTT_AMT}
+			 , RPM_INT_AMT        = #{RPM_INT_AMT}
+			 , BOR_END_YMD        = #{BOR_END_YMD}
+			 , PRNT_ECRP_ACTNO    = #{PRNT_ECRP_ACTNO}
+			 , ESTBL_BOFF_NO      = #{ESTBL_BOFF_NO}
+			 , DLNG_BOFF_NM       = #{DLNG_BOFF_NM}
+			 , PUB_DPO_FYR        = #{PUB_DPO_FYR}
+			 , ANE_LIM_ACC_YN     = #{ANE_LIM_ACC_YN}
+			 , STBX_BANK_CD       = #{STBX_BANK_CD}
+			 , DATA_REG_DT        = SYSDATE
+		 WHERE 1=1
+		   AND STBX_ECRP_ACTNO = #{STBX_ECRP_ACTNO}
+	]]>
+	</update>
+
+	<insert id="insertTfma120h" parameterType="MyMap">
+	<![CDATA[
+		/*NeoMapper6060.insertTfma120h*/
+		INSERT
+		  INTO TFMA120H
+		SELECT
+			   A.STBX_ECRP_ACTNO
+			 , (
+			 	SELECT NVL(MAX( HIST_SNUM) + 1, 1)
+			 	  FROM TFMA120H
+			 	 WHERE STBX_ECRP_ACTNO = A.STBX_ECRP_ACTNO
+			   ) AS HIST_SNUM
+			 , A.LAF_CD
+			 , A.BF_STBX_ECRP_ACTNO
+			 , A.TRSM_YMD
+			 , A.ACC_DLNG_DV_CD
+			 , A.DLNG_SNUM
+			 , A.GOF_CD
+			 , A.GOF_NM
+			 , A.DEPT_CD
+			 , A.DEPT_NM
+			 , A.FYR
+			 , A.ACNT_DV_CD
+			 , A.ACNT_DV_NM
+			 , A.NEW_ACC_DV_CD
+			 , A.ACC_PRT_NM
+			 , A.LAF_ECRP_BNO
+			 , A.DPOR_NM
+			 , A.BDE_NM
+			 , A.ACC_ESTBL_YMD
+			 , A.MTRY_YMD
+			 , A.CNLT_YMD
+			 , A.DPI_PD_NUM
+			 , A.CRTR_IRT
+			 , A.ITRT_APLCN_YMD
+			 , A.ACC_CNLT_YN
+			 , A.CNLT_DV_CD
+			 , A.CARD_PYMT_ACC_YN
+			 , A.ZRPY_ACC_YN
+			 , A.INBA_USE_YN
+			 , A.INT_RCG_PRD_CD
+			 , A.BOR_AMT
+			 , A.RPM_PRD_MM
+			 , A.RPM_DV_CD
+			 , A.RPM_YMD
+			 , A.PRN_RPM_TOTT_AMT
+			 , A.RPM_INT_AMT
+			 , A.BOR_END_YMD
+			 , A.PRNT_ECRP_ACTNO
+			 , A.ESTBL_BOFF_NO
+			 , A.DLNG_BOFF_NM
+			 , A.PUB_DPO_FYR
+			 , A.ANE_LIM_ACC_YN
+			 , A.STBX_BANK_CD
+			 , A.DATA_REG_DT
+		  FROM TFMA120 A
+		 WHERE 1=1
+		   AND A.STBX_ECRP_ACTNO = #{STBX_ECRP_ACTNO}
+	]]>
+	</insert>
+
+</mapper>

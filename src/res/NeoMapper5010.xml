@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper5010">
+
+	<select id="getVerifyTFE2311"  parameterType="MyMap" resultType="MyMap">
+		/*getVerifyTFE2311 (getVerifyKey)*/
+		SELECT LINK_TRSC_ID
+				, TRNX_NO         		/* 거래번호 */
+			    , LAF_CD         		/* 지방자치단체코드 */
+			    , EP_BYLV_DV_CD       	/* 지출단계별구분코드 */
+			    , EP_NO_DV_CD         	/* 지출번호구분코드 */
+			    , EP_SNUM         		/* 지출일련번호 */
+		 FROM TFE2311					/* 이뱅킹계좌검증 */
+	    WHERE ACC_VRFC_STAT_CD = 'R'	/* 요청상태 계좌검증상태코드 */
+	      AND JOB_SYS_CD = '01'			/* 	작업시스템코드  */
+	      AND JOB_STAT_CD = '01'		/* 작업상태코드 */
+	      AND DMND_YMD=#{DMND_YMD}		/* 요청일자 */
+		GROUP BY LINK_TRSC_ID			/* 트랜잭션 ID */
+				, LAF_CD
+				, EP_BYLV_DV_CD
+				, EP_NO_DV_CD
+				, EP_SNUM
+				, TRNX_NO
+	</select>
+
+    <select id="selectTFE2311"  resultType="MyMap">
+    	/*selectTFE2311 (getVerifyData)*/
+    	SELECT FNIS_CD AS BANK_CD									/* 금융기관코드 */
+   			, REPLACE(ECRP_ACTNO, '-') AS ACC_NO					/* 계좌번호 */
+   			, GIVE_AMT AS SUPPLY_AMT								/* 지급금액 */
+   			, REPLACE(NVL(DPOR_NM, ' '), CHR(10), '') AS ORG_NAME	/* 예금주명 */
+   			, ACC_VRFC_SNUM AS SAVE_SEQ								/* 계좌검증일련번호(검증순번) */
+   			, TRNX_NO	AS	거래번호									/* 거래번호 */
+   			, ATH_BAN_SLRY_CHLT_CD AS SAL_CHR_CD					/* 압류금지급여성격코드(압류방지코드) */
+		  FROM TFE2311												/* 이뱅킹계좌검증 */
+		 WHERE 1=1  						/* 트랜잭션 ID */
+		   AND TRNX_NO = #{TRNX_NO}
+		   AND LAF_CD = #{LAF_CD}									/* 자치단체코드 */
+           AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}						/* 지출단계별구분코드 */
+           AND EP_NO_DV_CD = #{EP_NO_DV_CD}							/* 지출번호 구분코드 */
+           AND EP_SNUM = #{EP_SNUM}									/* 지출일련번호(지출순번) */
+		   AND ACC_VRFC_STAT_CD = 'R'								/* 요청상태(계좌검증상태코드) */
+		   AND JOB_SYS_CD = '01'									/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'									/* 작업상태코드 */
+	</select>
+
+	<update id="updateVerifyData" parameterType="MyMap">
+		/*updateVerifyData*/
+		UPDATE TFE2311 SET
+				JOB_STAT_CD = '11'					/* 	작업상태코드  */
+		   	   , ACC_VRFC_STAT_CD = 'S'				/* 요청상태(계좌검증상태코드) 연계전송 성공???? */
+		 WHERE 1=1		/* 트랜잭션 ID */
+		   AND LAF_CD = #{LAF_CD}					/* 자치단체코드 */
+           AND EP_BYLV_DV_CD = #{EP_BYLV_DV_CD}		/* 지출단계별구분코드 */
+           AND EP_NO_DV_CD = #{EP_NO_DV_CD}			/* 지출번호 구분코드 */
+           AND EP_SNUM = #{EP_SNUM}					/* 지출일련번호(지출순번) */
+		   AND TRNX_NO = #{TRNX_NO}					/* 거래번호 */
+		   AND ACC_VRFC_STAT_CD = 'R'				/* 요청상태(계좌검증상태코드) */
+		   AND JOB_SYS_CD = '01'					/* 	작업시스템코드  */
+	       AND JOB_STAT_CD = '01'					/* 작업상태코드 */
+	</update>
+</mapper>

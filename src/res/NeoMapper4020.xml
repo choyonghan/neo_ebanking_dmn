@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper4020">
+	<select id="selectTFE2190"  resultType="MyMap">
+   		/*selectTFE2190*/
+		SELECT TRNX_NO					/* 거래번호 */
+		     , LINK_SNUM 				/* 연계일련번호 */
+		     , DLNG_YMD 				/* 거래일자 */
+		     , DATA_RCTN_CD 			/* 자료수신여부 */
+		     , DMND_ID 					/* 요청ID */
+		     , TRSFR_DMND_INST_DV_CD	/* 요청기관구분 */
+		     , LAF_CD 					/* 자치단체코드 */
+		     , GOF_CD 					/* 관서코드 */
+		     , GIVE_DEPT_CD 			/* 지급부서코드 */
+		     , FYR 						/* 회계연도 */
+		     , ACNT_DV_CD 				/* 회계코드 */
+		     , TRSFR_DATA_DV_CD 		/* 이체자료구분 */
+		     , PMOD_RGSTR_NO 			/* 지급명령등록번호 */
+		     , RAT_YN 					/* 재배정여부 */
+		     , TRSFR_PRCS_RSLT_CD 		/* 이체처리결과코드 */
+		     , TRSFR_PRCS_RSLT_CN 		/* 이체처리결과설명 */
+		     , TRSFR_RSLT_DLPS_NM 		/* 이체처리결과처리자명 */
+		     , TRSFR_RSLT_PRCS_YN 		/* 이체처리결과처리여부 */
+		     , SLRY_YN 					/* (복지)급여여부 */
+		     , ANE_LIM_ACC_YN        	/* 세출한도계좌여부 */
+		  FROM TFE2190 					/* 지급원장 */
+		 WHERE TRSFR_RSLT_PRCS_YN IN ('Y','D') /* 이체처리결과처리여부 */
+		   AND JOB_SYS_CD 	= '01' 		/* 작업시스템코드 */
+		   AND JOB_STAT_CD 	= '31' 		/* 작업상태코드 */
+		   AND LAF_CD 		= #{자치단체코드}
+
+		<!-- OLD
+		SELECT	거래일자,
+				자료수신여부,
+				요청ID,
+				요청기관구분,
+				자치단체코드,
+				관서코드,
+				지급부서코드,
+				회계연도,
+				회계코드,
+				자료구분,
+				지급명령등록번호,
+				재배정여부,
+				결과코드,
+				결과설명,
+				결과처리자명,
+				결과처리여부,
+				복지급여여부
+		  FROM	지급원장
+		 WHERE  결과처리여부 in  ('Y','D')
+		   AND	작업시스템코드 = '01'
+		   AND	작업상태코드 = '31'
+		   AND  자치단체코드 = #{자치단체코드}
+		   -->
+	</select>
+
+	<select id="selectTFE2170"  resultType="MyMap">
+		/*selectTFE2170*/
+		SELECT	DLNG_YMD 							/* 거래일자 */
+			  , DMND_ID 							/* 요청ID */
+			  , TRSFR_DMND_INST_DV_CD				/* 요청기관구분 */
+			  , LAF_CD								/* 자치단체코드 */
+			  , GOF_CD								/* 관서코드 */
+			  , GIVE_DEPT_CD						/* 부서코드 */
+			  , FYR									/* 회계연도 */
+			  , ACNT_DV_CD							/* 회계코드 */
+			  , TRSFR_DATA_DV_CD					/* 자료구분 */
+			  , PMOD_RGSTR_NO						/* 지급명령등록번호 */
+			  , DPST_SNUM							/* 입금일련번호 */
+			  , RAT_YN								/* 재배정여부 */
+			  , DATA_RCTN_CD						/* 자료수신여부 */
+			  , TRSFR_RSLT_PRCS_YN					/* 결과처리여부 */
+			  , TRSFR_PRCS_RSLT_CD					/* 결과코드 */
+			  , TRSFR_PRCS_RSLT_CN					/* 결과설명 */
+			  , TRSFR_RSLT_DLPS_NM					/* 결과처리자명 */
+			  , NVL(RTRIM(DPST_ECRP_ACTNO), '0') 	/* 입금계좌번호 */
+			  , NVL(RTRIM(DPST_ACNTR_NM),'0') 		/* 입금계좌예금주명 */
+			  , DLNG_AMT							/* 입금금액 */
+		  FROM	TFE2170  /* 입금명세 */
+		 WHERE  DLNG_YMD 			= #{거래일자}
+		   AND  TRSFR_RSLT_PRCS_YN 	= 'Y'  			/* 이체결과처리여부 */
+		   AND  TRNX_NO 			= #{거래번호}
+		   AND  MNG_SNUM 			= #{연계일련번호}	/* 관리일련번호 */
+
+		<!-- OLD
+		SELECT	거래일자,
+				요청ID,
+				요청기관구분,
+				자치단체코드,
+				관서코드,
+				부서코드,
+				회계연도,
+				회계코드,
+				자료구분,
+				지급명령등록번호,
+				입금일련번호,
+				재배정여부,
+				자료수신여부,
+				결과코드,
+				결과설명,
+				결과처리자명,
+				결과처리여부,
+				NVL(RTRIM(입금계좌번호), '0') AS 입금계좌번호,
+				NVL(RTRIM(입금계좌예금주명),'0') AS 입금계좌예금주명,
+				입금금액
+		  FROM	입금명세
+		 WHERE  거래일자 = #{거래일자}
+		   AND  결과처리여부 = 'Y'
+		   AND  요청ID = #{요청ID}
+		   AND	요청기관구분 = #{요청기관구분}
+		   AND	자치단체코드 = #{자치단체코드}
+		   AND	관서코드 = #{관서코드}
+		   AND	부서코드 = #{지급부서코드}
+		   AND	회계연도 = #{회계연도}
+		   AND	회계코드 = #{회계코드}
+		   AND	자료구분 = #{자료구분}
+		   AND  지급명령등록번호 = #{지급명령등록번호}
+		   AND  재배정여부 = #{재배정여부}
+		-->
+	</select>
+
+	<select id="getErrorCnt"  resultType="int">
+		/*getErrorCnt-사용하지 않음*/
+		SELECT COUNT(*) AS ERRCNT
+		  FROM TFE2170 										/* 입금명세(세출) */
+		 WHERE TRNX_NO = #{TRNX_NO}
+		   AND TRSFR_RSLT_PRCS_YN = 'Y'  					/* 이체처리결과여부 */
+		   AND TRSFR_PRCS_RSLT_CD <![CDATA[ <> ]]> '0000' 	/* 이체처리결과코드 */
+
+		<!-- OLD
+		SELECT	COUNT(*) AS ERRCNT
+		  FROM	입금명세
+		 WHERE  거래일자 = #{거래일자}
+		   AND  결과처리여부 = 'Y'
+		   AND  요청ID = #{요청ID}
+		   AND	요청기관구분 = #{요청기관구분}
+		   AND	자치단체코드 = #{자치단체코드}
+		   AND	관서코드 = #{관서코드}
+		   AND	부서코드 = #{지급부서코드}
+		   AND	회계연도 = #{회계연도}
+		   AND	회계코드 = #{회계코드}
+		   AND	자료구분 = #{자료구분}
+		   AND  지급명령등록번호 = #{지급명령등록번호}
+		   AND  재배정여부 = #{재배정여부}
+		   AND	결과코드 <![CDATA[ <> ]]> '0000'
+		 -->
+	</select>
+
+<!-- 불필요
+	<update id="update_result_ehojoledger" parameterType="MyMap">
+		UPDATE  ${LEDGER_NM}
+		   SET  DEAL_RSLT = #{결과코드,javaType=String,jdbcType=VARCHAR},
+		        DEAL_DESC_RSLT = #{결과설명,javaType=String,jdbcType=VARCHAR},
+		        DEAL_DESC_NM = #{결과처리자명,javaType=String,jdbcType=VARCHAR},
+		        DEAL_RSLT_YN = #{결과처리여부,javaType=String,jdbcType=VARCHAR},
+		        DEAL_RSLT_RECV_DATE = SYSDATE
+		 WHERE  TRNX_YMD = #{거래일자}
+		   AND  RCPT_YN = 'Y'
+		   AND  REQ_ID = #{요청ID}
+		   AND	REQ_INST_FG = #{요청기관구분}
+		   AND	LOC_GOV_CD = #{자치단체코드}
+		   AND	REQ_INST_CD = #{관서코드}
+		   AND	GCC_DEPT_CD = #{지급부서코드}
+		   AND	FIS_YEAR = #{회계연도}
+		   AND	FIS_FG_CD = #{회계코드}
+		   AND	DATA_FG = #{자료구분}
+		   AND  PAY_CMD_REGI_NO = #{지급명령등록번호}
+		   AND  RE_ALLO_YN = #{재배정여부}
+	</update>
+
+	<update id="update_result_ehojoreceipt" parameterType="MyMap">
+		UPDATE  ${DETAIL_NM}
+		   SET  RCPT_YN = #{자료수신여부,javaType=String,jdbcType=VARCHAR},
+		   		DEAL_RSLT = #{결과코드,javaType=String,jdbcType=VARCHAR},
+		        DEAL_DESC_RSLT = #{결과설명,javaType=String,jdbcType=VARCHAR},
+		        DEAL_DESC_NM = #{결과처리자명,javaType=String,jdbcType=VARCHAR},
+		        DEAL_RSLT_YN = #{결과처리여부,javaType=String,jdbcType=VARCHAR},
+		        DEAL_RSLT_RECV_DATE = SYSDATE
+		 WHERE  TRNX_YMD = #{거래일자}
+		   AND  RCPT_YN = 'Y'
+		   AND  REQ_ID = #{요청ID}
+		   AND	REQ_INST_FG = #{요청기관구분}
+		   AND	LOC_GOV_CD = #{자치단체코드}
+		   AND	REQ_INST_CD = #{관서코드}
+		   AND	GCC_DEPT_CD = #{부서코드}
+		   AND	FIS_YEAR = #{회계연도}
+		   AND	FIS_FG_CD = #{회계코드}
+		   AND	DATA_FG = #{자료구분}
+		   AND  PAY_CMD_REGI_NO = #{지급명령등록번호}
+		   AND  IN_SERIAL_NO = #{입금일련번호}
+		   AND  RE_ALLO_YN = #{재배정여부}
+	</update>
+-->
+
+	<select id="SearchErrCode" resultType="MyMap">
+		/*SearchErrCode-사용하지 않음*/
+		SELECT CD_NM || CD_CN AS RESULT_CD_INFO
+	   	  FROM TFE2170 A					/* 입금명세 */
+			  ,TFC0001 B  					/* 공통코드 */
+	     WHERE A.TRSFR_PRCS_RSLT_CD = B.CD
+	       AND B.CLS_CD IN ('WS0001', 'WS0002')
+	       AND A.DLNG_YMD = #{거래일자}
+	       AND A.TRSFR_RSLT_PRCS_YN = 'Y'  	/* 이체결과처리여부 */
+	       AND A.LAF_CD   = #{자치단체코드}
+	       AND A.TRNX_NO  = #{거래번호}
+	     GROUP BY B.CD, B.CD_NM, B.CD_CN
+    </select>
+
+    <!--(호조)입금명세 연계수신 저장  -->
+    <insert id="insertTFE2170R" parameterType="MyMap">
+    	/*insertTFE2170R-(호조)입금명세 연계수신 저장*/
+		INSERT INTO TFE2170R (
+ 			  LINK_SNUM         		/* 연계일련번호 */
+			, LINK_TRSC_ID         		/* 연계트랜잭션ID */
+			, DMND_ID					/* 요청ID */
+			, TRSFR_DMND_INST_DV_CD		/* 이체요청기관구분코드 */
+			, LAF_CD         			/* 지방자치단체코드 */
+			, GOF_CD         			/* 관서코드 */
+			, GIVE_DEPT_CD         		/* 지급부서코드 */
+			, FYR         				/* 회계연도 */
+			, ACNT_DV_CD         		/* 회계구분코드 */
+			, DPST_SNUM         		/* 입금일련번호 */
+			, RAT_YN         			/* 재배정여부 */
+			, TRSFR_DATA_DV_CD         	/* 이체자료구분코드 */
+			, PMOD_RGSTR_NO         	/* 지급명령등록번호 */
+			, LAF_LVL_CD         		/* 지방자치단체레벨코드 */
+			, DLNG_YMD         			/* 거래일자 */
+			, PMOD_NO         			/* 지급명령번호 */
+			, DPST_TY_CD         		/* 입금유형코드 */
+			, DPST_BANK_CD         		/* 입금은행코드 */
+			, DPST_ECRP_ACTNO         	/* 입금암호화계좌번호 */
+			, DPST_ACNTR_NM         	/* 입금계좌주명 */
+			, DPST_DTL_CN         		/* 입금명세내용 */
+			, DLNG_AMT         			/* 거래금액 */
+			, CMS_NO         			/* CMS번호 */
+			, DATA_RCTN_CD         		/* 자료수신코드 */
+			, DATA_RCTN_DT         		/* 자료수신일시 */
+			, DATA_NM         			/* 자료명 */
+			, TRSFR_RSLT_PRCS_YN        /* 이체결과처리여부 */
+			, TRSFR_PRCS_RSLT_CD        /* 이체처리결과코드 */
+			, TRSFR_PRCS_RSLT_CN        /* 이체처리결과내용 */
+			, TRSFR_RSLT_DLPS_NM        /* 이체결과처리자명 */
+			, TRSFR_PRCS_RSLT_RCTN_DT   /* 이체처리결과수신일시 */
+			, PMOD_DV_CD         		/* 지급명령구분코드 */
+			, CASH_TY_CD         		/* 현금유형코드 */
+			, CASH_ITM_CD         		/* 현금종목코드 */
+			, ITM_NM         			/* 종목명 */
+			, DLNG_SNUM         		/* 거래일련번호 */
+			, TRSFR_OBLG_SMSR_TELNO     /* 이체채주SMS수신전화번호 */
+			, SLRY_CHLT_CD         		/* 급여성격코드 */
+			, DDT_AMT_INPT_YN         	/* 공제금액입력여부 */
+			, SMSR_DV_CD         		/* SMS수신구분코드 */
+			, STBX_BANK_CD         		/* 금고은행코드 */
+			, ANE_LIM_ACC_YN         	/* 세출한도계좌여부 */
+			, LINK_PRCS_DV_CD         	/* 연계처리구분코드 */
+			, LINK_TRSM_STAT_CD         /* 연계전송상태코드 */
+			, LINK_ERR_MSG_CN          	/* 연계오류메시지내용  */
+			, PRCT_PRCS_DT         		/* 응용처리일시 */
+			, LINK_STAT_PRCS_DT         /* 연계상태처리일시 */
+		)
+		SELECT
+			SEQ_TFE2170R.NEXTVAL        /* 연계일련번호-A.LINK_SNUM */
+			, ''         				/* 연계트랜잭션ID LINK_TRSC_ID*/
+			, A.DMND_ID					/* 요청ID */
+			, A.TRSFR_DMND_INST_DV_CD	/* 이체요청기관구분코드 */
+			, A.LAF_CD         			/* 지방자치단체코드 */
+			, A.GOF_CD         			/* 관서코드 */
+			, A.GIVE_DEPT_CD         	/* 지급부서코드 */
+			, A.FYR         			/* 회계연도 */
+			, A.ACNT_DV_CD         		/* 회계구분코드 */
+			, A.DPST_SNUM         		/* 입금일련번호 */
+			, A.RAT_YN         			/* 재배정여부 */
+			, A.TRSFR_DATA_DV_CD      	/* 이체자료구분코드 */
+			, A.PMOD_RGSTR_NO         	/* 지급명령등록번호 */
+			, A.LAF_LVL_CD         		/* 지방자치단체레벨코드 */
+			, A.DLNG_YMD         		/* 거래일자 */
+			, A.PMOD_NO         		/* 지급명령번호 */
+			, A.DPST_TY_CD         		/* 입금유형코드 */
+			, (CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN B.DRW_BANK_CD ELSE A.DPST_BANK_CD END) AS DPST_BANK_CD         	/* 입금은행코드 */
+			, (CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN B.DRW_ECRP_ACTNO ELSE A.DPST_ECRP_ACTNO END) AS DPST_ECRP_ACTNO       /* 입금암호화계좌번호 */
+			, A.DPST_ACNTR_NM        	/* 입금계좌주명 */
+			, A.DPST_DTL_CN         	/* 입금명세내용 */
+			, A.DLNG_AMT         		/* 거래금액 */
+			, A.CMS_NO         			/* CMS번호 */
+			, A.DATA_RCTN_CD         	/* 자료수신코드 */
+			, A.DATA_RCTN_DT         	/* 자료수신일시 */
+			, A.DATA_NM         		/* 자료명 */
+			, A.TRSFR_RSLT_PRCS_YN    	/* 이체결과처리여부 */
+			, (CASE WHEN NVL(A.TRSFR_PRCS_RSLT_CD,'0006') != '0000' THEN '0006' ELSE '0000' END) AS TRSFR_PRCS_RSLT_CD         /* 이체처리결과코드 */
+			, A.TRSFR_PRCS_RSLT_CN    	/* 이체처리결과내용 */
+			, A.TRSFR_RSLT_DLPS_NM    	/* 이체결과처리자명 */
+			, A.TRSFR_PRCS_RSLT_RCTN_DT /* 이체처리결과수신일시 */
+			, A.PMOD_DV_CD         		/* 지급명령구분코드 */
+			, A.CASH_TY_CD         		/* 현금유형코드 */
+			, A.CASH_ITM_CD         	/* 현금종목코드 */
+			, A.ITM_NM         			/* 종목명 */
+			, A.DLNG_SNUM         		/* 거래일련번호 */
+			, A.TRSFR_OBLG_SMSR_TELNO 	/* 이체채주SMS수신전화번호 */
+			, A.SLRY_CHLT_CD         	/* 급여성격코드 */
+			, A.DDT_AMT_INPT_YN       	/* 공제금액입력여부 */
+			, A.SMSR_DV_CD         		/* SMS수신구분코드 */
+			, A.STBX_BANK_CD         	/* 금고은행코드 */
+			, A.ANE_LIM_ACC_YN        	/* 세출한도계좌여부 */
+			, 'C'        				/* 연계처리구분코드 LINK_PRCS_DV_CD*/
+			, 'N'        				/* [check]연계전송상태코드 LINK_TRSM_STAT_CD*/
+			, ''         				/* 연계오류메시지내용 LINK_ERR_MSG_CN */
+			, ''         				/* 응용처리일시 PRCT_PRCS_DT*/
+			, ''         				/* 연계상태처리일시 LINK_STAT_PRCS_DT*/
+		  FROM TFE2170 A, 				/* (세출)입금명세 */
+                (
+                SELECT TRNX_NO, DRW_BANK_CD, DRW_ECRP_ACTNO
+                  FROM TFE2190
+                 WHERE 1=1
+                   AND TRNX_NO = #{TRNX_NO}
+                ) B
+		 WHERE A.TRSFR_RSLT_PRCS_YN = 'Y'  /* 이체결과처리여부 */
+		   AND A.TRNX_NO = #{TRNX_NO}
+		   AND A.TRNX_NO = B.TRNX_NO
+    </insert>
+
+    <!--(호조)지급원장 연계수신 저장  -->
+    <insert id="insertTFE2190R" parameterType="MyMap">
+    	/*insertTFE2190R-(호조)지급원장 연계수신 저장*/
+		INSERT INTO TFE2190R (
+			  LINK_SNUM         	/* 연계일련번호 */
+			, LINK_TRSC_ID         	/* 연계트랜잭션ID */
+			, DMND_ID         		/* 요청ID */
+			, TRSFR_DMND_INST_DV_CD /* 이체요청기관구분코드 */
+			, LAF_CD         		/* 지방자치단체코드 */
+			, GOF_CD         		/* 관서코드 */
+			, GIVE_DEPT_CD         	/* 지급부서코드 */
+			, FYR         			/* 회계연도 */
+			, ACNT_DV_CD         	/* 회계구분코드 */
+			, TRSFR_DATA_DV_CD      /* 이체자료구분코드 */
+			, PMOD_RGSTR_NO         /* 지급명령등록번호 */
+			, RAT_YN         		/* 재배정여부 */
+			, DLNG_YMD         		/* 거래일자 */
+			, LAF_LVL_CD         	/* 지방자치단체레벨코드 */
+			, PMOD_NO         		/* 지급명령번호 */
+			, DND_DEPT_CD         	/* 요구부서코드 */
+			, PBIZ_CD         		/* 정책사업코드 */
+			, UBIZ_CD         		/* 단위사업코드 */
+			, DBIZ_CD         		/* 세부사업코드 */
+			, FLD_CD         		/* 분야코드 */
+			, SECT_CD         		/* 부문코드 */
+			, ANE_STMK_CD         	/* 세출통계목코드 */
+			, DRW_BANK_CD         	/* 출금은행코드 */
+			, DRW_ECRP_ACTNO        /* 출금암호화계좌번호 */
+			, DLNG_AMT         		/* 거래금액 */
+			, DRW_DTL_BANK_NM       /* 출금명세은행명 */
+			, DMND_INFO_CN         	/* 요청정보내용 */
+			, DPST_CNT         		/* 입금건수 */
+			, DMND_DT         		/* 요청일시 */
+			, LAF_NM         		/* 지방자치단체명 */
+			, GOF_NM         		/* 관서명 */
+			, GIVE_DEPT_NM         	/* 지급부서명 */
+			, ACNT_DV_NM         	/* 회계구분명 */
+			, PBIZ_NM         		/* 정책사업명 */
+			, UBIZ_NM         		/* 단위사업명 */
+			, DBIZ_NM         		/* 세부사업명 */
+			, FLD_NM         		/* 분야명 */
+			, SECT_NM         		/* 부문명 */
+			, ANE_STMK_NM         	/* 세출통계목명 */
+			, DND_DEPT_NM         	/* 요구부서명 */
+			, PSEP_USR_ID      		/* 지출원ID */
+			, PSEP_CGP_NM         	/* 지출원담당자명 */
+			, PSEP_TELNO         	/* 지출원전화번호 */
+			, DATA_RCTN_CD         	/* 자료수신코드 */
+			, DATA_RCTN_DT         	/* 자료수신일시 */
+			, DATA_NM         		/* 자료명 */
+			, TRSFR_RSLT_PRCS_YN    /* 이체결과처리여부 */
+			, TRSFR_PRCS_RSLT_CD    /* 이체처리결과코드 */
+			, TRSFR_PRCS_RSLT_CN    /* 이체처리결과내용 */
+			, TRSFR_RSLT_DLPS_NM    /* 이체결과처리자명 */
+			, TRSFR_PRCS_RSLT_RCTN_DT         /* 이체처리결과수신일시 */
+			, PMOD_DV_CD         	/* 지급명령구분코드 */
+			, CASH_TY_CD         	/* 현금유형코드 */
+			, CASH_ITM_CD         	/* 현금종목코드 */
+			, ITM_NM         		/* 종목명 */
+			, SLRY_YN         		/* 급여여부 */
+			, GIVE_DEPT_SMS_SNDG_TELNO         /* 지급부서SMS발신전화번호 */
+			, SMS_SND_YN         	/* SMS발송여부 */
+			, CSLT_ITNC_USR_ID      /* 품의발의사용자ID */
+			, PMOD_RGSTR_USR_ID     /* 지급명령등록사용자ID */
+			, STBX_BANK_CD         	/* 금고은행코드 */
+			, ANE_LIM_ACC_YN        /* 세출한도계좌여부 */
+			, LINK_PRCS_DV_CD       /* 연계처리구분코드 */
+			, LINK_TRSM_STAT_CD     /* 연계전송상태코드 */
+			, LINK_ERR_MSG_CN       /* 연계오류메시지내용 */
+			, PRCT_PRCS_DT         	/* 응용처리일시 */
+			, LINK_STAT_PRCS_DT     /* 연계상태처리일시 */
+		)
+		SELECT
+			SEQ_TFE2190R.NEXTVAL        /* 연계일련번호-A.LINK_SNUM */
+			, ''         				/* 연계트랜잭션ID LINK_TRSC_ID*/
+			, A.DMND_ID         		/* 요청ID */
+			, A.TRSFR_DMND_INST_DV_CD 	/* 이체요청기관구분코드 */
+			, A.LAF_CD         			/* 지방자치단체코드 */
+			, A.GOF_CD         			/* 관서코드 */
+			, A.GIVE_DEPT_CD         	/* 지급부서코드 */
+			, A.FYR         			/* 회계연도 */
+			, A.ACNT_DV_CD         		/* 회계구분코드 */
+			, A.TRSFR_DATA_DV_CD      	/* 이체자료구분코드 */
+			, A.PMOD_RGSTR_NO         	/* 지급명령등록번호 */
+			, A.RAT_YN         			/* 재배정여부 */
+			, A.DLNG_YMD         		/* 거래일자 */
+			, A.LAF_LVL_CD         		/* 지방자치단체레벨코드 */
+			, A.PMOD_NO         		/* 지급명령번호 */
+			, A.DND_DEPT_CD         	/* 요구부서코드 */
+			, A.PBIZ_CD         		/* 정책사업코드 */
+			, A.UBIZ_CD         		/* 단위사업코드 */
+			, A.DBIZ_CD         		/* 세부사업코드 */
+			, A.FLD_CD         			/* 분야코드 */
+			, A.SECT_CD         		/* 부문코드 */
+			, A.ANE_STMK_CD         	/* 세출통계목코드 */
+			, (CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN B.DPST_BANK_CD ELSE A.DRW_BANK_CD END) AS DRW_BANK_CD         	/* 출금은행코드 */
+			, (CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN B.DPST_ECRP_ACTNO ELSE A.DRW_ECRP_ACTNO END) AS DRW_ECRP_ACTNO        /* 출금암호화계좌번호 */
+			, A.DLNG_AMT         		/* 거래금액 */
+			, A.DRW_DTL_BANK_NM       	/* 출금명세은행명 */
+			, A.DMND_INFO_CN         	/* 요청정보내용 */
+			, A.DPST_CNT         		/* 입금건수 */
+			, A.DMND_DT         		/* 요청일시 */
+			, A.LAF_NM         			/* 지방자치단체명 */
+			, A.GOF_NM         			/* 관서명 */
+			, A.GIVE_DEPT_NM         	/* 지급부서명 */
+			, A.ACNT_DV_NM         		/* 회계구분명 */
+			, A.PBIZ_NM         		/* 정책사업명 */
+			, A.UBIZ_NM         		/* 단위사업명 */
+			, A.DBIZ_NM         		/* 세부사업명 */
+			, A.FLD_NM         			/* 분야명 */
+			, A.SECT_NM         		/* 부문명 */
+			, A.ANE_STMK_NM         	/* 세출통계목명 */
+			, A.DND_DEPT_NM         	/* 요구부서명 */
+			, A.PSEP_USR_ID      		/* 지출원ID */
+			, A.PSEP_CGP_NM         	/* 지출원담당자명 */
+			, A.PSEP_TELNO         		/* 지출원전화번호 */
+			, A.DATA_RCTN_CD         	/* 자료수신코드 */
+			, A.DATA_RCTN_DT         	/* 자료수신일시 */
+			, A.DATA_NM         		/* 자료명 */
+			, A.TRSFR_RSLT_PRCS_YN    	/* 이체결과처리여부 */
+			, DECODE(A.DATA_RCTN_CD,'D','0006',A.TRSFR_PRCS_RSLT_CD) AS  TRSFR_PRCS_RSLT_CD         /* 이체처리결과코드(반려'D'시 0006) */
+			, A.TRSFR_PRCS_RSLT_CN    	/* 이체처리결과내용 */
+			, A.TRSFR_RSLT_DLPS_NM    	/* 이체결과처리자명 */
+			, A.TRSFR_PRCS_RSLT_RCTN_DT         /* 이체처리결과수신일시 */
+			, A.PMOD_DV_CD         		/* 지급명령구분코드 */
+			, A.CASH_TY_CD         		/* 현금유형코드 */
+			, A.CASH_ITM_CD         	/* 현금종목코드 */
+			, A.ITM_NM         			/* 종목명 */
+			, A.SLRY_YN         		/* 급여여부 */
+			, A.GIVE_DEPT_SMS_SNDG_TELNO         /* 지급부서SMS발신전화번호 */
+			, A.SMS_SND_YN         		/* SMS발송여부 */
+			, A.CSLT_ITNC_USR_ID      	/* 품의발의사용자ID */
+			, A.PMOD_RGSTR_USR_ID     	/* 지급명령등록사용자ID */
+			, A.STBX_BANK_CD         	/* 금고은행코드 */
+			, A.ANE_LIM_ACC_YN        	/* 세출한도계좌여부 */
+			, 'C'        				/* 연계처리구분코드 LINK_PRCS_DV_CD*/
+			, 'N'        				/* [check]연계전송상태코드 LINK_TRSM_STAT_CD*/
+			, ''         				/* 연계오류메시지내용 LINK_ERR_MSG_CN */
+			, ''         				/* 응용처리일시 PRCT_PRCS_DT*/
+			, ''         				/* 연계상태처리일시 LINK_STAT_PRCS_DT*/
+		  FROM TFE2190 A,   			/* (세출)지급원장 */
+                (
+                SELECT TRNX_NO, DPST_BANK_CD, DPST_ECRP_ACTNO
+                  FROM TFE2170
+                 WHERE 1=1
+                   AND TRNX_NO = #{TRNX_NO}
+                   AND ROWNUM = 1
+                ) B
+		 WHERE A.TRSFR_RSLT_PRCS_YN IN ('Y','D') /* 이체처리결과처리여부 */
+		   AND A.JOB_SYS_CD  = '01' 	/* 작업시스템코드 */
+		   AND A.JOB_STAT_CD = '31' 	/* 작업상태코드 */
+		   AND A.TRNX_NO = #{TRNX_NO}
+		   AND A.TRNX_NO = B.TRNX_NO
+    </insert>
+
+    <!-- 지급원장 최종 작업완료처리(호조 결과전송 후) -->
+	<update id="updateTFE2190End" parameterType="MyMap">
+		/*updateTFE2190End-지급원장 최종 작업완료처리(호조 결과전송 후)*/
+		UPDATE TFE2190 				/* 지급원장(세출) */
+		   SET JOB_STAT_CD = '32' 	/* 작업상태코드 */
+		   	 , LINK_TRSM_STAT_CD = 'S' 	/* 연계전송상태코드 */
+		 WHERE TRNX_NO     = #{TRNX_NO}
+		 AND JOB_SYS_CD  = '01'  	/* 작업시스템코드 */
+		 AND JOB_STAT_CD = '31' 	/* 작업상태코드 */
+    </update>
+
+	<!--한도거래잔액 등록여부 조회  -->
+    <select id="getTFE2190ToTFMA050APrcCnt"  parameterType="MyMap" resultType="int">
+        /* new query getTFE2190ToTFMA050APrcCnt-한도거래잔액 등록여부 조회 */
+        SELECT COUNT(ORI_TRNX_NO) AS PRCCNT
+		  FROM TFMA050A
+		 WHERE ORI_TRNX_NO = #{TRNX_NO}
+		   AND ACC_DLNG_DV_CD = '02'
+		   AND ROWNUM = 1
+    </select>
+
+	<!--한도거래잔액 등록여부 조회  -->
+    <select id="getTFE2170ToTFMA050APrcCnt"  parameterType="MyMap" resultType="int">
+        /* new query getTFE2170ToTFMA050APrcCnt-한도거래잔액 등록여부 조회 */
+        SELECT COUNT(ORI_TRNX_NO) AS PRCCNT
+		  FROM TFMA050A
+		 WHERE ORI_TRNX_NO = #{TRNX_NO}
+		   AND ACC_DLNG_DV_CD = '01'
+		   AND ROWNUM = 1
+    </select>
+
+    <insert id="insertTFE2190ToTFMA050A" parameterType="MyMap">
+    	/*insertTFE2190ToTFMA050A-지급명세한도계좌 거래내역에 저장*/
+		INSERT INTO TFMA050A (
+				 DLNG_YMD			/*거래일자			*/
+				,DLNG_SNUM			/*거래일련번호(일자별일련번호)	*/
+				,DLNG_TM			/*거래시각			*/
+				,LAF_CD				/*지방자치단체코드		*/
+				,ACC_DLNG_DV_CD		/*계좌거래구분코드		*/
+				,ACC_DLNG_DV_NM		/*계좌거래구분명		*/
+				,FYR				/*회계연도			*/
+				,STBX_ECRP_ACTNO	/*금고암호화계좌번호		*/
+				,DLNG_BANK_CD		/*거래은행코드			*/
+				,DLNG_ECRP_ACTNO	/*거래암호화계좌번호		*/
+				,PWDDA_NM			/*입출금자명			*/
+				,DPST_BOFF_NO		/*입금지점번호			*/
+				,DDAM_DLNG_DV_CD	/*입출금거래구분코드		*/
+				,DDAM_RV_DV_CD		/*입출금수입구분코드		*/
+				,DDAM_DV_NM			/*입출금구분명			*/
+				,IDRK_YMD			/*기산일일자			*/
+				,ACC_INPT_DT		/*계좌입력일시			*/
+				,ACC_RGST_NM		/*계좌입력자명			*/
+				,ERP_PRCS_YN		/*ERP처리여부			*/
+				,PAID_TN			/*납입회차			*/
+				,DLNG_AMT			/*거래금액			*/
+				,PSNT_RAMT_AMT		/*현재잔액금액			*/
+				,CRTR_IRT			/*기준이율			*/
+				,DLNG_OTLN_CN		/*거래적요내용			*/
+				,ATM_DV_CD			/*ATM구분코드			*/
+				,STBX_BANK_CD		/*금고은행코드			*/
+				,ORI_TRNX_NO		/*원거래번호			*/
+				,ACNT_DV_CD			/*회계구분코드			*/
+				,GOF_CD				/*관서코드			*/
+				,GCC_DEPT_CD		/*GCC부서코드			*/
+				,DEPT_CD			/*부서코드			*/
+				,PRCS_RSLT_CD       /* 처리결과코드 */
+				)
+		SELECT
+			 A.DLNG_YMD					/*거래일자			*/
+			,SEQ_TFMA050A.NEXTVAL
+			,NVL(TO_CHAR(A.TRSFR_PRCS_RSLT_RCTN_DT, 'HH24MISS'), TO_CHAR(SYSDATE, 'HH24MISS'))					/*거래시각*/
+			,A.LAF_CD					/*지방자치단체코드		*/
+			,(CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN '01' ELSE '02' END)						/*계좌거래구분코드(02:출금)*/
+			,''							/*[check]계좌거래구분명(출금계좌 적용)		*/
+			,A.FYR						/*회계연도			*/
+			,(CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN REPLACE(B.DPST_ECRP_ACTNO, '-', '') ELSE REPLACE(A.DRW_ECRP_ACTNO, '-', '') END) AS DRW_ECRP_ACTNO			/*출금암호화계좌번호		*/
+			,(CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN B.DPST_BANK_CD ELSE A.DRW_BANK_CD END) AS DRW_BANK_CD				/*출금은행코드			*/
+			,(
+		  		SELECT MTAC_IDT_NO /*통합지출계좌번호*/
+		  		  FROM TFC0011
+		  		 WHERE 1=1
+		  		   AND ANE_LIM_ACC_NO = A.DRW_ECRP_ACTNO /*세출한도계좌번호*/
+		  		   AND ACC_NO_USE_YN = 'Y'
+		  		   AND ROWNUM = 1
+			 )	/* 거래암호화계좌번호(출금정보에 한함, 가상계좌거래일경우 가상계좌)		*/
+			,''							/*입출금자명			*/
+			,(
+				SELECT ACCT_MNG_JUM
+				FROM TFA0005
+				WHERE FYR 			= A.FYR
+			  	AND ACNT_DV_CD 		= A.ACNT_DV_CD
+			  	AND BANK_CD 		= A.DRW_BANK_CD
+			  	AND ACCT_NO 		= REPLACE(A.DRW_ECRP_ACTNO,'-','')
+			  	AND ROWNUM = 1
+			 )							/*입금지점번호(출금정보에 한함)			*/
+			,A.TRSFR_DATA_DV_CD			/*이체자료구분코드		*/
+			,''							/*입출금수입구분코드		*/
+			,''							/*입출금구분명			*/
+			,''							/*기산일일자			*/
+			,''							/*계좌입력일시			*/
+			,''							/*계좌입력자명			*/
+			,''							/*ERP처리여부			*/
+			,''							/*납입회차			*/
+			,A.DLNG_AMT					/*거래금액			*/
+			,0							/*현재잔액금액			*/
+			,0							/*기준이율			*/
+			,''							/*거래적요내용			*/
+			,''							/*ATM구분코드			*/
+			,A.DRW_BANK_CD				/*출금은행코드			*/
+			,A.TRNX_NO					/*거래번호			*/
+			,A.ACNT_DV_CD				/*회계구분코드			*/
+			,A.GOF_CD					/*관서코드			*/
+			,A.GIVE_DEPT_CD				/*지급부서코드			*/
+			,''							/*부서코드			*/
+			,A.TRSFR_PRCS_RSLT_CD
+		FROM TFE2190 A,
+             (
+             SELECT TRNX_NO, DPST_BANK_CD, DPST_ECRP_ACTNO
+               FROM TFE2170
+              WHERE 1=1
+                AND TRNX_NO = #{TRNX_NO}
+                AND ROWNUM = 1
+             ) B
+		WHERE 1=1
+		AND A.TRNX_NO = #{TRNX_NO}
+		AND A.ANE_LIM_ACC_YN = 'Y'
+		AND A.TRNX_NO = B.TRNX_NO
+    </insert>
+
+    <insert id="insertTFE2170ToTFMA050A" parameterType="MyMap">
+    	/*insertTFE2170ToTFMA050A-입금명세한도계좌 거래내역에 저장*/
+		INSERT INTO TFMA050A (
+				 DLNG_YMD			/*거래일자			*/
+				,DLNG_SNUM			/*거래일련번호(일자별일련번호)	*/
+				,DLNG_TM			/*거래시각			*/
+				,LAF_CD				/*지방자치단체코드		*/
+				,ACC_DLNG_DV_CD		/*계좌거래구분코드		*/
+				,ACC_DLNG_DV_NM		/*계좌거래구분명		*/
+				,FYR				/*회계연도			*/
+				,STBX_ECRP_ACTNO	/*금고암호화계좌번호		*/
+				,DLNG_BANK_CD		/*거래은행코드			*/
+				,DLNG_ECRP_ACTNO	/*거래암호화계좌번호		*/
+				,PWDDA_NM			/*입출금자명			*/
+				,DPST_BOFF_NO		/*입금지점번호			*/
+				,DDAM_DLNG_DV_CD	/*입출금거래구분코드		*/
+				,DDAM_RV_DV_CD		/*입출금수입구분코드		*/
+				,DDAM_DV_NM			/*입출금구분명			*/
+				,IDRK_YMD			/*기산일일자			*/
+				,ACC_INPT_DT		/*계좌입력일시			*/
+				,ACC_RGST_NM		/*계좌입력자명			*/
+				,ERP_PRCS_YN		/*ERP처리여부			*/
+				,PAID_TN			/*납입회차			*/
+				,DLNG_AMT			/*거래금액			*/
+				,PSNT_RAMT_AMT		/*현재잔액금액			*/
+				,CRTR_IRT			/*기준이율			*/
+				,DLNG_OTLN_CN		/*거래적요내용			*/
+				,ATM_DV_CD			/*ATM구분코드			*/
+				,STBX_BANK_CD		/*금고은행코드			*/
+				,ORI_TRNX_NO		/*원거래번호			*/
+				,ACNT_DV_CD			/*회계구분코드			*/
+				,GOF_CD				/*관서코드			*/
+				,GCC_DEPT_CD		/*GCC부서코드			*/
+				,DEPT_CD			/*부서코드			*/
+				,PRCS_RSLT_CD       /* 처리결과코드 */
+				)
+		SELECT
+		         DLNG_YMD			/*거래일자			*/
+		         ,SEQ_TFMA050A.NEXTVAL
+			  <!-- <choose>
+			 	 <when test='ANE_LIM_ACC_YN == "Y"'>
+			    ,(DLNG_SNUM + RN)	/*거래일련번호(일자별일련번호)	*/
+			   	 </when>
+				 <otherwise>
+				,(DLNG_SNUM + RN) - 1	/*거래일련번호(일자별일련번호)	*/
+				 </otherwise>
+			  </choose> -->
+		        ,DLNG_TM			/*거래시각			*/
+		        ,LAF_CD				/*지방자치단체코드		*/
+		        ,ACC_DLNG_DV_CD		/*계좌거래구분코드		*/
+		        ,ACC_DLNG_DV_NM		/*계좌거래구분명		*/
+		        ,FYR				/*회계연도			*/
+		        ,STBX_ECRP_ACTNO	/*금고암호화계좌번호		*/
+		        ,DLNG_BANK_CD		/*거래은행코드			*/
+		        ,DLNG_ECRP_ACTNO	/*거래암호화계좌번호		*/
+		        ,PWDDA_NM			/*입출금자명			*/
+		        ,DPST_BOFF_NO		/*입금지점번호			*/
+		        ,DDAM_DLNG_DV_CD	/*입출금거래구분코드		*/
+		        ,DDAM_RV_DV_CD		/*입출금수입구분코드		*/
+		        ,DDAM_DV_NM			/*입출금구분명			*/
+		        ,IDRK_YMD			/*기산일일자			*/
+		        ,ACC_INPT_DT		/*계좌입력일시			*/
+		        ,ACC_RGST_NM		/*계좌입력자명			*/
+		        ,ERP_PRCS_YN		/*ERP처리여부			*/
+		        ,PAID_TN			/*납입회차			*/
+		        ,DLNG_AMT			/*거래금액			*/
+		        ,PSNT_RAMT_AMT		/*현재잔액금액			*/
+		        ,CRTR_IRT			/*기준이율			*/
+		        ,DLNG_OTLN_CN		/*거래적요내용			*/
+		        ,ATM_DV_CD			/*ATM구분코드			*/
+		        ,STBX_BANK_CD		/*금고은행코드			*/
+		        ,ORI_TRNX_NO		/*원거래번호			*/
+				,ACNT_DV_CD			/*회계구분코드			*/
+				,GOF_CD				/*관서코드			*/
+				,GIVE_DEPT_CD		/*지급부서코드			*/
+				,DEPT_CD			/*부서코드			*/
+				,PRCS_RSLT_CD       /* 처리결과코드 */
+		FROM (
+				SELECT
+					 A.DLNG_YMD							/*거래일자			*/
+					,'' AS DLNG_SNUM				/*거래일련번호(일자별일련번호)	*/
+		            ,ROWNUM AS RN
+					,NVL(TO_CHAR(A.TRSFR_PRCS_RSLT_RCTN_DT, 'HH24MISS'), TO_CHAR(SYSDATE, 'HH24MISS')) AS DLNG_TM				/*거래시각*/
+					,A.LAF_CD							/*지방자치단체코드		*/
+					,(CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN '02' ELSE '01' END) AS ACC_DLNG_DV_CD				/*계좌거래구분코드(01:입금)*/
+					,''	AS ACC_DLNG_DV_NM				/*[check]계좌거래구분명(출금계좌 적용)		*/
+					,A.FYR								/*회계연도			*/
+					,(CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN REPLACE(B.DRW_ECRP_ACTNO, '-', '') ELSE REPLACE(A.DPST_ECRP_ACTNO, '-', '') END)	AS STBX_ECRP_ACTNO		/*입금암호화계좌번호		*/
+					,(CASE WHEN A.TRSFR_DATA_DV_CD = '46' THEN B.DRW_BANK_CD ELSE A.DPST_BANK_CD END) AS DLNG_BANK_CD		/*입금은행코드			*/
+					,''	AS DLNG_ECRP_ACTNO				/*거래암호화계좌번호(출금정보에 한함, 가상계좌거래일경우 가상계좌)		*/
+					,A.DPST_ACNTR_NM	AS PWDDA_NM		/*입금계좌주명			*/
+					,''	AS DPST_BOFF_NO					/*입금지점번호(출금정보에 한함)			*/
+					,A.TRSFR_DATA_DV_CD	AS DDAM_DLNG_DV_CD		/*이체자료구분코드		*/
+					,''	AS DDAM_RV_DV_CD						/*입출금수입구분코드		*/
+					,''	AS DDAM_DV_NM					/*입출금구분명			*/
+					,''	AS IDRK_YMD						/*기산일일자			*/
+					,''	AS ACC_INPT_DT					/*계좌입력일시			*/
+					,''	AS ACC_RGST_NM					/*계좌입력자명			*/
+					,''	AS ERP_PRCS_YN					/*ERP처리여부			*/
+					,''	AS PAID_TN						/*납입회차			*/
+					,A.DLNG_AMT							/*거래금액			*/
+					,0	AS PSNT_RAMT_AMT				/*현재잔액금액			*/
+					,0	AS CRTR_IRT						/*기준이율			*/
+					,A.DPST_DTL_CN	AS DLNG_OTLN_CN		/*입금명세내용			*/
+					,''	AS ATM_DV_CD					/*ATM구분코드			*/
+					,A.DPST_BANK_CD	AS STBX_BANK_CD		/*입금은행코드			*/
+					,A.TRNX_NO	AS ORI_TRNX_NO			/*거래번호			*/
+					,A.ACNT_DV_CD AS ACNT_DV_CD			/*회계구분코드			*/
+					,A.GOF_CD	AS GOF_CD				/*관서코드			*/
+					,A.GIVE_DEPT_CD	AS GIVE_DEPT_CD		/*지급부서코드			*/
+					,''	AS 	DEPT_CD						/*부서코드			*/
+                    ,(CASE
+                          WHEN A.TRSFR_PRCS_RSLT_CD = '0000' THEN '0000'
+                          WHEN A.TRSFR_PRCS_RSLT_CD = 'BN10501' THEN '0000'
+                          WHEN A.ANE_LIM_ACC_YN = 'Y' THEN '0000' ELSE '0006' END) AS PRCS_RSLT_CD
+				FROM TFE2170 A,
+	                (
+	                SELECT TRNX_NO, DRW_BANK_CD, DRW_ECRP_ACTNO
+	                  FROM TFE2190
+	                 WHERE 1=1
+	                   AND TRNX_NO = #{TRNX_NO}
+	                ) B
+				WHERE 1=1
+				AND A.TRNX_NO = #{TRNX_NO}
+				AND A.ANE_LIM_ACC_YN = 'Y'
+				AND A.TRNX_NO = B.TRNX_NO
+		      )
+    </insert>
+</mapper>

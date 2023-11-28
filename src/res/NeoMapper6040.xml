@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper6040">
+    <insert id="insert" parameterType="MyMap">
+    INSERT INTO 세입원장 (
+            자치단체코드,
+            회계연도,
+            회계구분코드,
+            작성일자,
+            일자별순번,
+            세입과목코드,
+            전일누계금액,
+            세입금액,
+            과오납반환액,
+            과목경정액,
+            전송일시,
+            삭제여부,
+            전송여부
+    ) VALUES (
+            #{자치단체코드,javaType=String,jdbcType=VARCHAR},
+            #{회계연도,javaType=String,jdbcType=VARCHAR},
+            #{회계구분코드,javaType=String,jdbcType=VARCHAR},
+            #{작성일자,javaType=String,jdbcType=VARCHAR},
+            #{일자별순번,javaType=long,jdbcType=NUMERIC},
+            #{세입과목코드,javaType=String,jdbcType=VARCHAR},
+            #{전일누계금액,javaType=long,jdbcType=NUMERIC},
+            #{세입금액,javaType=long,jdbcType=NUMERIC},
+            #{과오납반환액,javaType=long,jdbcType=NUMERIC},
+            #{과목경정액,javaType=long,jdbcType=NUMERIC},
+            SYSDATE,
+            #{삭제여부,javaType=String,jdbcType=VARCHAR},
+            'N'
+        )
+    </insert>
+
+    <update id="update" parameterType="MyMap">
+        UPDATE  세입원장
+           SET  삭제여부     = 'N'
+         WHERE  자치단체코드 = #{자치단체코드,javaType=String,jdbcType=VARCHAR}
+           AND  회계연도     = #{회계연도,javaType=String,jdbcType=VARCHAR}
+           AND  작성일자     = #{작성일자,javaType=String,jdbcType=VARCHAR}
+           AND  삭제여부     = 'Y'
+    </update>
+</mapper>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper4040">
+
+	<!-- (세출)지급원장 이체처리결과 업데이트 -->
+	<update id="updateTFE2190Result" parameterType="MyMap">
+		/*updateTFE2190Result-(세출)지급원장 이체처리결과 업데이트*/
+		UPDATE TFE2190 /* 지급원장 */
+		   SET TRSFR_PRCS_RSLT_CD	= #{RESULT_CD}	/* 이체처리결과코드 */
+		      ,TRSFR_PRCS_RSLT_CN 	= #{RESULT_EX} 	/* 이체처리결과내용 */
+		      ,TRSFR_RSLT_DLPS_NM 	= #{RESULT_NM}  /* 이체결과처리자명 */
+		      ,TRSFR_RSLT_PRCS_YN 	= 'Y'  			/* 이체결과처리여부 */
+		      ,TRSFR_PRCS_RSLT_RCTN_DT = SYSDATE  	/* 이체처리결과수신일시 */
+		      ,PRCT_CNT 			= #{정상처리건수}	/* 처리건수 */
+		      ,PRCT_AMT 			= #{정상처리금액} 	/* 처리금액 */
+		      ,ERR_CNT 				= #{미처리건수} 	/* 오류건수 */
+		      ,ERR_AMT 				= #{미처리금액} 	/* 오류금액 */
+		      ,JOB_SYS_CD  			= '01'  		/* 작업시스템코드 */
+		      ,JOB_STAT_CD 			= '31' 			/* 작업상태코드 */
+		      ,SPC_ACCT_NO 			=  #{불능분입금계좌번호}  /* [check]암호화 필요~~~~~~ */
+		WHERE TRNX_NO  = #{파일코드}  				/* 거래번호 */
+		  AND DATA_RCTN_CD = 'Y'  					/* 자료수신코드 */
+		  AND TRSFR_RSLT_PRCS_YN = 'N' 				/* 이체결과처리여부*/
+	</update>
+
+	<!-- (세출)입금명세 이체처리결과 업데이트(오류건 개별) -->
+	<update id="updateTFE2170Fail" parameterType="MyMap">
+		/*updateTFE2170Fail-(세출)입금명세 이체처리결과 업데이트(오류건 개별)*/
+		UPDATE TFE2170 										/* 입금명세 */
+		   SET DATA_RCTN_CD 			= #{RCPT_YN}  		/* 자료수신코드 */
+		   	 , TRSFR_PRCS_RSLT_CD		= #{이체처리불능코드} 	/* 이체처리결과코드 */
+			 , TRSFR_PRCS_RSLT_CN   	= #{RESULT_EX}		/* 이체처리결과내용 */
+			 , TRSFR_RSLT_DLPS_NM 		= #{RESULT_NM}		/* 이체처리결과처리자명 */
+			 , TRSFR_RSLT_PRCS_YN 		= 'Y'  				/* 이체결과처리여부 */
+			 , TRSFR_PRCS_RSLT_RCTN_DT 	= SYSDATE 			/* 이체결과처리수신일시 */
+		 WHERE DPST_SNUM = TO_NUMBER(#{입금일련번호})
+		 	AND TRNX_NO  = #{거래번호}
+		 	AND DATA_RCTN_CD       = 'Y'  					/* 자료수신코드 */
+		   	AND TRSFR_RSLT_PRCS_YN = 'N' 					/* 이체결과처리여부*/
+	</update>
+
+	<!-- (세출)입금명세 이체처리결과 업데이트(정상건 전체) -->
+	<update id="updateTFE2170Succ" parameterType="MyMap">
+		/*updateTFE2170Succ-(세출)입금명세 이체처리결과 업데이트(정상건 전체)*/
+		UPDATE TFE2170 										/* 입금명세 */
+		   SET DATA_RCTN_CD 			= 'Y'  				/* 자료수신코드 */
+		   	 , TRSFR_PRCS_RSLT_CD		= '0000' 			/* 이체처리결과코드 */
+			 , TRSFR_PRCS_RSLT_CN   	= '정상처리 되었습니다.'	/* 이체처리결과내용 */
+			 , TRSFR_RSLT_DLPS_NM 		= '대구은행'			/* 이체처리결과처리자명 */
+			 , TRSFR_RSLT_PRCS_YN 		= 'Y'  				/* 이체결과처리여부 */
+			 , TRSFR_PRCS_RSLT_RCTN_DT 	= SYSDATE 			/* 이체결과처리수신일시 */
+		 WHERE TRNX_NO  = #{거래번호}
+		   AND DATA_RCTN_CD 	  = 'Y'  					/* 자료수신코드 */
+		   AND TRSFR_RSLT_PRCS_YN = 'N' 					/* 이체결과처리여부*/
+	</update>
+
+<!-- 	<select id="checkData" resultType="MyMap"> -->
+<!-- 		/*checkData*/ -->
+<!--     	SELECT DISTINCT -->
+<!--     	       입금일련번호 -->
+<!--     		 , 입금금액 -->
+<!--     	  FROM 입금명세 -->
+<!--     	 WHERE SUBSTR(거래일자, 3) = #{거래일자} -->
+<!-- 		   AND 지급명령등록번호    = #{지급명령등록번호} -->
+<!-- 		   AND 재배정여부          = #{재배정여부} -->
+<!-- 		   AND 입금은행코드        = #{입금은행코드, javaType=String, jdbcType=VARCHAR} -->
+<!-- 		   AND DECODE(TRIM(replace( 입금계좌번호, '-', '')), '', '1', replace(입금계좌번호, '-', ''))=DECODE(TRIM(#{입금계좌번호, javaType=String, jdbcType=VARCHAR}),'','1', #{입금계좌번호, javaType=String, jdbcType=VARCHAR}) -->
+<!-- 		   AND 입금일련번호        = #{입금일련번호} -->
+<!-- 		   AND 입금금액            = #{이체금액} -->
+<!-- 		   AND 자료수신여부        = 'Y' -->
+<!-- 		   AND 결과처리여부        = 'N' -->
+<!--     </select> -->
+
+	<select id="getErrorCode" resultType="MyMap">
+		/*getErrorCode*/
+		SELECT NVL( MAX( ERRMSG ) , '기타오류' ) ERRMSG
+		  FROM (
+		         SELECT TRIM(CD_NM) || ' ' || TRIM(CD_CN) AS ERRMSG
+		  			  , CD
+		  			  , CLS_CD
+		  			  , CD_USE_YN
+		  		   FROM	TFC0001   /* 공통코드 */
+		  	   )
+		 WHERE CLS_CD    = #{분류코드}
+           AND CD      	 = #{코드}
+           AND CD_USE_YN = 'Y'
+    </select>
+
+	<update id="update_supplyledger_result_restore" parameterType="MyMap">
+		/*update_supplyledger_result_restore - 거래번호 기준으로 처리*/
+		UPDATE TFE2190
+		   SET TRSFR_PRCS_RSLT_CD = #{RESULT_CD, javaType=String, jdbcType=VARCHAR}  	/* 이체처리결과코드 */
+		     , TRSFR_PRCS_RSLT_CN = #{RESULT_EX, javaType=String, jdbcType=VARCHAR}  	/* 이체처리결과내용 */
+		     , TRSFR_RSLT_DLPS_NM = #{RESULT_NM, javaType=String, jdbcType=VARCHAR}  	/* 이체처리결과처리자명 */
+		     , TRSFR_RSLT_PRCS_YN = 'Y'  												/* 이체결과처리여부 */
+		     , TRSFR_PRCS_RSLT_RCTN_DT = SYSDATE  										/* 이체처리결과수신일시 */
+		     , DATA_RCTN_CD   	  = 'D'   												/* 자료수신코드 */
+		     , JOB_SYS_CD 		  = '01'   												/* 작업시스템코드 */
+		     , JOB_STAT_CD   	  = #{작업상태코드, javaType=String, jdbcType=VARCHAR}  	/* 작업상태코드 */
+		 WHERE TRNX_NO                = #{파일코드}  										/* 거래번호 */
+		   AND DATA_RCTN_CD           = 'Y'  											/* 자료수신코드 */
+		   AND TRSFR_RSLT_PRCS_YN     = 'N'  											/* 이체처리결과여부 */
+	</update>
+
+	<update id="update_receipt_result_restore" parameterType="MyMap">
+		/*update_receipt_result_restore - 거래번호 기준으로 처리*/
+		UPDATE TFE2170 																	/* 입금명세 */
+		   SET DATA_RCTN_CD = 'D'  														/* 자료수신코드 */
+		     , TRSFR_PRCS_RSLT_CD = #{RESULT_CD, javaType=String, jdbcType=VARCHAR}  	/* 이체처리결과코드 */
+		     , TRSFR_PRCS_RSLT_CN = #{RESULT_EX, javaType=String, jdbcType=VARCHAR}  	/* 이체처리결과내용 */
+		     , TRSFR_RSLT_DLPS_NM = #{RESULT_NM, javaType=String, jdbcType=VARCHAR}  	/* 이체처리결과처리자명 */
+		     , TRSFR_RSLT_PRCS_YN = 'Y'  												/* 이체결과처리여부 */
+		     , TRSFR_PRCS_RSLT_RCTN_DT = SYSDATE  										/* 이체처리결과수신일시 */
+		 WHERE 1=1
+		 	/*DPST_SNUM = 입금일련번호*/
+		 	AND TRNX_NO  = #{파일코드}
+		   	AND DATA_RCTN_CD = 'Y'  		/* 자료수신코드 */
+		   	AND TRSFR_RSLT_PRCS_YN = 'N' 	/* 이체결과처리여부*/
+	</update>
+
+    <delete id="deleteAccountBranch" parameterType="MyMap">
+    	/*deleteAccountBranch - 지급계좌 관리점 삭제*/
+ 		DELETE FROM  TFA0005  /* 지급계좌관리점 */
+         WHERE FYR 			= #{회계연도}
+           AND ACNT_DV_CD 	= #{회계코드}
+           AND BANK_CD 		= #{은행코드}
+           AND ACCT_NO 		= REPLACE(#{출금계좌번호},'-','')
+    </delete>
+
+	<insert id="insertAccountBranch" parameterType="MyMap">
+		/*insertAccountBranch - 지급계좌 관리점 추가*/
+		INSERT INTO TFA0005  /* 지급계좌관리점 */
+		(
+		 	 FYR				/* 회계연도 */
+		 	,ACNT_DV_CD			/* 회계구분코드 */
+		 	,BANK_CD			/*은행코드 */
+		 	,ACCT_NO			/*계좌번호 */
+			,ACCT_MNG_JUM		/*계좌관리점 */
+			,ACCT_MNG_JUM_NM	/*계좌관리점명 */
+			,ACCT_MNG_JUM_TEL	/*계좌관리점전화 */
+			,RGSTR_DT			/* 등록일시 */
+		) VALUES (
+		 	 #{회계연도}
+		 	,#{회계코드}
+		 	,#{은행코드}
+		 	,REPLACE(#{출금계좌번호},'-','')
+			,#{출금계좌관리점}
+			,#{출금계좌관리점명}
+			,#{출금계좌관리점전화번호}
+			,SYSDATE
+		)
+	</insert>
+
+	<!--원장 데이터에 처리선이 존재하는지 조회  -->
+    <select id="getPrcCnt"  parameterType="MyMap" resultType="int">
+        /* new query getPrcCnt-원장 데이터에 처리선이 존재하는지 조회 */
+        SELECT COUNT(*) AS PRCCNT
+		  FROM TFE2190  								/* 지급명세연계_송신*/
+		 WHERE TRNX_NO                = #{파일코드}  		/* 거래번호 */
+		   AND DATA_RCTN_CD           = 'Y'  			/* 자료수신코드 */
+		   AND TRSFR_RSLT_PRCS_YN     = 'N'  			/* 이체처리결과여부 */
+		   AND ROWNUM = 1
+    </select>
+
+	<!-- 묶음지급건 미사용 -->
+    <update id="update_totmaster_result" parameterType="MyMap">
+    	/*update_totmaster_result-묶음지급건 미사용*/
+		UPDATE TFE2190 								/* 지급원장 */
+		   SET TRSFR_RSLT_PRCS_YN 	= 'Y'  			/* 이체결과처리여부 */
+		      ,TRSFR_PRCS_RSLT_CD	= '0000'  		/* 이체처리결과코드 */
+		      ,TRSFR_PRCS_RSLT_CN = '지급완료' 		/* 이체처리결과내용 */
+		      ,TRSFR_RSLT_DLPS_NM = '대구은행'  		/* 이체결과처리자명 */
+		      ,ERR_CNT 			= '0' 				/* 오류건수 */
+		      ,ERR_AMT 			= '0' 				/* 오류금액 */
+		      ,PRCT_CNT 			= 입금총건수 		/* 처리건수 */
+		      ,PRCT_AMT 			= 출금금액  		/* 처리금액 */
+		      ,JOB_SYS_CD  		= '01'  			/* 작업시스템코드 */
+		      ,JOB_STAT_CD 		= '31' 				/* 작업상태코드 */
+		      ,ERR_FILE_CRT_YN 	= 'N'  				/* 에러파일생성여부 */
+		      ,TRSFR_PRCS_RSLT_RCTN_DT = SYSDATE  	/* 이체처리결과수신일시 */
+		WHERE SUBSTR(DLNG_YMD, 3) = #{거래일자}
+		  AND DMND_ID 		= 'LF'  				/* 요청ID */
+		  AND JOB_STAT_CD 	= '04'  				/* 작업상태코드 */
+		  AND TRNX_NO IN  							/* 거래번호 */
+
+		<foreach item="item" index="index" collection="strValue" open="(" separator="," close=")">
+         #{item}
+        </foreach>
+    </update>
+
+	<!-- 묶음지급건 미사용 -->
+<!--     <update id="update_totdetail_result" parameterType="MyMap"> -->
+<!--     	/*update_totdetail_result-묶음지급건 미사용*/ -->
+<!--         UPDATE 입금명세_ENC -->
+<!--            SET 자료수신여부   = 'Y' -->
+<!--              , 결과코드       = '0000' -->
+<!--              , 결과설명       = '정상처리 되었습니다.' -->
+<!--              , 결과처리여부   = 'Y' -->
+<!--              , 결과처리일시   = SYSDATE -->
+<!--              , 결과처리자명   = '대구은행' -->
+<!--          WHERE SUBSTR( 거래일자 , 3 ) = #{거래일자} -->
+<!--            AND 요청ID = 'LF' -->
+<!--            AND 거래번호 IN -->
+<!--         <foreach item="item" index="index" collection="strValue" open="(" separator="," close=")"> -->
+<!--          #{item} -->
+<!--         </foreach> -->
+<!--     </update> -->
+
+	<!-- 묶음지급건 미사용 -->
+<!--     <select id="get_totList" parameterType="MyMap" resultType="MyMap"> -->
+<!--     	/*get_totList-묶음지급건 미사용*/ -->
+<!--         <![CDATA[ -->
+<!--         SELECT 거래번호 -->
+<!--           FROM 입금명세 -->
+<!--          WHERE SUBSTR(거래일자, 3 ) = #{거래일자} -->
+<!--            AND 요청ID           = #{요청ID} -->
+<!--            AND 요청기관구분     = #{요청기관구분} -->
+<!--            AND 자치단체코드     = #{자치단체코드} -->
+<!--            AND 관서코드         = #{관서코드} -->
+<!--            AND 지급부서코드     = #{지급부서코드} -->
+<!--            AND 회계연도         = #{회계연도} -->
+<!--            AND 재배정여부       = #{재배정여부} -->
+<!--            AND 지급명령등록번호 = #{지급명령등록번호} -->
+<!--        ]]> -->
+<!--     </select> -->
+</mapper>

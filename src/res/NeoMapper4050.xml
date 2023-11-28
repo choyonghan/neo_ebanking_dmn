@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapper4050">
+    <!-- 세입과목테이블 -->
+
+    <!-- ############# 1001 ####################### -->
+    <!-- 등록된 데이터가 있는지 확인  -->
+    <select id="getDataCntCO1001"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4050.getDataCntCO1001 - 등록된 데이터가 있는지 확인 */
+        SELECT COUNT(*) AS DataCNT
+        FROM   TB_ABGG_CMSB
+        WHERE  TAXIN_CMN_FILE_NM  = #{파일명,jdbcType=VARCHAR}
+        AND    ROWNUM = 1
+    </select>
+
+    <select id="getTRseq" parameterType="MyMap" resultType="string">
+    /* NeoMapper4050.getTRseq - SEQ 조회 쿼리 */
+    SELECT TO_CHAR(SYSDATE,'YYMMDD') || LPAD(TR_SEQ.NEXTVAL,6,0) AS SEQ
+    FROM DUAL
+    </select>
+
+    <!-- getDataCnt 확인해서 이전에 등록된 데이터가 있으면 삭제  -->
+    <delete id="deleteCO1001" parameterType="MyMap">
+        /* NeoMapper4050.deleteCO1001 - 등록된 데이터가 있는지 확인 */
+        DELETE FROM TB_ABGG_CMSB
+         WHERE TAXIN_CMN_FILE_NM = #{파일명,jdbcType=VARCHAR}
+    </delete>
+
+    <!--전문 저장 -->
+    <insert id="insertCO1001" parameterType="MyMap">
+        /* NeoMapper4050.insertCO1001 - 세입과목테이블 */
+        INSERT INTO TB_ABGG_CMSB   /* 세입과목 */
+        (  TDT                 /* 거래일자             */
+        ,  TAXIN_CMN_FILE_NM   /* 세입공통파일명       */
+        ,  PVC_ATNM_GRUP_CD    /* 지방자치단체코드     */
+        ,  PVC_TAXIN_RQST_SEQ  /* 지방세입요청일련번호 */
+        ,  PVC_TAXIN_BIZ_DVCD  /* 지방세입업무구분코드 */
+        ,  PVC_TAXIN_SEQ       /* 지방세입일련번호     */
+        ,  ACTG_YR             /* 회계년도             */
+        ,  PVC_TAXIN_ACTG_DVCD /* 지방세입회계구분코드 */
+        ,  PVC_TAXIN_SBJ_CD    /* 지방세입과목코드     */
+        ,  PVC_TAXIN_SBJ_CD_NM /* 지방세입과목코드명   */
+        ,  ORT_SBJ_CD          /* 운영과목코드         */
+        ,  ORT_SBJ_NM          /* 운영과목명           */
+        ,  FST_REG_DTL_DTTI    /* 최초등록상세일시     */
+        ,  FST_RGPR_ENOB       /* 최초등록자행번       */
+        ,  FST_REG_BRNO        /* 최초등록점번호       */
+        ,  LT_CH_DTL_DTTI      /* 최종변경상세일시     */
+        ,  LT_CHPR_ENOB        /* 최종변경자행번       */
+        ,  LT_CH_BRNO          /* 최종변경점번호       */
+        ) VALUES (
+           #{전달일,jdbcType=VARCHAR}
+        ,  #{파일명,jdbcType=VARCHAR}
+        ,  #{지방자치단체코드,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{업무구분,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{회계연도,jdbcType=VARCHAR}
+        ,  #{회계구분,jdbcType=VARCHAR}
+        ,  #{세입과목코드,jdbcType=VARCHAR}
+        ,  #{세입과목명,jdbcType=VARCHAR}
+        ,  #{운영과목코드,jdbcType=VARCHAR}
+        ,  #{운영과목명,jdbcType=VARCHAR}
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        )
+    </insert>
+
+    <!-- ############# 1002 ####################### -->
+    <select id="getDataCntCO1002"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4050.getDataCntCO1002 - 등록된 데이터가 있는지 확인 */
+        SELECT COUNT(*) AS DataCNT
+        FROM   TB_ABGG_CMAD
+        WHERE  TAXIN_CMN_FILE_NM  = #{파일명,jdbcType=VARCHAR}
+        AND    ROWNUM = 1
+    </select>
+
+    <!-- getDataCnt 확인해서 이전에 등록된 데이터가 있으면 삭제  -->
+    <delete id="deleteCO1002" parameterType="MyMap">
+        /* NeoMapper4050.deleteCO1002 - 등록된 데이터가 있는지 확인 */
+        DELETE FROM TB_ABGG_CMAD
+         WHERE TAXIN_CMN_FILE_NM = #{파일명,jdbcType=VARCHAR}
+    </delete>
+
+    <!--전문 저장 -->
+    <insert id="insertCO1002" parameterType="MyMap">
+        /* NeoMapper4050.insertCO1002 - 세입과목테이블 */
+        INSERT INTO TB_ABGG_CMAD   /* 세입과목 */
+        (  TDT                 /* 거래일자             */
+        ,  TAXIN_CMN_FILE_NM   /* 세입공통파일명       */
+        ,  PVC_ATNM_GRUP_CD    /* 지방자치단체코드     */
+        ,  PVC_TAXIN_RQST_SEQ  /* 지방세입요청일련번호 */
+        ,  PVC_TAXIN_BIZ_DVCD  /* 지방세입업무구분코드 */
+        ,  PVC_TAXIN_SEQ       /* 지방세입일련번호     */
+        ,  SPECL_ACTG_BSNS_CD  /* 특별회계사업코드         */
+        ,  SPECL_ACTG_BSNS_NM  /* 특별회계사업명           */
+        ,  FST_REG_DTL_DTTI    /* 최초등록상세일시     */
+        ,  FST_RGPR_ENOB       /* 최초등록자행번       */
+        ,  FST_REG_BRNO        /* 최초등록점번호       */
+        ,  LT_CH_DTL_DTTI      /* 최종변경상세일시     */
+        ,  LT_CHPR_ENOB        /* 최종변경자행번       */
+        ,  LT_CH_BRNO          /* 최종변경점번호       */
+        ) VALUES (
+           #{전달일,jdbcType=VARCHAR}
+        ,  #{파일명,jdbcType=VARCHAR}
+        ,  #{지방자치단체코드,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{업무구분,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{특별회계사업코드,jdbcType=VARCHAR}
+        ,  #{특별회계사업명,jdbcType=VARCHAR}
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        )
+    </insert>
+
+    <!-- ############# 1003 ####################### -->
+    <select id="getDataCntCO1003"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4050.getDataCntCO1003 - 등록된 데이터가 있는지 확인 */
+        SELECT COUNT(*) AS DataCNT
+        FROM   TB_ABGG_CMUS
+        WHERE  TAXIN_CMN_FILE_NM  = #{파일명,jdbcType=VARCHAR}
+        AND    ROWNUM = 1
+    </select>
+
+    <!-- getDataCnt 확인해서 이전에 등록된 데이터가 있으면 삭제  -->
+    <delete id="deleteCO1003" parameterType="MyMap">
+        /* NeoMapper4050.deleteCO1003 - 등록된 데이터가 있는지 확인 */
+        DELETE FROM TB_ABGG_CMUS
+         WHERE TAXIN_CMN_FILE_NM = #{파일명,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteComuserm" parameterType="MyMap">
+        DELETE FROM COMUSERM
+         WHERE USR_ID = TRIM(#{사용자ID,jdbcType=VARCHAR})
+    </delete>
+
+    <delete id="deleteIntusrpm" parameterType="MyMap">
+        DELETE FROM INTUSRPM
+         WHERE USR_ID = TRIM(#{사용자ID,jdbcType=VARCHAR})
+    </delete>
+
+	<insert id="insertComuserm" parameterType="MyMap">
+	INSERT INTO COMUSERM (
+		USR_ID,USR_DIV,USR_NM,SIDO_COD,
+		SGG_COD,
+		REG_DTM,USE_YN,DN
+	)VALUES
+		(#{사용자ID},'G',#{사용자명,jdbcType=VARCHAR},'27',
+		DECODE(SUBSTR(#{소속과코드,jdbcType=VARCHAR},1,3),'627','000','341','110','342','140','343','170','344','200','345','230','346','260','347','290','999'),
+		SYSDATE,'Y',TRIM(#{사용자HASH값,jdbcType=VARCHAR})
+	)
+	</insert>
+
+	<insert id="insertIntusrpm" parameterType="MyMap">
+	INSERT INTO INTUSRPM
+	VALUES (
+			#{사용자ID},'1','GA'
+	)
+	</insert>
+
+
+    <!--전문 저장 -->
+    <insert id="insertCO1003" parameterType="MyMap">
+        /* NeoMapper4050.insertCO1003 - 세입과목테이블 */
+        INSERT INTO TB_ABGG_CMUS   /* 세입과목 */
+        (  TDT                 /* 거래일자             */
+        ,  TAXIN_CMN_FILE_NM   /* 세입공통파일명       */
+        ,  PVC_ATNM_GRUP_CD    /* 지방자치단체코드     */
+        ,  PVC_TAXIN_RQST_SEQ  /* 지방세입요청일련번호 */
+        ,  PVC_TAXIN_BIZ_DVCD  /* 지방세입업무구분코드 */
+        ,  PVC_TAXIN_SEQ       /* 지방세입일련번호     */
+        ,  FIIN_CD             /* 금융기관코드     */
+        ,  USID                /* 사용자ID  */
+        ,  USER_NM             /* 사용자명     */
+        ,  USER_HASH           /* 사용자해시값     */
+        ,  SVNBDY_SYS_USER_BLG_DEPT_CD /* 금고시스템사용자소속과코드     */
+        ,  SVNBDY_SYS_USER_BLG_TEAM_CD /* 금고시스템사용자소속팀코드     */
+        ,  SVNBDY_SYS_AUTH_YN  /* 금고시스템권한여부     */
+        ,  FST_REG_DTL_DTTI    /* 최초등록상세일시     */
+        ,  FST_RGPR_ENOB       /* 최초등록자행번       */
+        ,  FST_REG_BRNO        /* 최초등록점번호       */
+        ,  LT_CH_DTL_DTTI      /* 최종변경상세일시     */
+        ,  LT_CHPR_ENOB        /* 최종변경자행번       */
+        ,  LT_CH_BRNO          /* 최종변경점번호       */
+        ) VALUES (
+           #{전달일,jdbcType=VARCHAR}
+        ,  #{파일명,jdbcType=VARCHAR}
+        ,  #{지방자치단체코드,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{업무구분,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{금융기관코드,jdbcType=VARCHAR}
+        ,  #{사용자ID,jdbcType=VARCHAR}
+        ,  #{사용자명,jdbcType=VARCHAR}
+        ,  #{사용자HASH값,jdbcType=VARCHAR}
+        ,  #{소속과코드,jdbcType=VARCHAR}
+        ,  #{소속팀계코드,jdbcType=VARCHAR}
+        ,  #{시스템권한구분,jdbcType=VARCHAR}
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        )
+    </insert>
+
+    <!-- ############# 1004 ####################### -->
+    <select id="getDataCntCO1004"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4050.getDataCntCO1004 - 등록된 데이터가 있는지 확인 */
+        SELECT COUNT(*) AS DataCNT
+        FROM   TB_ABGG_CMDP
+        WHERE  TAXIN_CMN_FILE_NM  = #{파일명,jdbcType=VARCHAR}
+        AND    ROWNUM = 1
+    </select>
+
+    <!-- getDataCnt 확인해서 이전에 등록된 데이터가 있으면 삭제  -->
+    <delete id="deleteCO1004" parameterType="MyMap">
+        /* NeoMapper4050.deleteCO1004 - 등록된 데이터가 있는지 확인 */
+        DELETE FROM TB_ABGG_CMDP
+         WHERE TAXIN_CMN_FILE_NM = #{파일명,jdbcType=VARCHAR}
+    </delete>
+
+    <!--전문 저장 -->
+    <insert id="insertCO1004" parameterType="MyMap">
+        /* NeoMapper4050.insertCO1004 - 세입과목테이블 */
+        <![CDATA[
+        INSERT INTO TB_ABGG_CMDP   /* 세입과목 */
+        (  TDT                 /* 거래일자             */
+        ,  TAXIN_CMN_FILE_NM   /* 세입공통파일명       */
+        ,  PVC_ATNM_GRUP_CD    /* 지방자치단체코드     */
+        ,  PVC_TAXIN_RQST_SEQ  /* 지방세입요청일련번호 */
+        ,  PVC_TAXIN_BIZ_DVCD  /* 지방세입업무구분코드 */
+        ,  PVC_TAXIN_SEQ       /* 지방세입일련번호     */
+        ,  SVNBDY_SYS_USER_BLG_DEPT_CD   /* 금고시스템사용자소속과코드     */
+        ,  RQST_DPNM           /* 요청부서명     */
+        ,  FST_REG_DTL_DTTI    /* 최초등록상세일시     */
+        ,  FST_RGPR_ENOB       /* 최초등록자행번       */
+        ,  FST_REG_BRNO        /* 최초등록점번호       */
+        ,  LT_CH_DTL_DTTI      /* 최종변경상세일시     */
+        ,  LT_CHPR_ENOB        /* 최종변경자행번       */
+        ,  LT_CH_BRNO          /* 최종변경점번호       */
+        ) VALUES (
+           #{전달일,jdbcType=VARCHAR}
+        ,  #{파일명,jdbcType=VARCHAR}
+        ,  #{지방자치단체코드,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{업무구분,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{부서코드과,jdbcType=VARCHAR}
+        ,  #{부서명,jdbcType=VARCHAR}
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        )
+        ]]>
+    </insert>
+
+    <!-- ############# 1005 ####################### -->
+    <select id="getDataCntCO1005"  parameterType="MyMap" resultType="int">
+        /* NeoMapper4050.getDataCntCO1005 - 등록된 데이터가 있는지 확인 */
+        SELECT COUNT(*) AS DataCNT
+        FROM   TB_ABGG_CMTM
+        WHERE  TAXIN_CMN_FILE_NM  = #{파일명,jdbcType=VARCHAR}
+        AND    ROWNUM = 1
+    </select>
+
+    <!-- getDataCnt 확인해서 이전에 등록된 데이터가 있으면 삭제  -->
+    <delete id="deleteCO1005" parameterType="MyMap">
+        /* NeoMapper4050.deleteCO1005 - 등록된 데이터가 있는지 확인 */
+        DELETE FROM TB_ABGG_CMTM
+         WHERE TAXIN_CMN_FILE_NM = #{파일명,jdbcType=VARCHAR}
+    </delete>
+
+    <!--전문 저장 -->
+    <insert id="insertCO1005" parameterType="MyMap">
+        /* NeoMapper4050.insertCO1005 - 세입과목테이블 */
+        <![CDATA[
+        INSERT INTO TB_ABGG_CMTM   /* 세입과목 */
+        (  TDT                 /* 거래일자             */
+        ,  TAXIN_CMN_FILE_NM   /* 세입공통파일명       */
+        ,  PVC_ATNM_GRUP_CD    /* 지방자치단체코드     */
+        ,  PVC_TAXIN_RQST_SEQ  /* 지방세입요청일련번호 */
+        ,  PVC_TAXIN_BIZ_DVCD  /* 지방세입업무구분코드 */
+        ,  PVC_TAXIN_SEQ       /* 지방세입일련번호     */
+        ,  RQST_DEPTMT_CD      /* 요청부서코드     */
+        ,  RQST_DPNM           /* 요청부서명     */
+        ,  SVNBDY_SYS_USER_BLG_DEPT_CD /* 금고시스템사용자소속과코드     */
+        ,  SVNBDY_SYS_USER_BLG_TEAM_CD /* 금고시스템사용자소속팀코드     */
+        ,  FST_REG_DTL_DTTI    /* 최초등록상세일시     */
+        ,  FST_RGPR_ENOB       /* 최초등록자행번       */
+        ,  FST_REG_BRNO        /* 최초등록점번호       */
+        ,  LT_CH_DTL_DTTI      /* 최종변경상세일시     */
+        ,  LT_CHPR_ENOB        /* 최종변경자행번       */
+        ,  LT_CH_BRNO          /* 최종변경점번호       */
+        ) VALUES (
+           #{전달일,jdbcType=VARCHAR}
+        ,  #{파일명,jdbcType=VARCHAR}
+        ,  #{지방자치단체코드,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{업무구분,jdbcType=VARCHAR}
+        ,  #{일련번호,jdbcType=VARCHAR}
+        ,  #{부서코드계팀,jdbcType=VARCHAR}
+        ,  #{부서계팀명,jdbcType=VARCHAR}
+        ,  #{상위부서과코드,jdbcType=VARCHAR}
+        ,  #{소속팀계코드,jdbcType=VARCHAR}
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        ,  systimestamp
+        ,  '0000000'
+        ,  '965'
+        )
+        ]]>
+    </insert>
+
+
+    <!-- ############################################ -->
+    <!-- ############# TR 헤더 및 트레일 공통  ############## -->
+    <!-- ############################################ -->
+
+    <insert id="insertTR_H" parameterType="MyMap">
+        /* NeoMapper4050.insertTR_H - 헤더 */
+        <![CDATA[
+        INSERT INTO TR_HEADER
+        VALUES (#{파일명,jdbcType=VARCHAR},
+               #{업무구분,jdbcType=VARCHAR},
+               #{데이터구분,jdbcType=VARCHAR},
+               #{일련번호,jdbcType=VARCHAR},
+               #{송신기관코드,jdbcType=VARCHAR},
+               #{수신기관코드,jdbcType=VARCHAR},
+               #{이용기관지로번호,jdbcType=VARCHAR},
+               #{시스템코드,jdbcType=VARCHAR},
+               NVL(#{총DataRecord수,jdbcType=NUMERIC}, 0 ),
+               #{조회요청일,jdbcType=VARCHAR},
+               #{처리결과코드,jdbcType=VARCHAR},
+               '00',
+               TO_CHAR(SYSDATE,'YYYYMMDD'),
+               SYSDATE)
+        ]]>
+    </insert>
+    <insert id="insertTR_T" parameterType="MyMap">
+        /* NeoMapper4050.insertTR_T - 트레일러 */
+        <![CDATA[
+        INSERT INTO TR_TRAILER
+        VALUES (#{파일명,jdbcType=VARCHAR},
+               #{업무구분,jdbcType=VARCHAR},
+               #{데이터구분,jdbcType=VARCHAR},
+               #{일련번호,jdbcType=VARCHAR},
+               #{송신기관코드,jdbcType=VARCHAR},
+               #{수신기관코드,jdbcType=VARCHAR},
+               #{이용기관지로번호,jdbcType=VARCHAR},
+               #{시스템코드,jdbcType=VARCHAR},
+               NVL(#{총금액,jdbcType=NUMERIC}, 0),
+               NVL(#{총입금건수,jdbcType=NUMERIC}, 0),
+               NVL(#{총DataRecord수,jdbcType=NUMERIC}, 0) )
+        ]]>
+    </insert>
+
+
+    <!-- ############################################ -->
+    <!-- ############# TR2001 ####################### -->
+    <!-- ############################################ -->
+
+    <!--전문 저장 -->
+    <insert id="insertTR2001_M" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2001_M - 반환결의확정 메인 */
+        <![CDATA[
+        INSERT INTO TR2001_M
+        (   파일명
+        ,   SEQ
+        ,   업무구분
+        ,   데이터구분
+        ,   일련번호
+        ,   입출금지시거래구분코드
+        ,   전송일시
+        ,   이용기관지로번호
+        ,   지방자치단체코드
+        ,   지방자치단체명
+        ,   부서코드
+        ,   부서명
+        ,   결의자명
+        ,   거래요청관리번호
+        ,   회계연도
+        ,   회계일자
+        ,   출금총건수
+        ,   출금총금액
+        ,   광역시도세계좌번호
+        ,   광역시도세현년도출금금액
+        ,   광역시도세과년도출금금액
+        ,   시군구세계좌번호
+        ,   시군구세현년도출금금액
+        ,   시군구세과년도출금금액
+        ,   국세계좌번호
+        ,   국세현년도출금금액
+        ,   국세과년도출금금액
+        ,   출금계좌적요
+        ,   출금거래결과코드
+        ,   출금거래결과상세
+        ,   은행회계일자
+        ,   광역시도세금융기관코드
+        ,   시군구세금융기관코드
+        ,   국세금융기관코드
+        )  VALUES
+        (   #{파일명,jdbcType=VARCHAR}
+        ,   #{seq,jdbcType=VARCHAR}
+        ,   #{업무구분,jdbcType=VARCHAR}
+        ,   #{데이터구분,jdbcType=VARCHAR}
+        ,   #{일련번호,jdbcType=VARCHAR}
+        ,   #{입출금지시거래구분코드,jdbcType=VARCHAR}
+        ,   #{전송일시,jdbcType=VARCHAR}
+        ,   #{이용기관지로번호,jdbcType=VARCHAR}
+        ,   #{지방자치단체코드,jdbcType=VARCHAR}
+        ,   #{지방자치단체명,jdbcType=VARCHAR}
+        ,   #{부서코드,jdbcType=VARCHAR}
+        ,   #{부서명,jdbcType=VARCHAR}
+        ,   #{결의자명,jdbcType=VARCHAR}
+        ,   #{거래요청관리번호,jdbcType=VARCHAR}
+        ,   #{회계연도,jdbcType=VARCHAR}
+        ,   #{회계일자,jdbcType=VARCHAR}
+        ,   NVL(#{출금총건수,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{출금총금액,jdbcType=NUMERIC}, 0)
+        ,   #{광역시도세계좌번호,jdbcType=VARCHAR}
+        ,   NVL(#{광역시도세현년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{광역시도세과년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   #{시군구세계좌번호,jdbcType=VARCHAR}
+        ,   NVL(#{시군구세현년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{시군구세과년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   #{국세계좌번호,jdbcType=VARCHAR}
+        ,   NVL(#{국세현년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세과년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   #{출금계좌적요,jdbcType=VARCHAR}
+        ,   #{출금거래결과코드,jdbcType=VARCHAR}
+        ,   #{출금거래결과상세,jdbcType=VARCHAR}
+        ,   #{은행회계일자,jdbcType=VARCHAR}
+        ,   #{광역시도세금융기관코드,jdbcType=VARCHAR}
+        ,   #{시군구세금융기관코드,jdbcType=VARCHAR}
+        ,   #{국세금융기관코드,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <insert id="insertTR2001_D" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2001_D - 반환결의확정 메인 */
+        <![CDATA[
+        INSERT INTO TR2001_D
+        (   파일명
+        ,   SEQ
+        ,   SEQ_D
+        ,   업무구분
+        ,   데이터구분
+        ,   일련번호
+        ,   광역시도세계좌번호
+        ,   시군구세계좌번호
+        ,   국세계좌번호
+        ,   입금거래순번
+        ,   상세내역관리번호
+        ,   입금부서코드
+        ,   입금부서명
+        ,   납세번호
+        ,   부과년도
+        ,   납세자번호
+        ,   세목코드
+        ,   세목명
+        ,   본세회계구분코드
+        ,   본세입금액
+        ,   본세가산금
+        ,   도시계획세회계구분코드
+        ,   도시계획세입금액
+        ,   도시계획세가산금
+        ,   지역자원시설세회계구분코드공동
+        ,   지역자원시설세입금액
+        ,   지역자원시설세가산금
+        ,   지방교육세회계구분코드
+        ,   지방교육세입금액
+        ,   지방교욱세가산금
+        ,   국세농특세입금액
+        ,   국세농특세가산액
+        ,   국세교육세입금액
+        ,   국세교육세가산액
+        ,   국세회계구분코드
+        ,   국세세입금액
+        ,   국세세입가산금
+        ,   광역시도세회계구분
+        ,   광역시도세세입금액
+        ,   광역시도세세가산금
+        ,   시군구세회계구분
+        ,   시군구세세입금액
+        ,   시군구세가산금
+        ,   수취인계좌적요
+        ,   입금상세거래결과코드
+        ,   입금상세거래결과상세
+        ,   환급금관리번호
+        )  VALUES
+        (   #{파일명,jdbcType=VARCHAR}
+        ,   #{seq,jdbcType=VARCHAR}
+        ,   TR_SEQ2.NEXTVAL
+        ,   #{업무구분,jdbcType=VARCHAR}
+        ,   #{데이터구분,jdbcType=VARCHAR}
+        ,   #{일련번호,jdbcType=VARCHAR}
+        ,   #{광역시도세계좌번호,jdbcType=VARCHAR}
+        ,   #{시군구세계좌번호,jdbcType=VARCHAR}
+        ,   #{국세계좌번호,jdbcType=VARCHAR}
+        ,   #{입금거래순번,jdbcType=VARCHAR}
+        ,   #{상세내역관리번호,jdbcType=VARCHAR}
+        ,   #{입금부서코드,jdbcType=VARCHAR}
+        ,   #{입금부서명,jdbcType=VARCHAR}
+        ,   #{납세번호,jdbcType=VARCHAR}
+        ,   #{부과년도,jdbcType=VARCHAR}
+        ,   #{납세자번호,jdbcType=VARCHAR}
+        ,   #{세목코드,jdbcType=VARCHAR}
+        ,   #{세목명,jdbcType=VARCHAR}
+        ,   #{본세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{본세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{본세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{도시계획세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{도시계획세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{도시계획세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{지역자원시설세회계구분코드공동,jdbcType=VARCHAR}
+        ,   NVL(#{지역자원시설세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{지역자원시설세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{지방교육세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{지방교육세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{지방교욱세가산금,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세농특세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세농특세가산액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세교육세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세교육세가산액,jdbcType=NUMERIC}, 0)
+        ,   #{국세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{국세세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세세입가산금,jdbcType=NUMERIC}, 0)
+        ,   #{광역시도세회계구분,jdbcType=VARCHAR}
+        ,   NVL(#{광역시도세세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{광역시도세세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{시군구세회계구분,jdbcType=VARCHAR}
+        ,   NVL(#{시군구세세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{시군구세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{수취인계좌적요,jdbcType=VARCHAR}
+        ,   #{입금상세거래결과코드,jdbcType=VARCHAR}
+        ,   #{입금상세거래결과상세,jdbcType=VARCHAR}
+        ,   #{환급금관리번호,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <!-- ############################################ -->
+    <!-- ############# TR2002 ####################### -->
+    <!-- ############################################ -->
+
+    <insert id="insertTR2002_M" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2002_M - 세입금 충당 입출금 */
+        <![CDATA[
+        INSERT INTO TR2002_M
+        (   파일명
+        ,   SEQ
+        ,   업무구분
+        ,   데이터구분
+        ,   일련번호
+        ,   입출금지시거래구분코드
+        ,   전송일시
+        ,   이용기관지로번호
+        ,   지방자치단체코드
+        ,   지방자치단체명
+        ,   부서코드
+        ,   부서명
+        ,   결의자명
+        ,   거래요청관리번호
+        ,   회계연도
+        ,   회계일자
+        ,   납부일자
+        ,   자금이체일자
+        ,   출금총건수
+        ,   출금총금액
+        ,   광역시도세계좌번호
+        ,   광역시도세현년도출금금액
+        ,   광역시도세과년도출금금액
+        ,   시군구세계좌번호
+        ,   시군구세현년도출금금액
+        ,   시군구세과년도출금금액
+        ,   국세계좌번호
+        ,   국세현년도출금금액
+        ,   국세과년도출금금액
+        ,   출금계좌적요
+        ,   출금거래결과코드
+        ,   출금거래결과상세
+        ,   은행회계일자
+        ,   은행납부일자
+        ,   은행자금이체일자
+        )  VALUES
+        (   #{파일명,jdbcType=VARCHAR}
+        ,   #{seq,jdbcType=VARCHAR}
+        ,   #{업무구분,jdbcType=VARCHAR}
+        ,   #{데이터구분,jdbcType=VARCHAR}
+        ,   #{일련번호,jdbcType=VARCHAR}
+        ,   #{입출금지시거래구분코드,jdbcType=VARCHAR}
+        ,   #{전송일시,jdbcType=VARCHAR}
+        ,   #{이용기관지로번호,jdbcType=VARCHAR}
+        ,   #{지방자치단체코드,jdbcType=VARCHAR}
+        ,   #{지방자치단체명,jdbcType=VARCHAR}
+        ,   #{부서코드,jdbcType=VARCHAR}
+        ,   #{부서명,jdbcType=VARCHAR}
+        ,   #{결의자명,jdbcType=VARCHAR}
+        ,   #{거래요청관리번호,jdbcType=VARCHAR}
+        ,   #{회계연도,jdbcType=VARCHAR}
+        ,   #{회계일자,jdbcType=VARCHAR}
+        ,   #{납부일자,jdbcType=VARCHAR}
+        ,   #{자금이체일자,jdbcType=VARCHAR}
+        ,   NVL(#{출금총건수,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{출금총금액,jdbcType=NUMERIC}, 0)
+        ,   #{광역시도세계좌번호,jdbcType=VARCHAR}
+        ,   NVL(#{광역시도세현년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{광역시도세과년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   #{시군구세계좌번호,jdbcType=VARCHAR}
+        ,   NVL(#{시군구세현년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{시군구세과년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   #{국세계좌번호,jdbcType=VARCHAR}
+        ,   NVL(#{국세현년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세과년도출금금액,jdbcType=NUMERIC}, 0)
+        ,   #{출금계좌적요,jdbcType=VARCHAR}
+        ,   #{출금거래결과코드,jdbcType=VARCHAR}
+        ,   #{출금거래결과상세,jdbcType=VARCHAR}
+        ,   #{은행회계일자,jdbcType=VARCHAR}
+        ,   #{은행납부일자,jdbcType=VARCHAR}
+        ,   #{은행자금이체일자,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <insert id="insertTR2002_D" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2002_D - 세입금 충당 입출금 */
+        <![CDATA[
+        INSERT INTO TR2002_D
+        (   파일명
+        ,   SEQ
+        ,   SEQ_D
+        ,   업무구분
+        ,   데이터구분
+        ,   일련번호
+        ,   광역시도세계좌번호
+        ,   시군구세계좌번호
+        ,   국세계좌번호
+        ,   입금거래순번
+        ,   상세내역관리번호
+        ,   입금부서코드
+        ,   입금부서명
+        ,   납세번호
+        ,   부과년도
+        ,   납세자번호
+        ,   납세자명
+        ,   세목코드
+        ,   세목명
+        ,   본세회계구분코드
+        ,   본세입금액
+        ,   본세가산금
+        ,   도시계획세회계구분코드
+        ,   도시계획세입금액
+        ,   도시계획세가산금
+        ,   지역자원시설세회계구분코드공동
+        ,   지역자원시설세입금액
+        ,   지역자원시설세가산금
+        ,   지방교육세회계구분코드
+        ,   지방교육세입금액
+        ,   지방교욱세가산금
+        ,   국세농특세입금액
+        ,   국세농특세가산액
+        ,   국세교육세입금액
+        ,   국세교육세가산액
+        ,  국세회계구분코드
+        ,  국세세입금액
+        ,  국세가산금
+        ,  광역시도세회계구분
+        ,  광역시도세세입금액
+        ,  광역시도세세가산금
+        ,  시군구세회계구분
+        ,  시군구세세입금액
+        ,  시군구세가산금
+        ,  세입금충당OCR밴드입금부
+        ,  수취인계좌적요
+        ,  입금상세거래결과코드
+        ,  입금상세거래결과상세
+        ,  환급금관리번호
+        ,  광역시도세금융기관코드
+        ,  시군구세금융기관코드
+        ,  국세금융기관코드
+        )  VALUES
+        (   #{파일명,jdbcType=VARCHAR}
+        ,   #{seq,jdbcType=VARCHAR}
+        ,   TR_SEQ2.NEXTVAL
+        ,   #{업무구분,jdbcType=VARCHAR}
+        ,   #{데이터구분,jdbcType=VARCHAR}
+        ,   #{일련번호,jdbcType=VARCHAR}
+        ,   #{광역시도세계좌번호,jdbcType=VARCHAR}
+        ,   #{시군구세계좌번호,jdbcType=VARCHAR}
+        ,   #{국세계좌번호,jdbcType=VARCHAR}
+        ,   #{입금거래순번,jdbcType=VARCHAR}
+        ,   #{상세내역관리번호,jdbcType=VARCHAR}
+        ,   #{입금부서코드,jdbcType=VARCHAR}
+        ,   #{입금부서명,jdbcType=VARCHAR}
+        ,   #{납세번호,jdbcType=VARCHAR}
+        ,   #{부과년도,jdbcType=VARCHAR}
+        ,   #{납세자번호,jdbcType=VARCHAR}
+        ,   #{납세자명,jdbcType=VARCHAR}
+        ,   #{세목코드,jdbcType=VARCHAR}
+        ,   #{세목명,jdbcType=VARCHAR}
+        ,   #{본세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{본세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{본세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{도시계획세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{도시계획세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{도시계획세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{지역자원시설세회계구분코드공동,jdbcType=VARCHAR}
+        ,   NVL(#{지역자원시설세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{지역자원시설세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{지방교육세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{지방교육세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{지방교욱세가산금,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세농특세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세농특세가산액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세교육세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세교육세가산액,jdbcType=NUMERIC}, 0)
+        ,   #{국세회계구분코드,jdbcType=VARCHAR}
+        ,   NVL(#{국세세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{국세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{광역시도세회계구분,jdbcType=VARCHAR}
+        ,   NVL(#{광역시도세세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{광역시도세세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{시군구세회계구분,jdbcType=VARCHAR}
+        ,   NVL(#{시군구세세입금액,jdbcType=NUMERIC}, 0)
+        ,   NVL(#{시군구세가산금,jdbcType=NUMERIC}, 0)
+        ,   #{세입금충당OCR밴드입금부,jdbcType=VARCHAR}
+        ,   #{수취인계좌적요,jdbcType=VARCHAR}
+        ,   #{입금상세거래결과코드,jdbcType=VARCHAR}
+        ,   #{입금상세거래결과상세,jdbcType=VARCHAR}
+        ,   #{환급금관리번호,jdbcType=VARCHAR}
+        ,   #{광역시도세금융기관코드,jdbcType=VARCHAR}
+        ,   #{시군구세금융기관코드,jdbcType=VARCHAR}
+        ,   #{국세금융기관코드,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <!-- ############################################ -->
+    <!-- ############# TR2003 ####################### -->
+    <!-- ############################################ -->
+
+    <select id="getFileNumberTR2003"  parameterType="MyMap" resultType="String">
+        /* NeoMapper4050.getFileNumberTR2003 - 등록된 데이터가 있는지 확인 */
+        SELECT SEQ_543_FILENUMBER.NEXTVAL AS FILENUMBER
+        FROM   DUAL
+    </select>
+
+    <insert id="insertTR2003_M" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2003_M - 환급급지금 */
+        <![CDATA[
+        INSERT INTO TR2003_M
+        VALUES (#{파일명,jdbcType=VARCHAR},
+        #{seq,jdbcType=VARCHAR},
+        #{업무구분,jdbcType=VARCHAR},
+        #{데이터구분,jdbcType=VARCHAR},
+        #{일련번호,jdbcType=VARCHAR},
+        #{입출금지시거래구분코드,jdbcType=VARCHAR},
+        #{전송일시,jdbcType=VARCHAR},
+        #{이용기관지로번호,jdbcType=VARCHAR},
+        #{지방자치단체코드,jdbcType=VARCHAR},
+        #{지방자치단체명,jdbcType=VARCHAR},
+        #{부서코드,jdbcType=VARCHAR},
+        #{부서명,jdbcType=VARCHAR},
+        #{결의자명,jdbcType=VARCHAR},
+        #{거래요청관리번호,jdbcType=VARCHAR},
+        #{회계연도,jdbcType=VARCHAR},
+        #{회계일자,jdbcType=VARCHAR},
+        NVL(#{출금총건수,jdbcType=NUMERIC}, 0),
+        NVL(#{출금총금액,jdbcType=NUMERIC}, 0),
+        #{광역시도세계좌번호,jdbcType=VARCHAR},
+        NVL(#{광역시도세현년도출금금액,jdbcType=NUMERIC}, 0),
+        NVL(#{광역시도세과년도출금금액,jdbcType=NUMERIC}, 0),
+        #{시군구세계좌번호,jdbcType=VARCHAR},
+        NVL(#{시군구세현년도출금금액,jdbcType=NUMERIC}, 0),
+        NVL(#{시군구세과년도출금금액,jdbcType=NUMERIC}, 0),
+        #{국세계좌번호,jdbcType=VARCHAR},
+        NVL(#{국세현년도출금금액,jdbcType=NUMERIC}, 0),
+        NVL(#{국세과년도출금금액,jdbcType=NUMERIC}, 0),
+        #{출금계좌적요,jdbcType=VARCHAR},
+        #{출금거래결과코드,jdbcType=VARCHAR},
+        #{출금거래결과상세,jdbcType=VARCHAR},
+        #{은행회계일자,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+    <insert id="insertTR2003_D" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2003_D - 환급급지금 */
+        <![CDATA[
+        INSERT INTO TR2003_D
+        VALUES(#{파일명,jdbcType=VARCHAR},
+        #{seq,jdbcType=VARCHAR},
+        TR_SEQ2.NEXTVAL,
+        #{업무구분,jdbcType=VARCHAR},
+        #{데이터구분,jdbcType=VARCHAR},
+        #{일련번호,jdbcType=VARCHAR},
+        #{입금거래순번,jdbcType=VARCHAR},
+        #{상세내역관리번호,jdbcType=VARCHAR},
+        #{환급금관리번호,jdbcType=VARCHAR},
+        #{입금부서코드,jdbcType=VARCHAR},
+        #{입금부서명,jdbcType=VARCHAR},
+        #{납세번호,jdbcType=VARCHAR},
+        #{부과년도,jdbcType=VARCHAR},
+        #{납세자번호,jdbcType=VARCHAR},
+        #{납세자명,jdbcType=VARCHAR},
+        #{납세자주소,jdbcType=VARCHAR},
+        #{세목코드,jdbcType=VARCHAR},
+        #{세목명,jdbcType=VARCHAR},
+        #{추심기관코드,jdbcType=VARCHAR},
+        #{추심기관명,jdbcType=VARCHAR},
+        #{수취인금융기관코드,jdbcType=VARCHAR},
+        #{환급금지급방법코드,jdbcType=VARCHAR},
+        #{수취인계좌번호,jdbcType=VARCHAR},
+        #{수취인계좌예금주명,jdbcType=VARCHAR},
+        #{수취인계좌예금주번호,jdbcType=VARCHAR},
+        #{수취인전화번호,jdbcType=VARCHAR},
+        NVL(#{지급액,jdbcType=NUMERIC}, 0),
+        #{수취인계좌적요,jdbcType=VARCHAR},
+        #{입금상세거래결과코드 ,jdbcType=VARCHAR},
+        #{입금거래결과상세,jdbcType=VARCHAR},
+        #{환급금지급고유관리번호,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <!-- ############################################ -->
+    <!-- ############# TR2004 ####################### -->
+    <!-- ############################################ -->
+
+    <insert id="insertTR2004_M" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2004_M - 세입금 정산 입출금 */
+        <![CDATA[
+        INSERT INTO TR2004_M
+        VALUES (
+        #{파일명,jdbcType=VARCHAR},
+        #{seq,jdbcType=VARCHAR},
+        #{업무구분,jdbcType=VARCHAR},
+        #{데이터구분,jdbcType=VARCHAR},
+        #{일련번호,jdbcType=VARCHAR},
+        #{입출금지시거래구분코드,jdbcType=VARCHAR},
+        #{전송일시,jdbcType=VARCHAR},
+        #{이용기관지로번호,jdbcType=VARCHAR},
+        #{지방자치단체코드,jdbcType=VARCHAR},
+        #{지방자치단체명,jdbcType=VARCHAR},
+        #{부서코드,jdbcType=VARCHAR},
+        #{부서명,jdbcType=VARCHAR},
+        #{결의자명,jdbcType=VARCHAR},
+        #{거래요청관리번호,jdbcType=VARCHAR},
+        #{회계연도,jdbcType=VARCHAR},
+        #{회계일자,jdbcType=VARCHAR},
+        #{출금계좌번호,jdbcType=VARCHAR},
+        NVL(#{출금총건수,jdbcType=NUMERIC}, 0),
+        NVL(#{출금총금액,jdbcType=NUMERIC}, 0),
+        #{출금계좌적요,jdbcType=VARCHAR},
+        #{출금거래결과코드,jdbcType=VARCHAR},
+        #{출금거래결과상세,jdbcType=VARCHAR},
+        #{은행회계일자,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <insert id="insertTR2004_D" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2004_D - 세입금 정산 입출금 */
+        <![CDATA[
+        INSERT INTO TR2004_D
+        VALUES(
+        #{파일명,jdbcType=VARCHAR},
+        #{seq,jdbcType=VARCHAR},
+        TR_SEQ2.NEXTVAL,
+        #{업무구분,jdbcType=VARCHAR},
+        #{데이터구분,jdbcType=VARCHAR},
+        #{일련번호,jdbcType=VARCHAR},
+        #{입금거래순번,jdbcType=VARCHAR},
+        #{상세내역관리번호,jdbcType=VARCHAR},
+        #{세목코드,jdbcType=VARCHAR},
+        #{세목명,jdbcType=VARCHAR},
+        #{수취인기관코드,jdbcType=VARCHAR},
+        #{수취인기관명,jdbcType=VARCHAR},
+        #{수취인금융기관코드,jdbcType=VARCHAR},
+        #{수취인계좌번호,jdbcType=VARCHAR},
+        #{수취인계좌예금주명,jdbcType=VARCHAR},
+        #{수취인계좌예금주번호,jdbcType=VARCHAR},
+        #{수취인전화번호,jdbcType=VARCHAR},
+        NVL(#{지급액,jdbcType=NUMERIC}, 0),
+        #{수취인계좌적요,jdbcType=VARCHAR},
+        #{입금상세거래결과코드,jdbcType=VARCHAR},
+        #{입금거래결과상세,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+    <!-- ############################################ -->
+    <!-- ############# TR2005 ####################### -->
+    <!-- ############################################ -->
+
+    <insert id="insertTR2005_M" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2005_M - 세입금 정산 입출금 */
+        <![CDATA[
+        INSERT INTO TR2005_M
+        VALUES (
+        #{파일명,jdbcType=VARCHAR},
+        #{seq,jdbcType=VARCHAR},
+        #{업무구분,jdbcType=VARCHAR},
+        #{데이터구분,jdbcType=VARCHAR},
+        #{일련번호,jdbcType=VARCHAR},
+        #{입출금지시거래구분코드,jdbcType=VARCHAR},
+        #{전송일시,jdbcType=VARCHAR},
+        #{이용기관지로번호,jdbcType=VARCHAR},
+        #{지방자치단체코드,jdbcType=VARCHAR},
+        #{지방자치단체명,jdbcType=VARCHAR},
+        #{부서코드,jdbcType=VARCHAR},
+        #{부서명,jdbcType=VARCHAR},
+        #{결의자명,jdbcType=VARCHAR},
+        #{거래요청관리번호,jdbcType=VARCHAR},
+        #{회계연도,jdbcType=VARCHAR},
+        #{회계일자,jdbcType=VARCHAR},
+        #{출금계좌번호,jdbcType=VARCHAR},
+        NVL(#{출금총건수,jdbcType=NUMERIC}, 0),
+        NVL(#{출금총금액,jdbcType=NUMERIC}, 0),
+        #{출금계좌적요,jdbcType=VARCHAR},
+        #{출금거래결과코드,jdbcType=VARCHAR},
+        #{출금거래결과상세,jdbcType=VARCHAR},
+        #{은행회계일자,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <insert id="insertTR2005_D" parameterType="MyMap">
+        /* NeoMapper4050.insertTR2005_D - 세입금 정산 입출금 */
+        <![CDATA[
+        INSERT INTO TR2005_D
+        VALUES(
+        #{파일명,jdbcType=VARCHAR},
+        #{seq,jdbcType=VARCHAR},
+        TR_SEQ2.NEXTVAL,
+        #{업무구분,jdbcType=VARCHAR},
+        #{데이터구분,jdbcType=VARCHAR},
+        #{일련번호,jdbcType=VARCHAR},
+        #{입금거래순번,jdbcType=VARCHAR},
+        #{상세내역관리번호,jdbcType=VARCHAR},
+        #{수취인금융기관코드,jdbcType=VARCHAR},
+        #{수취인계좌번호,jdbcType=VARCHAR},
+        #{수취인계좌예금주명,jdbcType=VARCHAR},
+        #{수취인계좌예금주번호,jdbcType=VARCHAR},
+        #{수취인전화번호,jdbcType=VARCHAR},
+        NVL(#{지급액,jdbcType=NUMERIC}, 0),
+        #{수취인계좌적요,jdbcType=VARCHAR},
+        #{입금상세거래결과코드,jdbcType=VARCHAR},
+        #{입금거래결과상세,jdbcType=VARCHAR}
+        )
+        ]]>
+    </insert>
+
+    <insert id="insertTranRecpLog"  parameterType="MyMap">
+    <![CDATA[
+        /*NeoMapper4050.insertTranRecpLog*/
+        INSERT
+          INTO TRAN_RECP_TAB
+             (
+               SPRT_ORG
+             , TRSC_DATE
+             , TRSC_SEQ
+             , TRSC_TIME
+             , SPRT_KIND_CODE
+             , SPRT_TRSC_CODE
+             , TRSC_FLAG
+             , INPUT_TLGM
+             )
+        VALUES
+             (
+               'C'
+             , TO_CHAR(SYSDATE, 'YYYYMMDD')
+             , #{TRSC_SEQ,javaType=String,jdbcType=VARCHAR}
+             , TO_CHAR(SYSDATE, 'HHmmss')
+             , SUBSTR(#{INPUT_TLGM,javaType=String,jdbcType=VARCHAR}, 3, 4)
+             , SUBSTR(#{INPUT_TLGM,javaType=String,jdbcType=VARCHAR}, 0, 6)
+             , #{TRSC_FLAG,javaType=String,jdbcType=VARCHAR}
+             , SUBSTRB(#{INPUT_TLGM,javaType=String,jdbcType=VARCHAR},0,1900)
+             )
+     ]]>
+    </insert>
+
+</mapper>

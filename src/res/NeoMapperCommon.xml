@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NeoMapperCommon">
+	<select id="getCharset" parameterType="MyMap" resultType="MyMap">
+		SELECT
+			VALUE
+		FROM
+			${NLS_DATABASE_PARAMETERS}
+		WHERE
+			PARAMETER = 'NLS_CHARACTERSET'
+	</select>
+
+	<select id="getTrdate" parameterType="MyMap" resultType="MyMap">
+		SELECT  NVL(MIN(STD_YMD), '        ') AS TR_DAY
+	  	  FROM  (
+	        	SELECT STD_YMD
+	        	  FROM TFC0003	/* 영업일 */
+	         	 WHERE STD_YMD >= #{TR_DAY2}
+	           	   AND HOL_YN = 'N'
+	        	ORDER BY STD_YMD
+	        	)
+	</select>
+
+	<select id="getNextTrdate" parameterType="MyMap" resultType="MyMap">
+		SELECT  NVL(MIN(STD_YMD), '        ') AS TR_DAY
+	  	  FROM  (
+	        	SELECT STD_YMD
+	        	  FROM TFC0003	/* 영업일 */
+	         	 WHERE STD_YMD > #{TR_DAY2}
+	           	   AND HOL_YN = 'N'
+	        	ORDER BY STD_YMD
+	        	)
+	</select>
+
+	<select id="getBrforeTrdate" parameterType="MyMap" resultType="MyMap">
+		SELECT  NVL(MAX(STD_YMD), '        ') AS TR_DAY
+	  	  FROM  (
+	        	SELECT STD_YMD
+	        	  FROM TFC0003	/* 영업일 */
+	         	 WHERE STD_YMD &lt; #{TR_DAY2}
+	           	   AND HOL_YN = 'N'
+	        	ORDER BY STD_YMD
+	        	)
+	</select>
+
+	<select id="getHoliday" parameterType="MyMap" resultType="MyMap">
+		SELECT HOL_YN AS 휴일여부
+	  	  FROM TFC0003	/* 영업일 */
+	  	 WHERE STD_YMD = #{현재일자}
+	</select>
+
+	<select id="getSrtTime" parameterType="MyMap" resultType="MyMap">
+        SELECT  CLS_NM AS 전송시간
+              , CD_CN AS 코드설명
+          FROM  TFC0001	/* 공통코드 */
+         WHERE  CLS_CD = 'SRT001'  -- 데이터없음
+           AND  CD = 'SRT001'
+    </select>
+
+    <select id="getEndTime" parameterType="MyMap" resultType="MyMap">
+        SELECT  CD_NM AS 마감시간
+               ,CD_CN AS 코드설명
+          FROM  TFC0001	/* 공통코드 */
+         WHERE  CLS_CD = 'END001'
+           AND  CD = 'END001'
+    </select>
+
+    <select id="getStartTime" parameterType="MyMap" resultType="MyMap">
+        SELECT  CD_NM AS 전송시간
+               ,CD_CN AS 코드설명
+          FROM  TFC0001	/* 공통코드 */
+         WHERE  CLS_CD = 'TRN001'
+           AND  CD = 'TRN001'
+    </select>
+
+	<select id="getLinkList" parameterType="MyMap" resultType="MyMap">
+    <![CDATA[
+        SELECT  A.JUM_NO 	AS 점번
+               ,A.LINK_NM	AS 링크명
+               ,A.OFC_NM	AS 구청명
+               ,A.LAF_CD	AS 자치단체코드
+          FROM TFC0004	A /* 점번정보 */
+              ,TFC0001	B /* 공통코드 */
+         WHERE A.LAF_CD = B.CD
+           AND B.CLS_CD = 'GOVCD'
+           AND B.CD_USE_YN = 'Y'
+      ]]>
+    <if test="jobYn != null and jobYn != ''">
+    AND A.LAF_CD IN
+    <foreach item="item" index="index" collection="jobList"   open="(" separator="," close=")">
+        #{item}
+    </foreach>
+    </if>
+    ORDER BY JUM_NO
+    </select>
+
+	<select id="getLinkList2" parameterType="MyMap" resultType="MyMap">
+    <![CDATA[
+        SELECT  A.JUM_NO 	AS 점번
+               ,A.LINK_NM	AS 링크명
+               ,A.OFC_NM	AS 구청명
+               ,A.LAF_CD	AS 자치단체코드
+          FROM TFC0004	A /* 점번정보 */
+              ,TFC0001	B /* 공통코드 */
+         WHERE A.LAF_CD = B.CD
+           AND B.CLS_CD = 'GOVCD'
+           AND B.CD_USE_YN = 'Y'
+           AND A.LAF_CD = #{govcode}
+         ORDER BY JUM_NO
+      ]]>
+    </select>
+
+<!-- 	링크리스트가져오기 -->
+    <select id="getLinkListNeo" parameterType="MyMap" resultType="MyMap">
+	    <![CDATA[
+		SELECT A.JUM_NO								/* 점번 */
+				, A.LINK_NM								/* 링크명 */
+             	, A.OFC_NM								/* 구청명 */
+             	, A.LAF_CD								/* 자치단체코드 */
+	     FROM TFC0004	A 							/* 점번정보 */
+	            ,TFC0001	B 							/* 공통코드 */
+	    WHERE A.LAF_CD = B.CD
+	       AND B.CLS_CD = 'GOVCD'					/* 분류코드 */
+	       AND B.CD_USE_YN = 'Y'
+	       AND A.LAF_CD = #{govcode}
+       ]]>
+	</select>
+
+	<select id="getLink" parameterType="MyMap" resultType="MyMap">
+	<![CDATA[
+        SELECT  A.JUM_NO 	AS 점번
+               ,A.LINK_NM	AS 링크명
+               ,A.OFC_NM	AS 구청명
+               ,A.LAF_CD	AS 자치단체코드
+          FROM TFC0004	A /* 점번정보 */
+		 WHERE A.LAF_CD= #{자치단체코드}
+	]]>
+	</select>
+
+<!-- 	구청별 링크 리스트 가져오기()  -->
+	<select id="getLinkNeo" parameterType="MyMap" resultType="MyMap">
+	<![CDATA[
+		SELECT JUM_NO 			/* 점번 */
+                , LINK_NM				/* 링크명 */
+                , OFC_NM				/* 구청명 */
+                , LAF_CD					/* 자치단체코드 */
+          FROM TFC0004	 			/* 점번정보 */
+		 WHERE LAF_CD= #{LAF_CD}
+	]]>
+	</select>
+
+	<select id="getLinkName" parameterType="MyMap" resultType="MyMap">
+		 SELECT LINK_NM
+		   FROM TFC0004 			/* 점번정보 */
+		  WHERE	LAF_CD = #{LOCAL_GOV_CD}
+	</select>
+
+	<select id="nCntSelect" parameterType="MyMap" resultType="Long">
+		 SELECT COUNT(*) AS NCNT
+		   FROM TFC0005				/* 파일순번 */
+		  WHERE	DLNG_CD  = #{거래구분}
+			AND DLNG_YMD = #{거래일자}
+			AND	JUM_NO   = #{JUMBUN}
+	</select>
+
+	<select id="SqNoSelect" parameterType="MyMap" resultType="Long">
+		 SELECT SEQ_NO  AS FILESQNO
+		   FROM TFC0005	/* 파일순번 */
+		  WHERE	DLNG_CD  = #{거래구분}
+			AND DLNG_YMD = #{거래일자}
+			AND	JUM_NO   = #{JUMBUN}
+			FOR UPDATE WAIT 5
+	</select>
+
+	<update id="SqNoUpdate" parameterType="MyMap">
+		 UPDATE TFC0005	/* 파일순번 */
+		    SET SEQ_NO  = #{FILESQNO}
+		  WHERE	DLNG_CD  = #{거래구분}
+			AND DLNG_YMD = #{거래일자}
+			AND	JUM_NO   = #{JUMBUN}
+	</update>
+
+	<insert id="SqNoInsert">
+		INSERT INTO TFC0005	/* 파일순번 */
+		           (DLNG_CD, DLNG_YMD, JUM_NO, SEQ_NO, RGSTR_DT)
+			VALUES (#{거래구분}, #{거래일자}, #{JUMBUN}, #{FILESQNO}, SYSDATE)
+	</insert>
+
+
+<!-- 	파일순번 count 조회 -->
+	<select id="nCntSelectNeo" parameterType="MyMap" resultType="Long">
+		SELECT COUNT(*) AS NCNT
+		 FROM TFC0005										/* 파일순번 */
+	    WHERE DLNG_CD  = #{DLNG_CD}				/* 거래구분 */
+		   AND DLNG_YMD = #{DLNG_YMD}				/* 거래일자 */
+		   AND JUM_NO = #{JUM_NO}					/* 점번 */
+	</select>
+
+<!-- 	파일순번 조회 -->
+	<select id="sqNoSelectNeo" parameterType="MyMap" resultType="Long">
+		 SELECT SEQ_NO  AS FILESQNO
+		  FROM TFC0005									/* 파일순번 */
+		 WHERE DLNG_CD  = #{DLNG_CD}				/* 거래구분 */
+		    AND DLNG_YMD = #{DLNG_YMD}			/* 거래일자 */
+		    AND JUM_NO = #{JUM_NO}					/* 점번 */
+			 FOR UPDATE WAIT 5
+	</select>
+
+	<update id="sqNoUpdateNeo" parameterType="MyMap">
+		 UPDATE TFC0005									/* 파일순번 */
+		      SET SEQ_NO  = #{FILESQNO}
+		  WHERE DLNG_CD  = #{DLNG_CD}				/* 거래구분 */
+		     AND DLNG_YMD = #{DLNG_YMD}			/* 거래일자 */
+		     AND JUM_NO = #{JUM_NO}					/* 점번 */
+	</update>
+
+	<insert id="sqNoInsertNeo">
+		INSERT INTO TFC0005	/* 파일순번 */
+		           (DLNG_CD, DLNG_YMD, JUM_NO, SEQ_NO, RGSTR_DT)
+			VALUES (#{DLNG_CD}, #{DLNG_YMD}, #{JUM_NO}, #{FILESQNO}, SYSDATE)
+	</insert>
+
+
+	<!-- 데몬 상태 업데이트  -->
+	<update id="DmStatUpdate" parameterType="MyMap">
+		UPDATE TFC0009 /* 데몬현황 */
+		   SET LST_DATE = SYSDATE
+			  ,DM_STAT  = #{DM_STAT}
+	     WHERE DM_NM = #{DM_NM}
+		   AND USE_YN='Y'
+	</update>
+
+	<!-- 정지데몬 조회  -->
+	<select id="DmStatSelect" resultType="MyMap">
+	<![CDATA[
+		SELECT DM_NM
+			  ,DM_SCRIPT
+		  FROM TFC0009 /* 데몬현황 */
+	     WHERE USE_YN='Y'
+		   AND LST_DATE < SYSDATE - CHK_TM/(24*60*60)
+	]]>
+	</select>
+
+
+
+
+
+
+  	<!-- 공통코드 조회 -->
+  	<select id="listCodeCd" parameterType="MyMap" resultType="MyMap">
+	<![CDATA[
+		SELECT CD AS CD
+			 , CLS_NM
+			 , CD_NM
+			 , ADD_CD
+		  FROM TFC0001
+		 WHERE CLS_CD=#{CLS_CD}
+		   AND (#{CD} IS NULL OR CD = #{CD})
+		   AND CD_USE_YN='Y'
+ 	]]>
+	</select>
+
+
+
+
+  	<!-- 시퀀스 존재여부 확인 -->
+  	<select id="checkExistSeq" parameterType="MyMap" resultType="String">
+	<![CDATA[
+		SELECT DECODE(COUNT(1),1,'Y','N') AS SEQ_YN
+		  FROM USER_OBJECTS
+		 WHERE OBJECT_TYPE='SEQUENCE'
+		   AND OBJECT_NAME = #{SEQ_NAME}
+		   AND ROWNUM=1
+	]]>
+	</select>
+
+  	<!-- NEXT 시퀀스 조회 -->
+  	<select id="getNextSeq" parameterType="MyMap" resultType="int">
+	<![CDATA[
+		SELECT ${SEQ_NAME}.NEXTVAL FROM DUAL
+	]]>
+	</select>
+
+
+	<!-- 신규 Sequence 생성 -->
+  	<update id="createSeq" parameterType="MyMap">
+	<![CDATA[
+		CREATE SEQUENCE ${SEQ_NAME}
+		 START WITH 1
+		 INCREMENT BY 1
+		 MINVALUE 1
+		 MAXVALUE 999999
+		 NOCACHE
+		 NOCYCLE
+		 ORDER
+	 ]]>
+	</update>
+
+
+	<!-- 과거 Sequence 삭제 -->
+  	<update id="deleteSeq" parameterType="MyMap">
+	<![CDATA[
+		DROP SEQUENCE ${OLD_SEQ_NAME}
+	 ]]>
+	</update>
+
+
+<!--=================================================================================== 보고서/청백리 거래로그 쿼리 공통 사용 추가.20220916.하상우  -->
+
+    <insert id="insertTranLog"  parameterType="MyMap">
+    <![CDATA[
+    	/*NeoMapperCommon.insertTranLog*/
+        INSERT
+          INTO TRAN_RECP_TAB
+          	 (
+               SPRT_ORG
+             , TRSC_DATE
+             , TRSC_SEQ
+             , TRSC_TIME
+             , SPRT_KIND_CODE
+             , SPRT_TRSC_CODE
+             , TRSC_FLAG
+             , INPUT_TLGM
+             , REQUEST_NUM
+             , ELEC_BILL_NUM
+             )
+		VALUES
+			 (
+               #{SPRT_ORG,javaType=String,jdbcType=VARCHAR}
+             , #{TRSC_DATE,javaType=String,jdbcType=VARCHAR}
+             , #{TRSC_SEQ,javaType=String,jdbcType=VARCHAR}
+             , #{TRSC_TIME,javaType=String,jdbcType=VARCHAR}
+             , #{SPRT_KIND_CODE,javaType=String,jdbcType=VARCHAR}
+             , #{SPRT_TRSC_CODE,javaType=String,jdbcType=VARCHAR}
+             , #{TRSC_FLAG,javaType=String,jdbcType=VARCHAR}
+             , SUBSTRB(#{INPUT_TLGM,javaType=String,jdbcType=VARCHAR},0,1900)
+             , #{REQUEST_NUM,javaType=String,jdbcType=VARCHAR}
+             , #{ELEC_BILL_NUM,javaType=String,jdbcType=VARCHAR}
+			 )
+     ]]>
+    </insert>
+
+    <select id="selectRequestNum" parameterType="MyMap" resultType="int">
+    <![CDATA[
+    	/*NeoMapperCommon.selectRequestNum*/
+	    SELECT NVL( MAX(REQUEST_NUM)+1, 1) AS REQUEST_NUM
+	      FROM TRAN_RECP_TAB
+	     WHERE SPRT_ORG       = #{SPRT_ORG}		  /*구분값(V:가상계좌,R:보고서)*/
+	       AND TRSC_DATE      = #{TRSC_DATE}	  /*전송일자*/
+	       AND SPRT_KIND_CODE = #{SPRT_KIND_CODE} /*전문종별*/
+     ]]>
+    </select>
+
+
+	<select id="selectDrwRealActno" parameterType="MyMap" resultType="MyMap">
+	<![CDATA[
+  		/* NeoMapperCommon.selectDrwRealActno */
+  		SELECT MTAC_IDT_NO /*통합지출계좌번호*/
+  		  FROM TFC0011
+  		 WHERE 1=1
+  		   AND ANE_LIM_ACC_NO = #{ECRP_ACTNO} /*세출한도계좌번호*/
+  		   AND ACC_NO_USE_YN = 'Y'
+	]]>
+	</select>
+	<!--
+		SELECT CASE ANE_LIM_ACC_YN WHEN 'Y' THEN PRNT_ECRP_ACTNO /*부모암호화계좌번호:통합계좌(=실계좌)*/
+											ELSE STBX_ECRP_ACTNO /*금고암호화계좌번호:세출한도계좌or통합계좌(=실계좌)*/
+											END AS DRW_REAL_ACTNO
+			 , ANE_LIM_ACC_YN  /*세출한도계좌여부 Y:STBX_ECRP_ACTNO(세출한도계좌), PRNT_ECRP_ACTNO(통합계좌) / N:STBX_ECRP_ACTNO(실계좌)*/
+			 , STBX_ECRP_ACTNO /*금고암호화계좌번호:세출한도계좌or통합계좌*/
+			 , PRNT_ECRP_ACTNO /*부모암호화계좌번호:통합계좌*/
+		  FROM TFMA120
+		 WHERE 1=1
+		   AND ACC_CNLT_YN = 'N' /*계좌해지여부*/
+		   AND STBX_ECRP_ACTNO = #ECRP_ACTNO# /*암호화계좌 / ECRP_ACTNO*/
+	 -->
+
+
+</mapper>
